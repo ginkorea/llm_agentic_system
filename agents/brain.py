@@ -12,6 +12,7 @@ class Memory:
             self.short_term = []
         else: self.short_term = short_term
         self.forget_threshold = forget_threshold
+        self.visited_sites = []
 
 class Brain:
 
