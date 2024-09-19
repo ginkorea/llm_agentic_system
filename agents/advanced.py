@@ -1,7 +1,7 @@
 from agents.base import Agent
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
-from agents.brain import AdvancedBrain
+from agents.brain import Brain
 
 # BrainAgent class inheriting from Agent
 class AdvancedAgent(Agent):

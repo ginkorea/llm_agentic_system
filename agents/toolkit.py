@@ -117,7 +117,7 @@ class BagOfTools:
             print("Available tools:")
         for _tool in self.tools:
             if verbose:
-                print(f"--{_tool['name']}: {_tool['desc']}")
+                print(f"--{_tool['name']}: {_tool['desc'][23:]}")
         return self.tools
 
 

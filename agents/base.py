@@ -33,7 +33,7 @@ class Agent:
             return self.brain.memory.short_term
 
 
-    def determine_action(self, user_input: str, reasoning: bool) -> (bool, int):
+    def determine_action(self, user_input: str, advanced: bool) -> (bool, int):
         """
         Determine whether to use a tool or LLM.
         If advanced is False, check if any tool matches the input.
@@ -43,10 +43,45 @@ class Agent:
             - (True, tool_index) if a tool should be used
             - (False, -1) if LLM should be used
         """
-        if not reasoning:
-            b, idx = self.get_tool(user_input)
-            if b: return b, idx
+        if not advanced:
+            return self.basic_determine_action(user_input)
+        else:
+            return self.advanced_determine_action(user_input)
+
+    def basic_determine_action(self, user_input: str) -> (bool, int):
+        """
+        Determine whether to use a tool or LLM.
+        If advanced is False, check if any tool matches the input.
+        If advanced is True, it can be handled by the BrainAgent with the LLM.
+
+        Returns:
+            - (True, tool_index) if a tool should be used
+            - (False, -1) if LLM should be used
+        """
+        b, idx = self.get_tool(user_input)
+        if b: return b, idx
         return False, -1
+
+    def advanced_determine_action(self, user_input: str) -> (bool, int, str, str):
+        """
+        Use the brain's frontal lobe (or other lobes) to determine if the input should
+        be handled by a tool or an LLM. If a tool is chosen, return the index, the tool's name,
+        and the refined prompt. If LLM is chosen, return -1, the lobe, and the prompt for the LLM.
+
+        Returns:
+            - (True, tool_index, tool_name, refined_prompt) if a tool should be used
+            - (False, -1, lobe_name, refined_prompt) if LLM should be used
+        """
+        # Ask the frontal lobe to analyze the input and determine the best course of action
+        decision = self.brain.determine_tool_or_llm(user_input)
+
+        if decision['use_tool']:
+            # The brain suggests using a tool, return the tool's details
+            tool_index = self.get_tool(decision['tool_name'])[1]
+            return True, tool_index, decision['tool_name'], decision['refined_prompt']
+
+        # The brain suggests using an LLM
+        return False, -1, decision['lobe'], decision['refined_prompt']
 
     def get_tool(self, user_input: str) -> Tuple[bool,int]:
         """
