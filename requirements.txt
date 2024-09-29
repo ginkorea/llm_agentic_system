@@ -4,3 +4,6 @@ requests~=2.32.3
 selenium~=4.24.0
 beautifulsoup4~=4.12.3
 langchain-core~=0.3.1
+numpy~=1.26.4
+scikit-learn~=1.5.2
+sentence-transformers~=3.1.1

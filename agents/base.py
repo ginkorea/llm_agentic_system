@@ -1,6 +1,6 @@
 from typing import Tuple, List
-from agents.toolkit import BagOfTools
-from agents.brain import Brain
+from agents.toolkit.bag import BagOfTools
+from agents.brain.core import Brain
 
 
 # Base Agent class

@@ -7,10 +7,23 @@ class Lobe:
         """
         A base Lobe class that wraps a language model with a defined memory limit.
         """
-        self.model = ChatOpenAI(model=model_name, temperature=temperature)
+        self.model_name = model_name
+        self.temperature = temperature
         self.memory_limit = memory_limit
         self.system_message = system_message
+        self.model = ChatOpenAI(model=model_name, temperature=temperature)
         self.prompt_template = ChatPromptTemplate.from_messages([("system", self.system_message)])
+
+    def get_info(self):
+        """
+        Returns a dictionary of the lobe's information.
+        """
+        return {
+            "model_name": self.model_name,
+            "temperature": self.temperature,
+            "memory_limit": self.memory_limit,
+            "system_message": self.system_message
+        }
 
     def process(self, user_input: str, memory: list) -> str:
         """
