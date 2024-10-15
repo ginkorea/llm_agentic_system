@@ -42,4 +42,5 @@ const/
     __init__.py
     sk.py
 main.py
+readme.md
 requirements.txt

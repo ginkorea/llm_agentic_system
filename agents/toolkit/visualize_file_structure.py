@@ -23,7 +23,7 @@ def save_text_output(text_output, text_output_file):
 def should_ignore(item):
     """Returns True if the directory or file should be ignored."""
     # Ignore __pycache__ and hidden files/directories
-    return item.startswith('.') or item == '__pycache__'
+    return item.startswith('.') or item == '__pycache__' or item == 'devbench'
 
 def add_nodes(dot, path, parent=None, indent="", color_index=0, text_output=""):
     """Recursively add directories and files to the graph and text-based output."""

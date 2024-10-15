@@ -89,5 +89,6 @@ digraph {
 	"/home/gompert/workspace/llmas/const/sk.py" [label="sk.py" shape=note]
 	"/home/gompert/workspace/llmas/const" -> "/home/gompert/workspace/llmas/const/sk.py"
 	"/home/gompert/workspace/llmas/main.py" [label="main.py" shape=note]
+	"/home/gompert/workspace/llmas/readme.md" [label="readme.md" shape=note]
 	"/home/gompert/workspace/llmas/requirements.txt" [label="requirements.txt" shape=note]
 }
