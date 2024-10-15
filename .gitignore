@@ -4,3 +4,4 @@ const/sk*
 *.onnx
 *.zip
 *.tar.gz
+*.safetensors

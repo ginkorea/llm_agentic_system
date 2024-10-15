@@ -1,33 +1,48 @@
-import numpy as np
-from transformers import AutoTokenizer
-from openvino.runtime import Core
+def test_memory_system(memory_class):
+    """Generic test function to test memory systems (either CUDA or OpenVINO)."""
+    # Initialize the memory system with the provided class
+    memory = memory_class(forget_threshold=10)
+    print(f"{memory_class.__name__} Memory System initialized successfully.")
 
-# Initialize OpenVINO runtime
-ie = Core()
+    # Test memory storage
+    print("Storing memory entries...")
+    memory.store_memory("What is the capital of France?", "The capital of France is Paris.")
+    memory.store_memory("What is quantum physics?", "Quantum physics studies matter at atomic scales.")
+    memory.store_memory("How does gravity work?", "Gravity is a force that attracts objects towards one another.")
+    memory.store_memory("Explain thermodynamics laws.", "The laws of thermodynamics deal with energy and heat.")
+    print("Memory entries stored.")
 
-# Load the FP16 model
-model = ie.read_model(model="model_onnx/model_fp16.onnx")
-compiled_model = ie.compile_model(model=model, device_name="CPU")
+    # Test memory search
+    print("Performing searches...")
 
-# Check the input/output of the model
-print(compiled_model.inputs)
-print(compiled_model.outputs)
+    query_1 = "capital city of France"
+    query_2 = "gravity"
+    query_3 = "thermodynamics laws"
 
-# Initialize the tokenizer
-tokenizer = AutoTokenizer.from_pretrained("jinaai/jina-embeddings-v3")
+    result_1 = memory.search_memory(query_1)
+    result_2 = memory.search_memory(query_2)
+    result_3 = memory.search_memory(query_3)
 
-# Tokenize the input text (replace "your input text here" with actual text)
-inputs = tokenizer("your input text here", return_tensors="np")
+    # Display search results
+    print(f"Search results for '{query_1}': {result_1}")
+    print(f"Search results for '{query_2}': {result_2}")
+    print(f"Search results for '{query_3}': {result_3}")
 
-# Prepare input data (convert to numpy arrays)
-input_ids = inputs["input_ids"].astype(np.int64)
-attention_mask = inputs["attention_mask"].astype(np.int64)
-task_id = np.array(0, dtype=np.int64)  # Example task ID, if needed
+    # Check if search returns correct results (you can adjust these assertions based on your memory content)
+    assert result_1, f"Search for '{query_1}' failed!"
+    assert result_2, f"Search for '{query_2}' failed!"
+    assert result_3, f"Search for '{query_3}' failed!"
 
-# Run inference (pass the inputs as a list of numpy arrays)
-input_data = [input_ids, attention_mask, task_id]
-results = compiled_model(input_data)
+    print(f"All tests passed successfully for {memory_class.__name__}!\n")
 
-# Output the results
-output_layer = compiled_model.output(0)
-print(results[output_layer])
+
+if __name__ == "__main__":
+    from agents.brain.memory.cuda_embedded import CudaMemoryWithEmbeddings
+    from agents.brain.memory.ov_embedded import OpenvinoMemoryWithEmbeddings
+
+    # Test both CUDA and OpenVINO memory systems
+    print("Testing CUDA Memory System")
+    test_memory_system(CudaMemoryWithEmbeddings)
+
+    print("Testing OpenVINO Memory System")
+    test_memory_system(OpenvinoMemoryWithEmbeddings)
