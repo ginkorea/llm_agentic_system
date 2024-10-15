@@ -1,6 +1,6 @@
-from subeval import *
-from subeval.subjective.analyze_util import proc_task, match_answer
-from subeval.subjective.util import find_inconsistent
+from devbench.llm_judge.subeval.smp import *
+from devbench.llm_judge.subeval.subjective.analyze_util import proc_task, match_answer
+from devbench.llm_judge.subeval.subjective.util import find_inconsistent
 
 ### Analyze ###
 '''
@@ -10,9 +10,9 @@ and then analyze seperately.
 Note: the count-win-rate functions here are NOT the win-rate calculation functions.
 The actual new-version win-rate calculation is done after aggregation (See below after aggregate_data).
 '''
-def analyze(data_file, refm, judge):
+def analyze(data_file, _refm, _judge):
     # Preprocesses the data (seperate consistent and inconsistent data).
-    cons_data, incons_data = seperate_inconsistent(data_file,judge)
+    cons_data, incons_data = separate_inconsistent(data_file, _judge)
 
     # Initialize dictionaries for consistent, tie, and total counts
     cnt = defaultdict(lambda: 0)    # win
@@ -29,7 +29,7 @@ def analyze(data_file, refm, judge):
 
 
     # Calls the analyze function with the prepared data.
-    cons_cnt, cons_tie, cons_tot = analyze_cons(cons_data, refm, cons_tasks)
+    cons_cnt, cons_tie, cons_tot = analyze_cons(cons_data, _refm, cons_tasks)
     cnt.update(cons_cnt)
     tie.update(cons_tie)
     tot.update(cons_tot)
@@ -45,28 +45,28 @@ def analyze(data_file, refm, judge):
     
 
     # Calls the analyze function with the prepared data.
-    incons_cnt, incons_tie, incons_tot = analyze_incons(incons_data, refm, incons_tasks)
+    incons_cnt, incons_tie, incons_tot = analyze_incons(incons_data, _refm, incons_tasks)
     cnt = add_dict(cnt, incons_cnt)
     tie = add_dict(tie, incons_tie)
     tot = add_dict(tot, incons_tot)
     
     return cnt, tie, tot
 
-
+# Helper function to add two dictionaries
 def add_dict(a, b):
     return {key: a.get(key, 0) + b.get(key, 0) for key in set(a) | set(b)}
 
 
 # Inspired by preprocess from analyze_util.py to fit new needs.
-def seperate_inconsistent(data_file, judge):
+def separate_inconsistent(data_file, _judge):
     data = load(data_file)
     
     # Filters out data where the answers are an exact match ('EM').
-    nonem = [x != 'EM' for x in data[judge]]
+    nonem = [x != 'EM' for x in data[_judge]]
     data = data[nonem]
     
     # Extracts answers from the data and checks for successful extraction.
-    data['extracted'] = [match_answer(ans) for ans in data[judge]]
+    data['extracted'] = [match_answer(ans) for ans in data[_judge]]
     succeed = [not pd.isna(x) for x in data['extracted']]
     data = data[succeed]
     
@@ -74,11 +74,11 @@ def seperate_inconsistent(data_file, judge):
     return cons_data, incons_data
 
 
-def analyze_cons(data, refm, tasks):
+def analyze_cons(data, _refm, tasks):
     # Collects all unique models from columns 'A' and 'B' in the data.
     models = set(list(data['A']) + list(data['B']))
     models = list(models)
-    assert refm in models  # Ensures the reference model is in the list of models.
+    assert _refm in models  # Ensures the reference model is in the list of models.
 
     # Initializes tables for different statistics.
     cnt = defaultdict(lambda: 0)    # win
@@ -93,11 +93,11 @@ def analyze_cons(data, refm, tasks):
     
     return cnt, tie, tot
 
-def analyze_incons(data, refm, tasks):
+def analyze_incons(data, _refm, tasks):
     # Collects all unique models from columns 'A' and 'B' in the data.
     models = set(list(data['A']) + list(data['B']))
     models = list(models)
-    assert refm in models  # Ensures the reference model is in the list of models.
+    assert _refm in models  # Ensures the reference model is in the list of models.
 
     # Initializes tables for different statistics.
     cnt = defaultdict(lambda: 0)    # win
@@ -261,7 +261,7 @@ def calculate_winrate_new_call(infer_result_file, refm, judge, save_to_directory
     return win_rate_with_tie, win_rate_wo_tie
 
 if __name__=="__main__":
-    # Parameters: Adjust to your desiried ones
+    # Parameters: Adjust to your desired ones
     refm = "gpt-3.5-turbo-1106"
     judge = "gpt-3.5-turbo-1106"
     infer_result_file = "output/DevBench_projects_example_infer_input_2680_record0_gpt-3.5-turbo-1106_2/record_gpt-3.5-turbo-1106_2.tsv"

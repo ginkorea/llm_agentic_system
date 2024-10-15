@@ -7,7 +7,7 @@ from rich.progress import (BarColumn, MofNCompleteColumn, Progress, Task,
 from rich.text import Text
 import os.path as osp
 import portalocker
-from subeval.smp import load, dump
+from devbench.llm_judge.subeval.smp import load, dump
 
 
 class _Worker:

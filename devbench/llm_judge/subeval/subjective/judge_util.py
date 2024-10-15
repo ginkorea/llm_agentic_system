@@ -1,8 +1,8 @@
-from subeval.smp import *
-from subeval.subjective.prompt.subeval_prompts import build_prompt
+from devbench.llm_judge.subeval.smp import *
+from devbench.llm_judge.subeval.subjective.prompt.subeval_prompts import build_prompt
 from functools import partial
-from subeval.utils.mp_util import track_progress_rich
-from subeval.chat_api import OpenAIWrapper
+from devbench.llm_judge.subeval.utils.mp_util import track_progress_rich
+from devbench.llm_judge.subeval.chat_api import OpenAIWrapper
 
 # Function to get a unique record index for file naming
 def get_record_index(data_base, tgt_name, judge, nopt):

@@ -1,9 +1,9 @@
 import argparse
 import pandas as pd
-from subeval.smp import load, dump, timestr
-from subeval.subjective.construct_util import json2tsv, generate_inference_input
-from subeval.subjective.judge_util import judge_infer
-from subeval.subjective.analyze_util import analyze_pipe
+from devbench.llm_judge.subeval.smp import load, dump, timestr
+from devbench.llm_judge.subeval.subjective.construct_util import json2tsv, generate_inference_input
+from devbench.llm_judge.subeval.subjective.judge_util import judge_infer
+from devbench.llm_judge.subeval.subjective.analyze_util import analyze_pipe
 
 def parse_args():
     parser = argparse.ArgumentParser(

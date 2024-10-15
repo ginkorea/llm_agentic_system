@@ -1,4 +1,4 @@
-from subeval import *
+from devbench.llm_judge.subeval.smp import *
 import numpy as np
 
 # Columns of the data Dataframe

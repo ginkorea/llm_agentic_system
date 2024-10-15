@@ -1,4 +1,5 @@
-from subeval.smp import *
+
+from devbench.llm_judge.subeval.smp import *
 import os
 from .base import BaseAPI
 from openai import OpenAI

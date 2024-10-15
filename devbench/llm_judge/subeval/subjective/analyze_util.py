@@ -1,5 +1,5 @@
-from subeval import *
-from subeval.subjective.util import calc_win_rate, find_inconsistent, length_statistics_inferin
+from devbench.llm_judge.subeval.smp import *
+from devbench.llm_judge.subeval.subjective.util import calc_win_rate, find_inconsistent, length_statistics_inferin
 import re
 import os
 

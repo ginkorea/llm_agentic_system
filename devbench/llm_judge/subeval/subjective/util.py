@@ -6,7 +6,7 @@ import numpy as np
 import multiprocessing as mp
 import pandas as pd
 import copy as cp
-from subeval.smp import load, dump
+from devbench.llm_judge.subeval.smp import load, dump
 
 # ALL FUNCTIONS IN THIS FILE TAKE ENTRY-LEVEL RESULT DICT AS INPUTS !!!
 

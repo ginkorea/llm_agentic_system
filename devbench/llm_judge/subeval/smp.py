@@ -1,32 +1,12 @@
 # flake8: noqa: F401, F403
-import abc
-import argparse
-import collections
+
 import csv
 import json
-import multiprocessing as mp
-import numpy as np
-import os, sys, time, base64, io
-import os.path as osp
-import copy as cp
 import pickle
-import random as rd
-import requests
-import shutil
-import string
 import subprocess
-import warnings
 import pandas as pd
-from collections import OrderedDict, defaultdict
-from multiprocessing import Pool, current_process
-from tqdm import tqdm
-from PIL import Image
-import uuid
-from uuid import uuid4
 from datetime import datetime
-import matplotlib.pyplot as plt
-import seaborn as sns
-from tabulate import tabulate
+
 
 # Function to split a string by a separator and return the number of parts
 def splitlen(s, sep='/'):
