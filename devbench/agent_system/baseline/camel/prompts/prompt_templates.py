@@ -14,8 +14,8 @@
 import warnings
 from typing import Any, Optional
 
-from camel.prompts import TaskPromptTemplateDict, TextPrompt
-from camel.typing import RoleType, TaskType
+from devbench.agent_system.baseline.camel.prompts import TaskPromptTemplateDict, TextPrompt
+from devbench.agent_system.baseline.camel.typing import RoleType, TaskType
 
 
 class PromptTemplateGenerator:

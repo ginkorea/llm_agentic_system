@@ -14,7 +14,7 @@
 import inspect
 from typing import Any, Callable, Dict, Optional, Set, Tuple, TypeVar, Union
 
-from camel.typing import RoleType
+from devbench.agent_system.baseline.camel.typing import RoleType
 
 T = TypeVar('T')
 
@@ -98,7 +98,7 @@ class TextPrompt(str):
     def key_words(self) -> Set[str]:
         r"""Returns a set of strings representing the key words in the prompt.
         """
-        from camel.utils import get_prompt_template_key_words
+        from devbench.agent_system.baseline.camel.utils import get_prompt_template_key_words
         return get_prompt_template_key_words(self)
 
     def format(self, *args: Any, **kwargs: Any) -> 'TextPrompt':
@@ -128,6 +128,9 @@ class CodePrompt(TextPrompt):
         code_string (str): The code string for the prompt.
         code_type (str, optional): The type of code. Defaults to None.
     """
+
+    def __init__(self):
+        self._code_type = None
 
     def __new__(cls, *args: Any, **kwargs: Any) -> 'CodePrompt':
         r"""Creates a new instance of the :obj:`CodePrompt` class.
