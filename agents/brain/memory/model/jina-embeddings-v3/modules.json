@@ -1,0 +1,21 @@
+[
+  {
+    "idx": 0,
+    "name": "transformer",
+    "path": "",
+    "type": "custom_st.Transformer",
+    "kwargs": ["task"]
+  },
+  {
+    "idx": 1,
+    "name": "pooler",
+    "path": "1_Pooling",
+    "type": "sentence_transformers.models.Pooling"
+  },
+  {
+    "idx": 2,
+    "name": "normalizer",
+    "path": "2_Normalize",
+    "type": "sentence_transformers.models.Normalize"
+  }
+]

@@ -1,0 +1,16 @@
+{
+    "__version__":{
+        "sentence_transformers":"3.1.0",
+        "transformers":"4.41.2",
+        "pytorch":"2.3.1+cu121"
+    },
+    "prompts":{
+        "retrieval.query":"Represent the query for retrieving evidence documents: ",
+        "retrieval.passage":"Represent the document for retrieval: ",
+        "separation": "",
+        "classification": "",
+        "text-matching": ""
+    },
+    "default_prompt_name":null,
+    "similarity_fn_name":"cosine"
+}
