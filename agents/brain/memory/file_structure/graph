@@ -1,0 +1,93 @@
+// File Structure
+digraph {
+	size="10,10"
+	rankdir=TB
+	nodesep=0.5
+	ranksep=0.75
+	"/home/gompert/workspace/llmas/agents" [label=agents fillcolor=lightblue shape=folder style=filled]
+	"/home/gompert/workspace/llmas/agents/__init__.py" [label="__init__.py" shape=note]
+	"/home/gompert/workspace/llmas/agents" -> "/home/gompert/workspace/llmas/agents/__init__.py"
+	"/home/gompert/workspace/llmas/agents/advanced.py" [label="advanced.py" shape=note]
+	"/home/gompert/workspace/llmas/agents" -> "/home/gompert/workspace/llmas/agents/advanced.py"
+	"/home/gompert/workspace/llmas/agents/base.py" [label="base.py" shape=note]
+	"/home/gompert/workspace/llmas/agents" -> "/home/gompert/workspace/llmas/agents/base.py"
+	"/home/gompert/workspace/llmas/agents/brain" [label=brain fillcolor=lightgreen shape=folder style=filled]
+	"/home/gompert/workspace/llmas/agents" -> "/home/gompert/workspace/llmas/agents/brain"
+	"/home/gompert/workspace/llmas/agents/brain/__init__.py" [label="__init__.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain" -> "/home/gompert/workspace/llmas/agents/brain/__init__.py"
+	"/home/gompert/workspace/llmas/agents/brain/core.py" [label="core.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain" -> "/home/gompert/workspace/llmas/agents/brain/core.py"
+	"/home/gompert/workspace/llmas/agents/brain/lobes.py" [label="lobes.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain" -> "/home/gompert/workspace/llmas/agents/brain/lobes.py"
+	"/home/gompert/workspace/llmas/agents/brain/memory" [label=memory fillcolor=yellow shape=folder style=filled]
+	"/home/gompert/workspace/llmas/agents/brain" -> "/home/gompert/workspace/llmas/agents/brain/memory"
+	"/home/gompert/workspace/llmas/agents/brain/memory/__init__.py" [label="__init__.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory" -> "/home/gompert/workspace/llmas/agents/brain/memory/__init__.py"
+	"/home/gompert/workspace/llmas/agents/brain/memory/_embedded.py" [label="_embedded.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory" -> "/home/gompert/workspace/llmas/agents/brain/memory/_embedded.py"
+	"/home/gompert/workspace/llmas/agents/brain/memory/cuda_embedded.py" [label="cuda_embedded.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory" -> "/home/gompert/workspace/llmas/agents/brain/memory/cuda_embedded.py"
+	"/home/gompert/workspace/llmas/agents/brain/memory/embedded.py" [label="embedded.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory" -> "/home/gompert/workspace/llmas/agents/brain/memory/embedded.py"
+	"/home/gompert/workspace/llmas/agents/brain/memory/file_structure" [label=file_structure fillcolor=pink shape=folder style=filled]
+	"/home/gompert/workspace/llmas/agents/brain/memory" -> "/home/gompert/workspace/llmas/agents/brain/memory/file_structure"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model" [label=model fillcolor=pink shape=folder style=filled]
+	"/home/gompert/workspace/llmas/agents/brain/memory" -> "/home/gompert/workspace/llmas/agents/brain/memory/model"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3" [label="jina-embeddings-v3" fillcolor=lightgrey shape=folder style=filled]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/README.md" [label="README.md" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/README.md"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/config.json" [label="config.json" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/config.json"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/config_sentence_transformers.json" [label="config_sentence_transformers.json" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/config_sentence_transformers.json"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/custom_st.py" [label="custom_st.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/custom_st.py"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/model.safetensors" [label="model.safetensors" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/model.safetensors"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/model_fp16.onnx" [label="model_fp16.onnx" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/model_fp16.onnx"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/modules.json" [label="modules.json" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/modules.json"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/pytorch_model.bin" [label="pytorch_model.bin" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/pytorch_model.bin"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/special_tokens_map.json" [label="special_tokens_map.json" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/special_tokens_map.json"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/tokenizer_config.json" [label="tokenizer_config.json" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/tokenizer_config.json"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model_accel.py" [label="model_accel.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory" -> "/home/gompert/workspace/llmas/agents/brain/memory/model_accel.py"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model_test.py" [label="model_test.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory" -> "/home/gompert/workspace/llmas/agents/brain/memory/model_test.py"
+	"/home/gompert/workspace/llmas/agents/brain/memory/onnx_conversion.py" [label="onnx_conversion.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory" -> "/home/gompert/workspace/llmas/agents/brain/memory/onnx_conversion.py"
+	"/home/gompert/workspace/llmas/agents/brain/memory/ov_embedded.py" [label="ov_embedded.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory" -> "/home/gompert/workspace/llmas/agents/brain/memory/ov_embedded.py"
+	"/home/gompert/workspace/llmas/agents/brain/memory/simple.py" [label="simple.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory" -> "/home/gompert/workspace/llmas/agents/brain/memory/simple.py"
+	"/home/gompert/workspace/llmas/agents/toolkit" [label=toolkit fillcolor=lightgreen shape=folder style=filled]
+	"/home/gompert/workspace/llmas/agents" -> "/home/gompert/workspace/llmas/agents/toolkit"
+	"/home/gompert/workspace/llmas/agents/toolkit/__init__.py" [label="__init__.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/toolkit" -> "/home/gompert/workspace/llmas/agents/toolkit/__init__.py"
+	"/home/gompert/workspace/llmas/agents/toolkit/bag.py" [label="bag.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/toolkit" -> "/home/gompert/workspace/llmas/agents/toolkit/bag.py"
+	"/home/gompert/workspace/llmas/agents/toolkit/calculate.py" [label="calculate.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/toolkit" -> "/home/gompert/workspace/llmas/agents/toolkit/calculate.py"
+	"/home/gompert/workspace/llmas/agents/toolkit/get_page.py" [label="get_page.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/toolkit" -> "/home/gompert/workspace/llmas/agents/toolkit/get_page.py"
+	"/home/gompert/workspace/llmas/agents/toolkit/search.py" [label="search.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/toolkit" -> "/home/gompert/workspace/llmas/agents/toolkit/search.py"
+	"/home/gompert/workspace/llmas/agents/toolkit/t.py" [label="t.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/toolkit" -> "/home/gompert/workspace/llmas/agents/toolkit/t.py"
+	"/home/gompert/workspace/llmas/agents/toolkit/to_upper.py" [label="to_upper.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/toolkit" -> "/home/gompert/workspace/llmas/agents/toolkit/to_upper.py"
+	"/home/gompert/workspace/llmas/agents/toolkit/visualize_file_structure.py" [label="visualize_file_structure.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/toolkit" -> "/home/gompert/workspace/llmas/agents/toolkit/visualize_file_structure.py"
+	"/home/gompert/workspace/llmas/const" [label=const fillcolor=lightblue shape=folder style=filled]
+	"/home/gompert/workspace/llmas/const/__init__.py" [label="__init__.py" shape=note]
+	"/home/gompert/workspace/llmas/const" -> "/home/gompert/workspace/llmas/const/__init__.py"
+	"/home/gompert/workspace/llmas/const/sk.py" [label="sk.py" shape=note]
+	"/home/gompert/workspace/llmas/const" -> "/home/gompert/workspace/llmas/const/sk.py"
+	"/home/gompert/workspace/llmas/main.py" [label="main.py" shape=note]
+	"/home/gompert/workspace/llmas/requirements.txt" [label="requirements.txt" shape=note]
+}

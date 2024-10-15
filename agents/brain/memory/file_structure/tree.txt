@@ -1,0 +1,45 @@
+agents/
+    __init__.py
+    advanced.py
+    base.py
+    brain/
+        __init__.py
+        core.py
+        lobes.py
+        memory/
+            __init__.py
+            _embedded.py
+            cuda_embedded.py
+            embedded.py
+            file_structure/
+            model/
+                jina-embeddings-v3/
+                    README.md
+                    config.json
+                    config_sentence_transformers.json
+                    custom_st.py
+                    model.safetensors
+                    model_fp16.onnx
+                    modules.json
+                    pytorch_model.bin
+                    special_tokens_map.json
+                    tokenizer_config.json
+            model_accel.py
+            model_test.py
+            onnx_conversion.py
+            ov_embedded.py
+            simple.py
+    toolkit/
+        __init__.py
+        bag.py
+        calculate.py
+        get_page.py
+        search.py
+        t.py
+        to_upper.py
+        visualize_file_structure.py
+const/
+    __init__.py
+    sk.py
+main.py
+requirements.txt
