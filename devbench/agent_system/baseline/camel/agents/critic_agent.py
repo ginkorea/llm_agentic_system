@@ -18,10 +18,10 @@ from typing import Any, Dict, Optional, Sequence
 
 from colorama import Fore
 
-from camel.agents import ChatAgent
-from camel.messages import ChatMessage, SystemMessage
-from camel.typing import ModelType
-from camel.utils import get_first_int, print_text_animated
+from devbench.agent_system.baseline.camel.agents import ChatAgent
+from devbench.agent_system.baseline.camel.messages import ChatMessage, SystemMessage
+from devbench.agent_system.baseline.camel.typing import ModelType
+from devbench.agent_system.baseline.camel.utils import get_first_int, print_text_animated
 
 
 class CriticAgent(ChatAgent):
@@ -78,10 +78,10 @@ class CriticAgent(ChatAgent):
         for index, option in enumerate(options):
             flatten_options += f"Option {index + 1}:\n{option}\n\n"
             self.options_dict[str(index + 1)] = option
-        format = (
+        input_format = (
             f"Please first enter your choice ([1-{len(self.options_dict)}]) "
             "and then your explanation and comparison: ")
-        return flatten_options + format
+        return flatten_options + input_format
 
     def get_option(self, input_message: ChatMessage) -> str:
         r"""Gets the option selected by the critic.
@@ -128,7 +128,8 @@ class CriticAgent(ChatAgent):
                       "Returning a random option.")
         return random.choice(list(self.options_dict.values()))
 
-    def parse_critic(self, critic_msg: ChatMessage) -> Optional[str]:
+    @staticmethod
+    def parse_critic(critic_msg: ChatMessage) -> Optional[str]:
         r"""Parses the critic's message and extracts the choice.
 
         Args:

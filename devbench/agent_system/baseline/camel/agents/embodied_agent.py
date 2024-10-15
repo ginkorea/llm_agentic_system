@@ -15,10 +15,10 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from colorama import Fore
 
-from camel.agents import BaseToolAgent, ChatAgent, HuggingFaceToolAgent
-from camel.messages import ChatMessage, SystemMessage
-from camel.typing import ModelType
-from camel.utils import print_text_animated
+from devbench.agent_system.baseline.camel.agents import BaseToolAgent, ChatAgent, HuggingFaceToolAgent
+from devbench.agent_system.baseline.camel.messages import ChatMessage, SystemMessage
+from devbench.agent_system.baseline.camel.typing import ModelType
+from devbench.agent_system.baseline.camel.utils import print_text_animated
 
 
 class EmbodiedAgent(ChatAgent):

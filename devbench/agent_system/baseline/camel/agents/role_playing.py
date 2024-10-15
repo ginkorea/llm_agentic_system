@@ -14,16 +14,16 @@
 import copy
 from typing import Dict, List, Optional, Sequence, Tuple
 
-from camel.agents import (
+from devbench.agent_system.baseline.camel.agents import (
     ChatAgent,
     TaskPlannerAgent,
     TaskSpecifyAgent,
 )
-from camel.agents.chat_agent import ChatAgentResponse
-from camel.messages import ChatMessage, UserChatMessage
-from camel.messages import SystemMessage
-from camel.typing import ModelType, RoleType, TaskType, PhaseType
-from devagent.utils import log_arguments, log_and_print_online
+from devbench.agent_system.baseline.camel.agents.chat_agent import ChatAgentResponse
+from devbench.agent_system.baseline.camel.messages import ChatMessage, UserChatMessage
+from devbench.agent_system.baseline.camel.messages import SystemMessage
+from devbench.agent_system.baseline.camel.typing import ModelType, RoleType, TaskType, PhaseType
+from devbench.agent_system.baseline.devagent.utils import log_arguments, log_and_print_online
 
 
 @log_arguments

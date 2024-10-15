@@ -18,12 +18,12 @@ from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_exponential
 
-from camel.agents import BaseAgent
-from camel.configs import ChatGPTConfig
-from camel.messages import ChatMessage, MessageType, SystemMessage
-from camel.model_backend import ModelBackend, ModelFactory
-from camel.typing import ModelType, RoleType
-from camel.utils import (
+from devbench.agent_system.baseline.camel.agents import BaseAgent
+from devbench.agent_system.baseline.camel.configs import ChatGPTConfig
+from devbench.agent_system.baseline.camel.messages import ChatMessage, MessageType, SystemMessage
+from devbench.agent_system.baseline.camel.model_backend import ModelBackend, ModelFactory
+from devbench.agent_system.baseline.camel.typing import ModelType, RoleType
+from devbench.agent_system.baseline.camel.utils import (
     get_model_token_limit,
     num_tokens_from_messages,
     openai_api_key_required,
@@ -84,6 +84,7 @@ class ChatAgent(BaseAgent):
             message_window_size: Optional[int] = None,
     ) -> None:
 
+        self.stored_messages = None
         self.system_message: SystemMessage = system_message
         self.role_name: str = system_message.role_name
         self.role_type: RoleType = system_message.role_type
@@ -107,9 +108,9 @@ class ChatAgent(BaseAgent):
         self.init_messages()
         return self.stored_messages
 
+    @staticmethod
     def get_info(
-            self,
-            id: Optional[str],
+            ident: Optional[str],
             usage: Optional[Dict[str, int]],
             termination_reasons: List[str],
             num_tokens: int,
@@ -117,7 +118,7 @@ class ChatAgent(BaseAgent):
         r"""Returns a dictionary containing information about the chat session.
 
         Args:
-            id (str, optional): The ID of the chat session.
+            ident (str, optional): The ID of the chat session.
             usage (Dict[str, int], optional): Information about the usage of
                 the LLM model.
             termination_reasons (List[str]): The reasons for the termination of
@@ -128,7 +129,7 @@ class ChatAgent(BaseAgent):
             Dict[str, Any]: The chat session information.
         """
         return {
-            "id": id,
+            "id": ident,
             "usage": usage,
             "termination_reasons": termination_reasons,
             "num_tokens": num_tokens,
@@ -173,6 +174,10 @@ class ChatAgent(BaseAgent):
                 containing the output messages, a boolean indicating whether
                 the chat session has terminated, and information about the chat
                 session.
+                :param top_p:
+                :param temperature:
+                :param input_message:
+                :param model_source:
         """
         messages = self.update_messages(input_message)
         if self.message_window_size is not None and len(

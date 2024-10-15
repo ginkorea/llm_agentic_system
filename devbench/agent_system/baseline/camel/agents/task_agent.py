@@ -13,11 +13,11 @@
 # =========== Copyright 2023 @ CAMEL-AI.org. All Rights Reserved. ===========
 from typing import Any, Dict, Optional, Union
 
-from camel.agents import ChatAgent
-from camel.configs import ChatGPTConfig
-from camel.messages import SystemMessage, UserChatMessage
-from camel.prompts import PromptTemplateGenerator, TextPrompt
-from camel.typing import ModelType, RoleType, TaskType
+from devbench.agent_system.baseline.camel.agents import ChatAgent
+from devbench.agent_system.baseline.camel.configs import ChatGPTConfig
+from devbench.agent_system.baseline.camel.messages import SystemMessage, UserChatMessage
+from devbench.agent_system.baseline.camel.prompts import PromptTemplateGenerator, TextPrompt
+from devbench.agent_system.baseline.camel.typing import ModelType, RoleType, TaskType
 
 
 class TaskSpecifyAgent(ChatAgent):
@@ -160,12 +160,12 @@ class TaskPlannerAgent(ChatAgent):
         task_msg = UserChatMessage(role_name="Task Planner",
                                    content=self.task_planner_prompt)
         # sub_tasks_msgs, terminated, _
-        task_tesponse = super().step(task_msg)
+        task_response = super().step(task_msg)
 
-        if task_tesponse.msgs is None:
+        if task_response.msgs is None:
             raise RuntimeError("Got None Subtasks messages.")
-        if task_tesponse.terminated:
+        if task_response.terminated:
             raise RuntimeError("Task planning failed.")
 
-        sub_tasks_msg = task_tesponse.msgs[0]
+        sub_tasks_msg = task_response.msgs[0]
         return TextPrompt(sub_tasks_msg.content)
