@@ -12,18 +12,15 @@
 # limitations under the License.
 # =========== Copyright 2023 @ CAMEL-AI.org. All Rights Reserved. ===========
 import json
-import os
 from abc import ABC, abstractmethod
 from typing import Any, Dict
 
 import openai
-import tiktoken
-import requests
 import copy
 
-from camel.typing import ModelType
-from devagent.statistics import prompt_cost
-from devagent.utils import log_and_print_online
+from devbench.agent_system.baseline.camel.typing import ModelType
+from devbench.agent_system.baseline.devagent.statistics import prompt_cost
+from devbench.agent_system.baseline.devagent.utils import log_and_print_online
 
 
 class ModelBackend(ABC):

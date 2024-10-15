@@ -13,9 +13,9 @@
 # =========== Copyright 2023 @ CAMEL-AI.org. All Rights Reserved. ===========
 from typing import Dict, Generator, List, Optional, Set, Tuple
 
-from camel.messages import SystemMessage, SystemMessageType
-from camel.prompts import PromptTemplateGenerator, TextPrompt
-from camel.typing import RoleType, TaskType
+from devbench.agent_system.baseline.camel.messages import SystemMessage, SystemMessageType
+from devbench.agent_system.baseline.camel.prompts import PromptTemplateGenerator, TextPrompt
+from devbench.agent_system.baseline.camel.typing import RoleType, TaskType
 
 
 class SystemMessageGenerator:
