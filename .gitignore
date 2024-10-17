@@ -1,7 +1,2 @@
 const/sk*
-# Ignore large binary or model files
-*.bin
-*.onnx
-*.zip
-*.tar.gz
-*.safetensors
+
