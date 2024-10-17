@@ -3,7 +3,6 @@ import torch
 import numpy as np
 from pydantic import Field, PrivateAttr, ConfigDict
 from agents.brain.memory.embedded import EmbeddedMemory
-import pandas as pd
 
 class CudaMemoryWithEmbeddings(EmbeddedMemory):
     """Memory class that uses CUDA for acceleration."""
