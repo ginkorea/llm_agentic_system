@@ -41,7 +41,7 @@ class EmbeddedMemory(SimpleMemory):
         super().store_memory(user_input, response, embedding)
 
     def embedding_search(self, query: str, memory_df: pd.DataFrame, top_n: int = 3) -> pd.DataFrame:
-        """Search for top N closest matches based on embeddings."""
+        """Search for the top N closest matches based on embeddings."""
         query_embedding = self._generate_embedding(query)
 
         embeddings = np.vstack(memory_df['embedding'].values)
