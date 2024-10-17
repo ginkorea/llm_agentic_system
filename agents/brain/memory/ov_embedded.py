@@ -10,7 +10,7 @@ class OpenvinoMemoryWithEmbeddings(EmbeddedMemory):
     model_path: str = Field(default="model/jina-embeddings-v3/model_fp16.onnx")
     ie: Core = Field(default_factory=Core)
 
-    # Define Pydantic model configuration to avoid conflict with "model_"
+    # Define Pydantic model configuration to avoid conflicts
     model_config = ConfigDict(protected_namespaces=())
 
     # Use private attributes for dynamic objects
@@ -22,7 +22,7 @@ class OpenvinoMemoryWithEmbeddings(EmbeddedMemory):
         super().__init__(**kwargs)
 
         # Compile the OpenVINO model
-        device_to_use = "GPU" if self.ie.get_versions("GPU") else "CPU"
+        device_to_use = "GPU" if "GPU" in self.ie.available_devices else "CPU"
         self._compiled_model = self.ie.compile_model(model=self.model_path, device_name=device_to_use)
 
         # Initialize tokenizer
@@ -30,15 +30,28 @@ class OpenvinoMemoryWithEmbeddings(EmbeddedMemory):
 
     def _generate_embedding(self, text: str) -> np.ndarray:
         """Generate text embeddings using the OpenVINO-accelerated ONNX model."""
-        inputs = self._tokenizer(text, return_tensors="np", padding=True)
+        max_length = 8194
+
+        # Set a maximum sequence length
+
+        inputs = self._tokenizer(text, return_tensors="np", padding=True, truncation=True, max_length=max_length)
         input_ids = inputs["input_ids"].astype(np.int64)
         attention_mask = inputs["attention_mask"].astype(np.int64)
 
         # Run inference on OpenVINO model
         result = self._compiled_model([input_ids, attention_mask])
 
-        return result[self._compiled_model.output(0)].flatten()
+        # Get embedding output
+        embedding = result[self._compiled_model.output(0)].flatten()
 
+        # Adjust embedding to fixed size
+        fixed_size = self.embedding_size  # 1024
+        if len(embedding) > fixed_size:
+            embedding = embedding[:fixed_size]
+        elif len(embedding) < fixed_size:
+            embedding = np.pad(embedding, (0, fixed_size - len(embedding)))
+
+        return embedding
 
 if __name__ == "__main__":
     # Initialize OpenVINO-based memory class
@@ -59,8 +72,8 @@ if __name__ == "__main__":
     assert isinstance(memory.long_term_df.iloc[0]["embedding"], np.ndarray), "Embedding should be a numpy array."
     print(f"Shape of embedding for first entry: {memory.long_term_df.iloc[0]['embedding'].shape}")
 
-    # Ensure that embeddings have the correct size (this assumes the max embedding size)
-    expected_embedding_size = memory.max_embedding_size  # Adjust this based on your model
+    # Ensure that embeddings have the correct size
+    expected_embedding_size = memory.embedding_size  # 8192
     print(f"Expected embedding size: {expected_embedding_size}")
     assert memory.long_term_df.iloc[0]["embedding"].shape[0] == expected_embedding_size, \
         f"Embedding size should be {expected_embedding_size}, got {memory.long_term_df.iloc[0]['embedding'].shape[0]}."
@@ -74,3 +87,12 @@ if __name__ == "__main__":
     assert not search_results.empty, "Search results should not be empty."
 
     print("\nAll tests passed successfully.")
+
+from transformers import AutoConfig
+
+# Load the model configuration
+model_dir = "jinaai/jina-embeddings-v3"
+config = AutoConfig.from_pretrained(model_dir, trust_remote_code=True)
+
+# Print the maximum sequence length
+print(f"Max sequence length: {config.max_position_embeddings}")

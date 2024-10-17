@@ -3,6 +3,7 @@ import torch
 import numpy as np
 from pydantic import Field, PrivateAttr, ConfigDict
 from agents.brain.memory.embedded import EmbeddedMemory
+import pandas as pd
 
 class CudaMemoryWithEmbeddings(EmbeddedMemory):
     """Memory class that uses CUDA for acceleration."""
@@ -12,7 +13,7 @@ class CudaMemoryWithEmbeddings(EmbeddedMemory):
         default_factory=lambda: torch.device("cuda" if torch.cuda.is_available() else "cpu")
     )
 
-    # Define Pydantic model configuration to avoid conflicts with reserved names
+    # Define Pydantic model configuration to avoid conflicts
     model_config = ConfigDict(protected_namespaces=())
 
     # Use private attributes for dynamic objects
@@ -28,6 +29,9 @@ class CudaMemoryWithEmbeddings(EmbeddedMemory):
         # Load configuration
         config = AutoConfig.from_pretrained(model_dir, trust_remote_code=True)
 
+        # Update embedding_size based on model's hidden_size
+        self.embedding_size = config.hidden_size  # For example, 1024
+
         # Load tokenizer
         self._tokenizer = AutoTokenizer.from_pretrained(
             model_dir, trust_remote_code=True
@@ -41,27 +45,26 @@ class CudaMemoryWithEmbeddings(EmbeddedMemory):
         ).to(self.device)
 
     def _generate_embedding(self, text: str) -> np.ndarray:
-        """Generate text embeddings using CUDA."""
+        """Generate text embeddings using mean pooling."""
         inputs = self._tokenizer(
             text, return_tensors="pt", padding=True, truncation=True
         ).to(self.device)
-        input_ids = inputs["input_ids"]
-        attention_mask = inputs["attention_mask"]
 
         with torch.no_grad():
-            result = self._model(
-                input_ids=input_ids, attention_mask=attention_mask
-            ).last_hidden_state
+            outputs = self._model(**inputs)
+            last_hidden_state = outputs.last_hidden_state  # Shape: (batch_size, sequence_length, hidden_size)
 
-        # Perform mean pooling over the sequence length dimension to get a fixed-size vector
-        embedding = result.mean(dim=1).cpu().numpy().flatten()
+        # Mean pooling over the sequence length dimension to get a fixed-size vector
+        embedding = last_hidden_state.mean(dim=1).cpu().numpy().flatten()
 
-        return embedding
+        return embedding  # Embedding size is hidden_size (e.g., 1024)
 
 
 if __name__ == "__main__":
     # Initialize CUDA-based memory class
     memory = CudaMemoryWithEmbeddings(forget_threshold=3)
+
+    print(f"Using device: {memory.device}")
 
     print("\n--- Running Basic Store Memory Test ---")
     # Store some memory
@@ -83,7 +86,7 @@ if __name__ == "__main__":
     )
 
     # Ensure that embeddings have the correct size
-    expected_embedding_size = memory.max_embedding_size
+    expected_embedding_size = memory.embedding_size  # Should be 1024
     print(f"Expected embedding size: {expected_embedding_size}")
     assert (
         memory.long_term_df.iloc[0]["embedding"].shape[0] == expected_embedding_size
