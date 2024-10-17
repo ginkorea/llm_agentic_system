@@ -1,5 +1,4 @@
 import numpy as np
-from pandas import DataFrame
 from transformers import AutoTokenizer
 from openvino.runtime import Core
 from pydantic import Field, PrivateAttr, ConfigDict
