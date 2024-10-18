@@ -1,13 +1,13 @@
 from agents.base import Agent
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
-from agents.brain import Brain
+from agents.brain.core import Brain
 
 # BrainAgent class inheriting from Agent
 class AdvancedAgent(Agent):
     def __init__(self):
         super().__init__()  # Call the base class constructor
-        self.brain = AdvancedBrain()  # Use the advanced brain model
+        self.brain = Brain()  # Use the advanced brain model
 
 
     def choose_lobe(self, reasoning: bool):

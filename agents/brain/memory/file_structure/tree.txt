@@ -15,6 +15,16 @@ agents/
                 graph.pdf
                 tree.txt
             model/
+                graphcodebert-base/
+                    README.md
+                    config.json
+                    flax_model.msgpack
+                    merges.txt
+                    pytorch_model.bin
+                    special_tokens_map.json
+                    tf_model.h5
+                    tokenizer_config.json
+                    vocab.json
                 jina-embeddings-v3/
                     README.md
                     config.json
@@ -29,6 +39,7 @@ agents/
             model_test.py
             ov_embedded.py
             simple.py
+            test.py
     toolkit/
         __init__.py
         bag.py
@@ -40,7 +51,9 @@ agents/
         visualize_file_structure.py
 const/
     __init__.py
+    _sk.py
     sk.py
 main.py
 readme.md
 requirements.txt
+workspace/

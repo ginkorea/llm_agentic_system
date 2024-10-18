@@ -37,6 +37,26 @@ digraph {
 	"/home/gompert/workspace/llmas/agents/brain/memory/file_structure" -> "/home/gompert/workspace/llmas/agents/brain/memory/file_structure/tree.txt"
 	"/home/gompert/workspace/llmas/agents/brain/memory/model" [label=model fillcolor=pink shape=folder style=filled]
 	"/home/gompert/workspace/llmas/agents/brain/memory" -> "/home/gompert/workspace/llmas/agents/brain/memory/model"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base" [label="graphcodebert-base" fillcolor=lightgrey shape=folder style=filled]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base/README.md" [label="README.md" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base/README.md"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base/config.json" [label="config.json" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base/config.json"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base/flax_model.msgpack" [label="flax_model.msgpack" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base/flax_model.msgpack"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base/merges.txt" [label="merges.txt" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base/merges.txt"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base/pytorch_model.bin" [label="pytorch_model.bin" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base/pytorch_model.bin"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base/special_tokens_map.json" [label="special_tokens_map.json" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base/special_tokens_map.json"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base/tf_model.h5" [label="tf_model.h5" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base/tf_model.h5"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base/tokenizer_config.json" [label="tokenizer_config.json" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base/tokenizer_config.json"
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base/vocab.json" [label="vocab.json" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/graphcodebert-base/vocab.json"
 	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3" [label="jina-embeddings-v3" fillcolor=lightgrey shape=folder style=filled]
 	"/home/gompert/workspace/llmas/agents/brain/memory/model" -> "/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3"
 	"/home/gompert/workspace/llmas/agents/brain/memory/model/jina-embeddings-v3/README.md" [label="README.md" shape=note]
@@ -65,6 +85,8 @@ digraph {
 	"/home/gompert/workspace/llmas/agents/brain/memory" -> "/home/gompert/workspace/llmas/agents/brain/memory/ov_embedded.py"
 	"/home/gompert/workspace/llmas/agents/brain/memory/simple.py" [label="simple.py" shape=note]
 	"/home/gompert/workspace/llmas/agents/brain/memory" -> "/home/gompert/workspace/llmas/agents/brain/memory/simple.py"
+	"/home/gompert/workspace/llmas/agents/brain/memory/test.py" [label="test.py" shape=note]
+	"/home/gompert/workspace/llmas/agents/brain/memory" -> "/home/gompert/workspace/llmas/agents/brain/memory/test.py"
 	"/home/gompert/workspace/llmas/agents/toolkit" [label=toolkit fillcolor=lightgreen shape=folder style=filled]
 	"/home/gompert/workspace/llmas/agents" -> "/home/gompert/workspace/llmas/agents/toolkit"
 	"/home/gompert/workspace/llmas/agents/toolkit/__init__.py" [label="__init__.py" shape=note]
@@ -86,9 +108,12 @@ digraph {
 	"/home/gompert/workspace/llmas/const" [label=const fillcolor=lightblue shape=folder style=filled]
 	"/home/gompert/workspace/llmas/const/__init__.py" [label="__init__.py" shape=note]
 	"/home/gompert/workspace/llmas/const" -> "/home/gompert/workspace/llmas/const/__init__.py"
+	"/home/gompert/workspace/llmas/const/_sk.py" [label="_sk.py" shape=note]
+	"/home/gompert/workspace/llmas/const" -> "/home/gompert/workspace/llmas/const/_sk.py"
 	"/home/gompert/workspace/llmas/const/sk.py" [label="sk.py" shape=note]
 	"/home/gompert/workspace/llmas/const" -> "/home/gompert/workspace/llmas/const/sk.py"
 	"/home/gompert/workspace/llmas/main.py" [label="main.py" shape=note]
 	"/home/gompert/workspace/llmas/readme.md" [label="readme.md" shape=note]
 	"/home/gompert/workspace/llmas/requirements.txt" [label="requirements.txt" shape=note]
+	"/home/gompert/workspace/llmas/workspace" [label=workspace fillcolor=lightblue shape=folder style=filled]
 }

@@ -1,12 +1,11 @@
-from langchain_openai import ChatOpenAI
 from .lobes import PreFrontalCortex, OccipitalLobe, FrontalLobe, TemporalLobe, ParietalLobe, Cerebellum, Hippocampus, \
     BrocasArea, Amygdala, CerebralCortex
-from .memory import Memory
+from .memory.simple import SimpleMemory
 
 
 class Brain:
     def __init__(self, forget_threshold: int = 10):
-        self.memory = Memory(forget_threshold=forget_threshold)
+        self.memory = SimpleMemory(forget_threshold=forget_threshold)
 
         # Initialize lobes using the specialized classes
         self.lobes = [
@@ -60,7 +59,7 @@ class Brain:
 
     def store_memory(self, user_input: str, response: str):
         """Store the user input and response in memory."""
-        # Add prompt-response pair to memory
+        # Add a prompt-response pair to memory
 
 
 

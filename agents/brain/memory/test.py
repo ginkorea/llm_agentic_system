@@ -1,3 +1,5 @@
+import numpy as np
+
 def memory_tests(test_memory):
     print("\n--- Running Basic Store Memory Test ---")
     # Store some memory
