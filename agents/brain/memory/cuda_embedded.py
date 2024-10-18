@@ -24,29 +24,28 @@ class CudaMemoryWithEmbeddings(EmbeddedMemory):
 
     def __init__(self, **kwargs):
         """Initialize CUDA-based memory and set up the model and tokenizer."""
-        # Extract keyword arguments for model directory index and model name if provided
         model_dir_index = kwargs.pop('model_dir_index', 0)  # Default to index 0
-        model_name = kwargs.pop('model_name', "")  # Use default model_name if not provided
+        model_name = kwargs.pop('model_name', "")
 
         super().__init__(**kwargs)  # Initialize Pydantic fields using kwargs
 
-        # Get model paths and tokenizer using the Models class
         models = Models()
-        model_dir = models.get_model_dir()[model_dir_index]  # Allow directory index to be specified dynamically
+        model_dir = models.get_model_dir()[model_dir_index]
         print(f"Selected model directory: {model_dir}")
         self.model_path = f"{model_dir}/{model_name}"
-        tokenizer_name = models.tokenizers[model_dir_index]  # Choose tokenizer based on the same index
+        tokenizer_name = models.tokenizers[model_dir_index]
 
         # Load model configuration
         config = AutoConfig.from_pretrained(model_dir, trust_remote_code=True)
 
-        # Update embedding size based on model's hidden size
         self.embedding_size = config.hidden_size
 
-        # Load tokenizer
-        self._tokenizer = AutoTokenizer.from_pretrained(tokenizer_name, trust_remote_code=True)
+        # Load tokenizer with clean_up_tokenization_spaces set to False to avoid FutureWarning
+        self._tokenizer = AutoTokenizer.from_pretrained(
+            tokenizer_name, trust_remote_code=True, clean_up_tokenization_spaces=False
+        )
 
-        # Load the model and move it to the appropriate device (CUDA or CPU)
+        # Load the model
         self._model = AutoModel.from_pretrained(model_dir, config=config, trust_remote_code=True).to(self.device)
 
     def _generate_embedding(self, text: str) -> np.ndarray:
@@ -59,13 +58,13 @@ class CudaMemoryWithEmbeddings(EmbeddedMemory):
             outputs = self._model(**inputs)
             last_hidden_state = outputs.last_hidden_state
 
-        # Mean pooling to get fixed-size vector
+        # Mean pooling
         embedding = last_hidden_state.mean(dim=1).cpu().numpy().flatten()
 
         return embedding
 
 if __name__ == "__main__":
-    # Initialize CUDA-based memory class with dynamic directory index and model name
+    # Initialize CUDA-based memory class
     memory = CudaMemoryWithEmbeddings(forget_threshold=3, model_dir_index=2)
 
     # Test the memory class
