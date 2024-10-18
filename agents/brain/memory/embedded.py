@@ -1,8 +1,7 @@
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
-from pydantic import Field
+from pydantic import Field, PrivateAttr
 import pandas as pd
-
 from agents.brain.memory.simple import SimpleMemory
 
 class EmbeddedMemory(SimpleMemory):
