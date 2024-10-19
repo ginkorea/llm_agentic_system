@@ -101,7 +101,7 @@ class TemporalLobe(Lobe):
 class ParietalLobe(Lobe):
     def __init__(self):
         super().__init__(
-            model_name="o1-mini",
+            model_name="gpt-4o-mini",
             temperature=0.2,
             memory_limit=5,
             system_message="You handle mathematical reasoning, spatial awareness, and problem-solving."

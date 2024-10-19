@@ -6,11 +6,12 @@ from agents.brain.core import Brain
 class Agent:
     def __init__(self):
         # Memory to store previous interactions
-        self.brain = Brain()
+
 
         # Initialize available tools with descriptions
         self.toolkit = BagOfTools()
         self.toolkit.get_tools()
+        self.brain = Brain(toolkit=self.toolkit)
         self.verbose = True
 
     def store_memory(self, user_input: str, response: str):
