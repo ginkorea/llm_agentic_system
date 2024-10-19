@@ -82,7 +82,7 @@ def visualize_file_structure(start_path: str = '.') -> str:
     # Start the recursion from the root directory
     text_output = add_nodes(dot, start_path)
 
-    output_dir = 'home/gompert/workspace/llmas/agents/brain/memory/file_structure/' # Output directory for the generated files
+    output_dir = 'agents/brain/memory/file_structure/' # Output directory for the generated files
 
     # Save and render the graph as PDF
     output_file = output_dir + 'graph'
