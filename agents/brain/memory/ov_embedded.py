@@ -38,7 +38,7 @@ class OpenvinoMemoryWithEmbeddings(EmbeddedMemory):
         self._compiled_model = self.ie.compile_model(model=self.model_path, device_name=device_to_use)
 
         # Initialize tokenizer
-        self._tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+        self._tokenizer = AutoTokenizer.from_pretrained(model_dir)
 
     def _generate_embedding(self, text: str) -> np.ndarray:
         """Generate text embeddings using the OpenVINO-accelerated ONNX model."""

@@ -42,7 +42,7 @@ class CudaMemoryWithEmbeddings(EmbeddedMemory):
 
         # Load tokenizer with clean_up_tokenization_spaces set to False to avoid FutureWarning
         self._tokenizer = AutoTokenizer.from_pretrained(
-            tokenizer_name, trust_remote_code=True, clean_up_tokenization_spaces=False
+            model_dir, trust_remote_code=True, clean_up_tokenization_spaces=False
         )
 
         # Load the model

@@ -61,6 +61,15 @@ class Brain:
         """Store the user input and response in memory."""
         # Add a prompt-response pair to memory
 
+    def get_lobe_by_name(self, lobe_name: str):
+        """
+        Retrieve a lobe instance by its class name.
+        """
+        for lobe in self.lobes:
+            if lobe.__class__.__name__ == lobe_name:
+                return lobe
+        return None
+
 
 
 
