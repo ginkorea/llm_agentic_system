@@ -51,6 +51,12 @@ class Lobe:
         messages.append(HumanMessage(content=user_input))
         return messages
 
+    def print_model_info(self):
+        print(f"Model: {self.model_name}")
+        print(f"Temperature: {self.temperature}")
+        print(f"Memory Limit: {self.memory_limit}")
+        print(f"System Message: {self.system_message}")
+
 # PreFrontalCortex: Reflexive thinking and decision-making
 class PreFrontalCortex(Lobe):
     def __init__(self):

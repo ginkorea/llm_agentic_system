@@ -129,6 +129,7 @@ User input: {user_input}
 
             # Pass the memory DataFrame directly
             memory = self.brain.memory.short_term_df
+            lobe.print_model_info()
             response = lobe.process(user_input=refined_prompt, memory=memory)
 
             # Store the interaction in memory
