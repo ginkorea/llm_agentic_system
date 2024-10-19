@@ -1,7 +1,0 @@
-// File Structure
-digraph {
-	size="10,10"
-	rankdir=TB
-	nodesep=0.5
-	ranksep=0.75
-}
