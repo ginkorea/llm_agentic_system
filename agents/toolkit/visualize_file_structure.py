@@ -28,6 +28,14 @@ def should_ignore(item):
 def add_nodes(dot, path, parent=None, indent="", color_index=0, text_output=""):
     """Recursively add directories and files to the graph and text-based output."""
     # Get the current directory's content, ignore hidden files and directories to be ignored
+    if path == "":
+        path = "."
+    try:
+        os.listdir(path)
+    except PermissionError:
+        return text_output
+    except FileNotFoundError:
+        return text_output
     for item in sorted(os.listdir(path)):
         if should_ignore(item):
             continue  # Skip ignored files and directories
@@ -74,7 +82,7 @@ def visualize_file_structure(start_path: str = '.') -> str:
     # Start the recursion from the root directory
     text_output = add_nodes(dot, start_path)
 
-    output_dir = '../brain/memory/file_structure/' # Output directory for the generated files
+    output_dir = 'home/gompert/workspace/llmas/agents/brain/memory/file_structure/' # Output directory for the generated files
 
     # Save and render the graph as PDF
     output_file = output_dir + 'graph'

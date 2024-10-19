@@ -1,5 +1,4 @@
 from agents.base import Agent
-from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from agents.brain.core import Brain
 
@@ -7,6 +6,7 @@ from agents.brain.core import Brain
 class AdvancedAgent(Agent):
     def __init__(self):
         super().__init__()  # Call the base class constructor
+        self.tool_descriptions = None
         self.brain = Brain()  # Use the advanced brain model
 
 
@@ -27,7 +27,7 @@ class AdvancedAgent(Agent):
         """
         if not advanced:
             # Use the basic logic to choose a tool or LLM
-            for tool in self.toolkit:
+            for tool in self.toolkit.tools:
                 if tool.__name__ in user_input:
                     # Extract the part of the input relevant to the tool and execute the tool function
                     expression = user_input.replace(tool.__name__, "").strip()
