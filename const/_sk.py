@@ -14,3 +14,4 @@ class KeyChain:
 kc = KeyChain()
 
 os.environ["OPENAI_API_KEY"] = kc.open_ai
+
