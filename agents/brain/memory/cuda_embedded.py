@@ -1,4 +1,3 @@
-# from flash_attn.flash_attn_triton import flash_attn_qkvpacked_func, flash_attn_func
 from flash_attn import flash_attn_func
 from transformers import AutoTokenizer, AutoModel, AutoConfig
 import torch
@@ -54,17 +53,26 @@ class CudaMemoryWithEmbeddings(EmbeddedMemory):
             # Forward pass through the model
             outputs = self._model(**inputs)
             hidden_state = outputs.last_hidden_state.to(self.device).to(torch.float16)
-            print(f"Shape of model output (last_hidden_state): {hidden_state.shape}")
-            print(f"Dtype of model output (last_hidden_state): {hidden_state.dtype}")
+            if self.verbose:
+                print(f"Shape of model output (last_hidden_state): {hidden_state.shape}")
+                print(f"Dtype of model output (last_hidden_state): {hidden_state.dtype}")
 
             # Number of heads and head dimension
             n_heads = 12  # Adjust based on your model
-            head_dim = hidden_state.size(-1) // n_heads
-            print(f"n_heads: {n_heads}, head_dim: {head_dim}")
+            hidden_dim = hidden_state.size(-1)  # Dynamically get hidden_dim from hidden_state
+            if hidden_dim % n_heads != 0:
+                # Adjust hidden_dim to be divisible by n_heads
+                padding_size = n_heads - (hidden_dim % n_heads)
+                hidden_state = F.pad(hidden_state, (0, padding_size))
+                hidden_dim = hidden_state.size(-1)
 
-            # Linear projections for Q, K, V
-            # Ensure weights are in torch.float16
-            weight_qkv = torch.randn(hidden_state.size(-1), n_heads * head_dim, device=self.device, dtype=torch.float16)
+            head_dim = hidden_dim // n_heads  # Ensure head_dim * n_heads == hidden_dim
+            if self.verbose:
+                print(f"n_heads: {n_heads}, head_dim: {head_dim}")
+
+            # Dynamic Linear projections for Q, K, V
+            # Ensure weights are in torch.float16 and adjust to hidden_state's size
+            weight_qkv = torch.randn(hidden_dim, hidden_dim, device=self.device, dtype=torch.float16)
 
             query = F.linear(hidden_state, weight=weight_qkv)
             key = F.linear(hidden_state, weight=weight_qkv)
@@ -75,14 +83,16 @@ class CudaMemoryWithEmbeddings(EmbeddedMemory):
             key = key.view(hidden_state.size(0), hidden_state.size(1), n_heads, head_dim)
             value = value.view(hidden_state.size(0), hidden_state.size(1), n_heads, head_dim)
 
-            print(f"Shape of QKV tensors before FlashAttention: {query.shape}, {key.shape}, {value.shape}")
-            print(f"Dtype of QKV tensors: {query.dtype}, {key.dtype}, {value.dtype}")
+            if self.verbose:
+                print(f"Shape of QKV tensors before FlashAttention: {query.shape}, {key.shape}, {value.shape}")
+                print(f"Dtype of QKV tensors: {query.dtype}, {key.dtype}, {value.dtype}")
 
             # Apply FlashAttention using positional arguments
             try:
                 attn_output = flash_attn_func(query, key, value)  # Positional arguments only
-                print(f"Shape of attention output: {attn_output.shape}")
-                print(f"Dtype of attention output: {attn_output.dtype}")
+                if self.verbose:
+                    print(f"Shape of attention output: {attn_output.shape}")
+                    print(f"Dtype of attention output: {attn_output.dtype}")
             except Exception as e:
                 print(f"FlashAttention failed with error: {e}")
                 raise

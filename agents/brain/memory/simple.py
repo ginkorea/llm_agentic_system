@@ -16,6 +16,7 @@ class SimpleMemory(BaseMemory):
     long_term_df: pd.DataFrame = Field(
         default_factory=lambda: pd.DataFrame(columns=["user_input", "response", "embedding"]))
     forget_threshold: int = Field(default=10)
+    verbose: bool = Field(default=False)
 
     def store_memory(self, user_input: str, response: str, embedding: np.ndarray = None) -> None:
         """

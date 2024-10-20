@@ -4,13 +4,19 @@ import pandas as pd
 from langchain_openai import ChatOpenAI
 from langchain.schema import SystemMessage, HumanMessage, AIMessage
 
+
 class Lobe:
-    def __init__(self, model_name: str, temperature: float, memory_limit: int, system_message: str):
+    def __init__(self, model_name: str = None, temperature: float = None, memory_limit: int = 10,
+                 system_message: str = "", initialize_model: bool = True):
         self.model_name = model_name
         self.temperature = temperature
         self.memory_limit = memory_limit
         self.system_message = system_message
-        self.model = ChatOpenAI(model_name=self.model_name, temperature=self.temperature)
+
+        if initialize_model and self.model_name and self.temperature is not None:
+            self.model = ChatOpenAI(model_name=self.model_name, temperature=self.temperature)
+        else:
+            self.model = None  # No model is required for lobes like Hippocampus
 
     def get_info(self):
         return {
@@ -117,15 +123,7 @@ class Cerebellum(Lobe):
             system_message="You manage rapid reflexive actions with minimal reasoning."
         )
 
-# Hippocampus: Memory recall and continuity
-class Hippocampus(Lobe):
-    def __init__(self):
-        super().__init__(
-            model_name="gpt-4o",
-            temperature=0.6,
-            memory_limit=10,
-            system_message="You are responsible for recalling long-term memory and maintaining continuity."
-        )
+
 
 # Broca’s Area: Conversational and structured speech
 class BrocasArea(Lobe):

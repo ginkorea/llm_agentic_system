@@ -1,17 +1,31 @@
 # agents/brain/core.py
-
+from .build_prompt import default_prompt_builder
+from .examples import prompt_examples
 from .lobes import (
     PreFrontalCortex, OccipitalLobe, FrontalLobe, TemporalLobe, ParietalLobe,
-    Cerebellum, Hippocampus, BrocasArea, Amygdala, CerebralCortex
+    Cerebellum, BrocasArea, Amygdala, CerebralCortex
 )
+from .hippocampus import Hippocampus
 from .memory.simple import SimpleMemory
+from .memory.cuda_embedded import CudaMemoryWithEmbeddings
+from .memory.ov_embedded import OpenvinoMemoryWithEmbeddings
 import json
 
 
 class Brain:
-    def __init__(self, toolkit, forget_threshold: int = 10, verbose: bool = True):
+    def __init__(self, toolkit, forget_threshold: int = 10, verbose: bool = True, memory_type='cuda'):
+
+        # Set the verbose flag
         self.verbose = verbose
-        self.memory = SimpleMemory(forget_threshold=forget_threshold)
+
+        # Initialize memory based on the memory_type
+        if memory_type == 'cuda':
+            self.memory = CudaMemoryWithEmbeddings(forget_threshold=forget_threshold)
+        elif memory_type == 'openvino':
+            self.memory = OpenvinoMemoryWithEmbeddings(forget_threshold=forget_threshold)
+        else:
+            self.memory = SimpleMemory(forget_threshold=forget_threshold)
+
         self.toolkit = toolkit  # Add toolkit to Brain
 
         # Initialize lobes using the specialized classes
@@ -22,10 +36,10 @@ class Brain:
             TemporalLobe(),
             ParietalLobe(),
             Cerebellum(),
-            Hippocampus(),
             BrocasArea(),
             Amygdala(),
-            CerebralCortex()
+            CerebralCortex(),
+            Hippocampus(self)
         ]
 
     def get_lobe_info(self):
@@ -67,74 +81,11 @@ class Brain:
         )
 
         # Build examples
-        examples = """
-Examples:
+        examples = prompt_examples
 
-User input: "calculate 5 + 5" or "What is 5 + 5?" or "5 + 5" or "calculate: 5 + 5"
-Response:
-{
-    "use_tool": true,
-    "tool_name": "calculate",
-    "refined_prompt": "5 + 5"
-}
-
-
-User input: "get_page https://www.google.com" or "open https://www.google.com" or "show me https://www.google.com" or "navigate to https://www.google.com"
-Response:
-{
-    "use_tool": true,
-    "tool_name": "get_page",
-    "refined_prompt": "https://www.google.com"
-}
-
-User input: "What is the capital of France?" or "Another easy question: What is the capital of France?"
-Response:
-{
-    "use_tool": false,
-    "lobe_index": 0, # PreFrontalCortex
-    "refined_prompt": "What is the capital of France?"
-}
-
-
-User input: "Describe the image at the following URL: http://example.com/image.jpg"
-Response:
-{
-    "use_tool": false,
-    "lobe_index": 2,
-    "refined_prompt": "Describe the image at http://example.com/image.jpg"
-}
-"""
-
-        # Construct the prompt for the PreFrontalCortex
-        prompt = f"""
-You are responsible for reflexive thinking and quick decision-making.
-
-Available tools:
-{tool_descriptions}
-
-Available lobes:
-{lobe_descriptions}
-
-Based on the user's input, decide whether to use a tool or a lobe to handle the task.
-
-{examples}
-
-Please respond in JSON format:
-- If using a tool:
-{{
-    "use_tool": true,
-    "tool_name": "<tool_name>",
-    "refined_prompt": "<refined_prompt_for_tool>"
-}}
-- If using a lobe:
-{{
-    "use_tool": false,
-    "lobe_index": <lobe_index>,
-    "refined_prompt": "<refined_prompt_for_lobe>"
-}}
-
-User input: "{user_input}"
-"""
+        # Construct the prompt for the PreFrontalCortex to make a decision
+        prompt = default_prompt_builder(tool_descriptions=tool_descriptions, lobe_descriptions=lobe_descriptions,
+                                        examples=examples, user_input=user_input)
 
         # The PreFrontalCortex determines which action to take
         prefrontal_cortex = self.lobes[0]  # Assuming PreFrontalCortex is at index 0
