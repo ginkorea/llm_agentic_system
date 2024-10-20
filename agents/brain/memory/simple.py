@@ -10,6 +10,7 @@ class SimpleMemory(BaseMemory):
     A memory class using Pandas DataFrame to store both short-term and long-term memory
     alongside TF-IDF-based searches or embeddings.
     """
+    embedded: bool = False
 
     short_term_df: pd.DataFrame = Field(
         default_factory=lambda: pd.DataFrame(columns=["user_input", "response", "embedding"]))

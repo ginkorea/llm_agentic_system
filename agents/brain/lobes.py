@@ -49,8 +49,7 @@ class Lobe:
         return response.content.strip()
 
     def build_prompt_messages(self, user_input: str, memory: list):
-        messages = []
-        messages.append(SystemMessage(content=self.system_message))
+        messages = [SystemMessage(content=self.system_message)]
         for mem in memory:
             messages.append(HumanMessage(content=mem['user_input']))
             messages.append(AIMessage(content=mem['response']))
@@ -122,8 +121,6 @@ class Cerebellum(Lobe):
             memory_limit=2,
             system_message="You manage rapid reflexive actions with minimal reasoning."
         )
-
-
 
 # Broca’s Area: Conversational and structured speech
 class BrocasArea(Lobe):

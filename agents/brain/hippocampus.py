@@ -10,39 +10,66 @@ class Hippocampus(Lobe):
             initialize_model=False  # Prevents OpenAI model initialization
         )
         self.brain = brain  # Access the brain's memory for retrieval
+        self.embedded = self.brain.memory.embedded
 
-    def recall_memory(self, query: str, embedded: bool = True):
+    def recall_memory(self, query: str):
         """Search and retrieve memories based on the query."""
-        if embedded:
+        if self.embedded:
             # Use brain's embedded memory search
             return self.brain.memory.embedding_search(query)
         else:
             # If not using embeddings, search directly from stored text
             return self.brain.memory.search(query)
 
-
-    def search_memory(self, query: str, embedded: bool = True, long_term: bool = False, top_n: int = 3) -> pd.DataFrame:
+    def process(self, user_input: str, memory: pd.DataFrame = None) -> pd.DataFrame:
         """
-        Search memory based on the query. If using embedded memory, it will search based on embeddings.
+        Processes the refined prompt, extracts the relevant memory search instructions,
+        and returns the corresponding memories.
 
         Args:
-            query (str): The search query.
-            embedded (bool): Flag to indicate if we are searching through embedded memory.
-            long_term (bool): Flag to indicate if we are searching long-term memory.
-            top_n (int): The number of top search results to return.
-
+            :param memory: The memory data (short-term or long-term) to be used for retrieval.
+            :param user_input:  (str): A semicolon-separated refined prompt in the format [top_n; memory_type; search_query].
         Returns:
-            pd.DataFrame: The relevant memory entries.
+            pd.DataFrame: The retrieved memories.
+
         """
-        memory = self.brain.memory
 
-        # If we are using embedded memory, use the embedding search
-        if embedded and hasattr(memory, "embedding_search"):
-            return memory.search_memory(query, long_term=long_term, top_n=top_n)
+        # Remove the square brackets and split the prompt by semicolons
+        print("user_input", user_input)
+        refined_prompt = user_input.strip()[1:-1]  # Remove the brackets
+        print("refined_prompt", refined_prompt)
+        parts = [part.strip() for part in refined_prompt.split(';')]
+        print("parts", parts)
 
-        # Fallback to basic string-based search (non-embedded)
-        memory_df = memory.long_term_df if long_term else memory.short_term_df
-        return memory.tfidf_search(query, long_term=long_term, top_n=top_n)
+        if len(parts) != 3:
+            print("Refined prompt must be in the format '[top_n; memory_type; search_query]'.")
+            print(parts)
+            raise ValueError("Refined prompt must be in the format '[top_n; memory_type; search_query]'.")
+            #TODO make this rerun the prompt using the prefrontal cortex, provided the error message to the LLM
 
 
+        # Extract the components from the refined prompt
+        try:
+            top_n = int(parts[0])
+        except ValueError:
+            top_n = 3 # Default to top 3 if parsing fails (or not provided)
+            if top_n > len(memory):
+                top_n = len(memory)
+
+        memory_type = parts[1]
+        search_query = parts[2]
+
+        # Determine the correct memory to search
+        if memory_type.count("long") > 0:
+            memory_df = self.brain.memory.long_term_df  # Assuming you have long_term_df
+        else:
+            memory_df = self.brain.memory.short_term_df
+
+        # Perform the memory search using the parsed components
+        if self.brain.verbose:
+            print("search_query", search_query)
+            print("top_n", top_n)
+            print("searching memory for query")
+
+        return self.brain.memory.embedding_search(query=search_query, memory_df=memory_df, top_n=top_n)
 

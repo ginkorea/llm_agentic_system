@@ -7,6 +7,8 @@ from agents.brain.memory.simple import SimpleMemory
 class EmbeddedMemory(SimpleMemory):
     """Base memory class that provides shared functionality for embedding storage and search."""
 
+    embedded: bool = True
+
     embedding_size: int = 1024  # Adjusted to match model's hidden_size
 
     long_term_df: pd.DataFrame = Field(
@@ -40,15 +42,19 @@ class EmbeddedMemory(SimpleMemory):
         super().store_memory(user_input, response, embedding)
 
     def embedding_search(self, query: str, memory_df: pd.DataFrame, top_n: int = 3) -> pd.DataFrame:
-        """Search for the top N closest matches based on embeddings."""
-        query_embedding = self._generate_embedding(query)
+        """Search for the top N closest matches based on embeddings in the provided memory DataFrame."""
+        query_embedding = self._generate_embedding(query)  # Generate the embedding for the query
 
+        # Extract the stored embeddings from the memory DataFrame
         embeddings = np.vstack(memory_df['embedding'].values)
 
+        # Calculate cosine similarities between query embedding and stored embeddings
         similarities = cosine_similarity([query_embedding], embeddings).flatten()
 
+        # Get the top N most similar memories based on cosine similarity
         top_indices = np.argsort(-similarities)[:top_n]
 
+        # Return the top N matching memories
         return memory_df.iloc[top_indices]
 
     def search_memory(self, query: str, long_term: bool = False, top_n: int = 3) -> pd.DataFrame:

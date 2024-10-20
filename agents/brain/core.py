@@ -136,6 +136,8 @@ class Brain:
         else:
             # Use the specified lobe to generate a response
             selected_lobe = self.lobes[action["lobe_index"]]
+            if self.verbose:
+                print(f"Using lobe '{selected_lobe.__class__.__name__}' to process the input.")
             result = selected_lobe.process(user_input=action["refined_prompt"], memory=self.memory.short_term_df)
 
         # Store the interaction in memory

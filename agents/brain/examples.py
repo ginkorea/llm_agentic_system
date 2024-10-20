@@ -35,10 +35,11 @@ Response:
     "refined_prompt": "Describe the image at http://example.com/image.jpg"
 }
 
-User input: "Print the first 5 rows of short-term memory"
+User input: "Find the top three most relevant memories in your long-term memory related to 'Python'."
 Response:
 {
-    "use_tool": true,
-    "tool_name": "memory_retrieval",
-    "refined_prompt": "print_type: head, rows: 5"
+    "use_tool": false,
+    "lobe_index": -1,
+    "refined_prompt": "[3; long-term; Python]"
+}
 """
