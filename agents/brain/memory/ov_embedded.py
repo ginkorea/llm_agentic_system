@@ -6,6 +6,7 @@ from agents.brain.memory.embedded import EmbeddedMemory
 from agents.brain.memory.model.get import Models
 
 
+
 class OpenvinoMemoryWithEmbeddings(EmbeddedMemory):
     """Memory class that uses OpenVINO for acceleration with dynamic model selection using Pydantic."""
 

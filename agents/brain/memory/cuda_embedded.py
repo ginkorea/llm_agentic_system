@@ -1,5 +1,8 @@
+# from flash_attn.flash_attn_triton import flash_attn_qkvpacked_func, flash_attn_func
+from flash_attn import flash_attn_func
 from transformers import AutoTokenizer, AutoModel, AutoConfig
 import torch
+import torch.nn.functional as F
 import numpy as np
 from pydantic import Field, PrivateAttr, ConfigDict
 from agents.brain.memory.embedded import EmbeddedMemory
@@ -8,26 +11,22 @@ from agents.brain.memory.model.get import Models
 class CudaMemoryWithEmbeddings(EmbeddedMemory):
     """Memory class that uses CUDA for acceleration with dynamic model and tokenizer management."""
 
-    # Pydantic model configuration to avoid conflicts
     model_config = ConfigDict(protected_namespaces=())
-
-    # Pydantic-managed fields
     model_name: str = Field(default="")
     model_path: str = Field(default="")
     device: torch.device = Field(
         default_factory=lambda: torch.device("cuda" if torch.cuda.is_available() else "cpu")
     )
 
-    # Private attributes for the model and tokenizer
     _model: AutoModel = PrivateAttr()
     _tokenizer: AutoTokenizer = PrivateAttr()
 
     def __init__(self, **kwargs):
         """Initialize CUDA-based memory and set up the model and tokenizer."""
-        model_dir_index = kwargs.pop('model_dir_index', 0)  # Default to index 0
+        model_dir_index = kwargs.pop('model_dir_index', 2)
         model_name = kwargs.pop('model_name', "")
 
-        super().__init__(**kwargs)  # Initialize Pydantic fields using kwargs
+        super().__init__(**kwargs)
 
         models = Models()
         model_dir = models.get_model_dir()[model_dir_index]
@@ -35,37 +34,69 @@ class CudaMemoryWithEmbeddings(EmbeddedMemory):
         self.model_path = f"{model_dir}/{model_name}"
         tokenizer_name = models.tokenizers[model_dir_index]
 
-        # Load model configuration
         config = AutoConfig.from_pretrained(model_dir, trust_remote_code=True)
 
         self.embedding_size = config.hidden_size
 
-        # Load tokenizer with clean_up_tokenization_spaces set to False to avoid FutureWarning
         self._tokenizer = AutoTokenizer.from_pretrained(
             model_dir, trust_remote_code=True, clean_up_tokenization_spaces=False
         )
 
-        # Load the model
         self._model = AutoModel.from_pretrained(model_dir, config=config, trust_remote_code=True).to(self.device)
 
     def _generate_embedding(self, text: str) -> np.ndarray:
-        """Generate text embeddings using mean pooling."""
+        """Generate text embeddings using mean pooling and FlashAttention for acceleration."""
         inputs = self._tokenizer(
             text, return_tensors="pt", padding=True, truncation=True
         ).to(self.device)
 
         with torch.no_grad():
+            # Forward pass through the model
             outputs = self._model(**inputs)
-            last_hidden_state = outputs.last_hidden_state
+            hidden_state = outputs.last_hidden_state.to(self.device).to(torch.float16)
+            print(f"Shape of model output (last_hidden_state): {hidden_state.shape}")
+            print(f"Dtype of model output (last_hidden_state): {hidden_state.dtype}")
 
-        # Mean pooling
-        embedding = last_hidden_state.mean(dim=1).cpu().numpy().flatten()
+            # Number of heads and head dimension
+            n_heads = 12  # Adjust based on your model
+            head_dim = hidden_state.size(-1) // n_heads
+            print(f"n_heads: {n_heads}, head_dim: {head_dim}")
+
+            # Linear projections for Q, K, V
+            # Ensure weights are in torch.float16
+            weight_qkv = torch.randn(hidden_state.size(-1), n_heads * head_dim, device=self.device, dtype=torch.float16)
+
+            query = F.linear(hidden_state, weight=weight_qkv)
+            key = F.linear(hidden_state, weight=weight_qkv)
+            value = F.linear(hidden_state, weight=weight_qkv)
+
+            # Reshape Q, K, V to (batch_size, seqlen, n_heads, head_dim)
+            query = query.view(hidden_state.size(0), hidden_state.size(1), n_heads, head_dim)
+            key = key.view(hidden_state.size(0), hidden_state.size(1), n_heads, head_dim)
+            value = value.view(hidden_state.size(0), hidden_state.size(1), n_heads, head_dim)
+
+            print(f"Shape of QKV tensors before FlashAttention: {query.shape}, {key.shape}, {value.shape}")
+            print(f"Dtype of QKV tensors: {query.dtype}, {key.dtype}, {value.dtype}")
+
+            # Apply FlashAttention using positional arguments
+            try:
+                attn_output = flash_attn_func(query, key, value)  # Positional arguments only
+                print(f"Shape of attention output: {attn_output.shape}")
+                print(f"Dtype of attention output: {attn_output.dtype}")
+            except Exception as e:
+                print(f"FlashAttention failed with error: {e}")
+                raise
+
+        # Mean pooling over the attention output
+        # Convert attention output back to float32 if necessary
+        embedding = attn_output.mean(dim=1).to(torch.float32).cpu().numpy().flatten()
 
         return embedding
 
+
 if __name__ == "__main__":
     # Initialize CUDA-based memory class
-    memory = CudaMemoryWithEmbeddings(forget_threshold=3, model_dir_index=2)
+    memory = CudaMemoryWithEmbeddings(forget_threshold=3, model_dir_index=1)
 
     # Test the memory class
     from agents.brain.memory.test import memory_tests
