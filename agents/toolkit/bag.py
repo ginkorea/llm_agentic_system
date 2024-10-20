@@ -3,7 +3,6 @@ from agents.toolkit.get_page import get_page
 from agents.toolkit.calculate import calculate
 from agents.toolkit.to_upper import to_upper
 from agents.toolkit.visualize_file_structure import visualize_file_structure
-from agents.toolkit.memory_retrieval import memory_retrieval
 
 from langchain_core.tools.structured import StructuredTool  # Import StructuredTool
 
@@ -16,7 +15,6 @@ class BagOfTools:
         self.calculate = calculate
         self.to_upper = to_upper
         self.visualize_file_structure = visualize_file_structure
-        self.memory_retrieval = memory_retrieval
         self.bind_tools()
 
     def bind_tools(self):
