@@ -1,10 +1,12 @@
 agents/
     __init__.py
-    advanced.py
     base.py
     brain/
         __init__.py
+        build_prompt.py
         core.py
+        examples.py
+        hippocampus.py
         lobes.py
         memory/
             __init__.py
@@ -15,10 +17,22 @@ agents/
                 graph.pdf
                 tree.txt
             model/
+                __init__.py
+                get.py
                 graphcodebert-base/
                     README.md
                     config.json
                     flax_model.msgpack
+                    merges.txt
+                    pytorch_model.bin
+                    special_tokens_map.json
+                    tf_model.h5
+                    tokenizer_config.json
+                    vocab.json
+                graphcodebert-py/
+                    config.json
+                    flax_model.msgpack
+                    gitattributes
                     merges.txt
                     pytorch_model.bin
                     special_tokens_map.json
@@ -35,6 +49,7 @@ agents/
                     modules.json
                     pytorch_model.bin
                     special_tokens_map.json
+                    tokenizer.json
                     tokenizer_config.json
             model_test.py
             ov_embedded.py
@@ -56,4 +71,3 @@ const/
 main.py
 readme.md
 requirements.txt
-workspace/
