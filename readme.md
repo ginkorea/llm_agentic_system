@@ -10,6 +10,8 @@ This project focuses on building an **autonomous software development system** u
 
 Using **hybrid memory structures** and **CUDA acceleration**, the system improves memory management, computational efficiency, and the ability to refine past work through **file embeddings**.
 
+<img src="repo_image.png" alt="LLM Autonomous Agent System for Software Development" width="800">
+
 ## Key Features
 
 - **Multi-Lobe Framework**: Specialized modules handle distinct tasks such as memory recall, reasoning, and problem-solving.
