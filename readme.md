@@ -85,7 +85,7 @@ requirements.txt
    **Install Git LFS**:
    - On Linux:
      ```bash
-     sudo apt-get install git-lfs
+     sudo <your_package_manager> install git-lfs
      git lfs install
      ```
    - On macOS:
