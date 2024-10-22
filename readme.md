@@ -135,6 +135,28 @@ Instead of manually installing dependencies via `requirements.txt`, you can now 
    pip install .[gpu, ov] # for CUDA [gpu] and OpenVINO [ov] acceleration
    ```
 
+## API Key Configuration
+
+This project requires API keys to access certain functionalities. To set up your API keys, follow these steps:
+
+1. **Locate the API Key Example**:
+   You will find an example API key file named `const/_sk.py`. This file contains placeholders for the required keys.
+
+   Example structure of `const/_sk.py`:
+
+   ```python
+   import os
+
+   class KeyChain:
+       def __init__(self):
+           self.open_ai = "your_openai_key"  # Replace with your OpenAI API key
+           self.google_json = "your_google_json"  # Replace with your Google JSON key
+           self.google_cx = "your_google_cx"  # Replace with your Google CX
+
+   kc = KeyChain()
+   os.environ["OPENAI_API_KEY"] = kc.open_ai
+
+
 ### Additional Setup for CUDA or OpenVINO
 
 Depending on your hardware configuration, you may want to adjust the memory configuration:
@@ -155,7 +177,7 @@ The system will initialize the **autonomous agent** that can plan, code, and ref
 
 ## Tools Available
 
-This project includes a set of powerful tools integrated into the agent for various tasks:
+This project includes a set of integrated tools based off of the LangChain tools suite are available for the agent to use for various tasks:
 
 1. **`calculate`**: 
    - Description: Evaluates mathematical expressions.
