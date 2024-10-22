@@ -132,7 +132,7 @@ Instead of manually installing dependencies via `requirements.txt`, you can now 
    If you want to install FlashAttention for GPU acceleration, use the following command:
 
    ```bash
-   pip install .[gpu]
+   pip install .[gpu, ov] # for CUDA [gpu] and OpenVINO [ov] acceleration
    ```
 
 ### Additional Setup for CUDA or OpenVINO
