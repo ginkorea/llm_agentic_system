@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 # Read the contents of your README file (optional, for detailed descriptions)
-with open("README.md", "r", encoding="utf-8") as fh:
+with open("readme.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
@@ -22,7 +22,6 @@ setup(
         "langchain-core~=0.3.1",
         "numpy~=1.26.4",
         "scikit-learn~=1.5.2",
-        "openvino~=2024.4.0",
         "transformers~=4.44.2",
         "graphviz~=0.20.3",
         "pandas~=2.2.3",
@@ -44,12 +43,13 @@ setup(
         "progressbar2~=3.53.2",
     ],
     extras_require={
-        "gpu": ["flash_attn~=2.6.3"],  # Optional dependency for GPU users
+        "gpu": ["flash_attn~=2.6.3"], # Add GPU-specific dependencies
+        "ov": ["openvino~=2024.4.0"] # Add OpenVINO-specific dependencies
     },
     python_requires='>=3.10',  # Ensure the correct Python version
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",  # Replace with your license
+        "License :: GPL-3.0",
         "Operating System :: OS Independent",
     ],
 )
