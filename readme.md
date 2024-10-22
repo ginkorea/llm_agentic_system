@@ -141,6 +141,8 @@ Depending on your hardware configuration, you may want to adjust the memory conf
 - **CUDA**: If you're using NVIDIA GPUs, the system can utilize CUDA for fast computations with models.
 - **OpenVINO**: For systems using Intel hardware, OpenVINO can accelerate ONNX models.
 
+
+
 ### Running the System
 
 Once the setup is complete, you can start the system:
