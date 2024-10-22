@@ -1,11 +1,11 @@
-# Use an official Python 3.11 container image from Microsoft for DevContainers
-FROM mcr.microsoft.com/devcontainers/python:0-3.11-bullseye
+# Use Python 3.11 as the base image
+FROM mcr.microsoft.com/devcontainers/python:0-3.11
 
 # Set the working directory inside the container
 WORKDIR /workspace
 
-# Install system dependencies (if needed)
-RUN apt-get update && apt-get install -y git-lfs
+# Install system dependencies including Graphviz
+RUN apt-get update && apt-get install -y git-lfs graphviz
 
 # Ensure Git LFS is set up
 RUN git lfs install
@@ -17,7 +17,7 @@ COPY . /workspace
 RUN pip install --upgrade pip
 RUN pip install .
 
-# Expose a default port (if necessary, depending on your application)
+# Expose a default port (if necessary)
 EXPOSE 8080
 
 # Default command to run when the container starts
