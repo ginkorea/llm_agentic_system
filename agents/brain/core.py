@@ -6,24 +6,27 @@ from .lobes import (
     Cerebellum, BrocasArea, Amygdala, CerebralCortex
 )
 from .hippocampus import Hippocampus
-from .memory.simple import SimpleMemory
-from .memory.cuda_embedded import CudaMemoryWithEmbeddings
-from .memory.ov_embedded import OpenvinoMemoryWithEmbeddings
 import json
 
 
 class Brain:
-    def __init__(self, toolkit, forget_threshold: int = 10, verbose: bool = True, memory_type='cuda'):
+    def __init__(self, toolkit, forget_threshold: int = 10, verbose: bool = True, memory_type='embedded'):
 
         # Set the verbose flag
         self.verbose = verbose
 
-        # Initialize memory based on the memory_type
+        # Initialize memory based on the memory_type parameter
         if memory_type == 'cuda':
+            from .memory.cuda_embedded import CudaMemoryWithEmbeddings
             self.memory = CudaMemoryWithEmbeddings(forget_threshold=forget_threshold)
         elif memory_type == 'openvino':
+            from .memory.ov_embedded import OpenvinoMemoryWithEmbeddings
             self.memory = OpenvinoMemoryWithEmbeddings(forget_threshold=forget_threshold)
+        elif memory_type == 'embedded':
+            from .memory.embedded import EmbeddedMemory
+            self.memory = EmbeddedMemory(forget_threshold=forget_threshold)
         else:
+            from .memory.simple import SimpleMemory
             self.memory = SimpleMemory(forget_threshold=forget_threshold)
 
         self.toolkit = toolkit  # Add toolkit to Brain
