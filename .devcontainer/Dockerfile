@@ -5,13 +5,16 @@ FROM mcr.microsoft.com/devcontainers/python:0-3.11
 WORKDIR /workspace
 
 # Install system dependencies including Graphviz
-RUN apt-get update && \
-    apt-get install -y wget unzip gnupg2 graphviz && \
-    wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+RUN apt-get update && apt-get install -y wget unzip gnupg2 graphviz
+
+# Add Google Chrome repository and install Chrome
+RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
     echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list && \
     apt-get update && \
-    apt-get install -y google-chrome-stable && \
-    CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+\.\d+') && \
+    apt-get install -y google-chrome-stable
+
+# Install ChromeDriver
+RUN CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+\.\d+') && \
     wget -N https://chromedriver.storage.googleapis.com/$CHROME_VERSION/chromedriver_linux64.zip && \
     unzip chromedriver_linux64.zip && \
     mv chromedriver /usr/local/bin/ && \
