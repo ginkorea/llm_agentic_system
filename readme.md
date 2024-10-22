@@ -2,13 +2,13 @@
 
 ## Overview
 
-This project is focused on building an **autonomous software development system** using **LLM-based agents** and a **multi-lobe architecture**. The system handles the entire software development lifecycle, including:
+This project focuses on building an **autonomous software development system** using **LLM-based agents** and a **multi-lobe architecture**. The system manages the entire software development lifecycle, including:
 - **Planning**
 - **Coding**
 - **Testing**
 - **Reviewing**
 
-By using **hybrid memory structures** and **CUDA acceleration**, the system aims to improve memory management, computational efficiency, and the ability to refine past work through **file embeddings**.
+Using **hybrid memory structures** and **CUDA acceleration**, the system improves memory management, computational efficiency, and the ability to refine past work through **file embeddings**.
 
 ## Key Features
 
@@ -21,13 +21,48 @@ By using **hybrid memory structures** and **CUDA acceleration**, the system aims
 
 ```
 agents/
+    __init__.py
+    base.py
     brain/
+        __init__.py
+        build_prompt.py
+        core.py
+        examples.py
+        hippocampus.py
+        lobes.py
         memory/
+            __init__.py
+            cuda_embedded.py
+            embedded.py
+            file_structure/
+                graph
+                graph.pdf
+                tree.txt
             model/
-toolkit/
-    visualize_file_structure.py
+                __init__.py
+                get.py
+                graphcodebert-base/
+                graphcodebert-py/
+                jina-embeddings-v3/
+            model_test.py
+            ov_embedded.py
+            simple.py
+            test.py
+    toolkit/
+        __init__.py
+        bag.py
+        calculate.py
+        get_page.py
+        search.py
+        t.py
+        to_upper.py
+        visualize_file_structure.py
 const/
+    __init__.py
+    _sk.py
+    sk.py
 main.py
+readme.md
 requirements.txt
 ```
 
@@ -36,7 +71,107 @@ requirements.txt
 - **LangChain** and **OpenAI API** for LLM orchestration.
 - **Jina AI** for embedding-based memory.
 - **Python** as the primary development language.
+- **Torch and Triton** for high-performance computation on GPU.
+- **OpenVINO** for hardware-accelerated inference.
 
-## Work in Progress
+## Installation Instructions
 
-This project is in active development and will evolve as new features are implemented and optimized. It is being tested using the **DevBench** benchmark for autonomous software development tasks.
+### Prerequisites
+
+1. **Git with LFS (Large File Storage)**
+
+   Make sure you have Git and Git LFS installed to clone the repository. Git LFS is required to handle the large model files.
+   
+   **Install Git LFS**:
+   - On Linux:
+     ```bash
+     sudo apt-get install git-lfs
+     git lfs install
+     ```
+   - On macOS:
+     ```bash
+     brew install git-lfs
+     git lfs install
+     ```
+   - On Windows, use the [Git LFS installer](https://git-lfs.github.com/).
+
+2. **Python 3.10+**
+
+   Ensure Python 3.10 or later is installed. You can check your Python version with:
+
+   ```bash
+   python --version
+   ```
+
+### Clone the Repository
+
+```bash
+git lfs clone https://github.com/ginkorea/llm_agentic_system.git
+cd llm_agentic_system
+```
+
+### Install Python Dependencies
+
+The project dependencies are managed via `requirements.txt`. To install them:
+
+1. **Create a Virtual Environment** (optional but recommended):
+
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
+
+2. **Install the dependencies**:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+### Additional Setup for CUDA or OpenVINO
+
+Depending on your hardware configuration, you may want to adjust the memory configuration:
+- **CUDA**: If you're using NVIDIA GPUs, the system can utilize CUDA for fast computations with models.
+- **OpenVINO**: For systems using Intel hardware, OpenVINO can accelerate ONNX models.
+
+### Running the System
+
+Once the setup is complete, you can start the system:
+
+```bash
+python main.py
+```
+
+The system will initialize the **autonomous agent** that can plan, code, and refine software projects autonomously.
+
+## Tools Available
+
+This project includes a set of powerful tools integrated into the agent for various tasks:
+
+1. **`calculate`**: 
+   - Description: Evaluates mathematical expressions.
+   - Usage: `calculate("2 + 2")`
+   - Example Output: `4`
+
+2. **`get_page`**:
+   - Description: Retrieves the full text of a web page from a given URL.
+   - Usage: `get_page("https://example.com")`
+   - Example Output: The content of the web page as text.
+
+3. **`search`**:
+   - Description: Performs a Google search using Google's JSON API and returns top non-visited results.
+   - Usage: `search({"query": "Python programming", "n_sites": 3, "visited_sites": []})`
+   - Example Output: A list of search results containing titles, links, and snippets.
+
+4. **`visualize_file_structure`**:
+   - Description: Recursively builds a graph and text-based tree of the file structure, using colored submodules.
+   - Usage: `visualize_file_structure(start_path=".")`
+   - Example Output: A PDF of the file structure and a text-based tree.
+
+5. **`BagOfTools`**:
+   - Description: A class to manage and dynamically bind the above tools for flexible use.
+   - Example Usage: You can call `get_tools()` to see a list of all available tools.
+
+## Visualization of File Structures
+
+You can also use the `visualize_file_structure.py` tool to generate visual representations of the file structure, outputting both a graph and a text-based tree.
+
