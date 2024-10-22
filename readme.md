@@ -135,6 +135,12 @@ Instead of manually installing dependencies via `requirements.txt`, you can now 
    pip install .[gpu, ov] # for CUDA [gpu] and OpenVINO [ov] acceleration
    ```
 
+### Additional Setup for CUDA or OpenVINO
+
+Depending on your hardware configuration, you may want to adjust the memory configuration:
+- **CUDA**: If you're using NVIDIA GPUs, the system can utilize CUDA for fast computations with models.
+- **OpenVINO**: For systems using Intel hardware, OpenVINO can accelerate ONNX models.
+
 ## API Key Configuration
 
 This project requires API keys to access certain functionalities. To set up your API keys, follow these steps:
@@ -155,15 +161,6 @@ This project requires API keys to access certain functionalities. To set up your
 
    kc = KeyChain()
    os.environ["OPENAI_API_KEY"] = kc.open_ai
-
-
-### Additional Setup for CUDA or OpenVINO
-
-Depending on your hardware configuration, you may want to adjust the memory configuration:
-- **CUDA**: If you're using NVIDIA GPUs, the system can utilize CUDA for fast computations with models.
-- **OpenVINO**: For systems using Intel hardware, OpenVINO can accelerate ONNX models.
-
-
 
 ### Running the System
 
