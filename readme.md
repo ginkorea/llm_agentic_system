@@ -74,13 +74,13 @@ requirements.txt
 - **Torch and Triton** for high-performance computation on GPU.
 - **OpenVINO** for hardware-accelerated inference.
 
-## Installation Instructions
+### Installation Instructions
 
 ### Prerequisites
 
 1. **Git with LFS (Large File Storage)**
 
-   Make sure you have Git and Git LFS installed to clone the repository. Git LFS is required to handle the large model files.
+   Make sure you have Git and Git LFS installed to clone the repository. Git LFS is required to handle large model files.
    
    **Install Git LFS**:
    - On Linux:
@@ -110,9 +110,9 @@ git clone https://github.com/ginkorea/llm_agentic_system.git
 cd llm_agentic_system
 ```
 
-### Install Python Dependencies
+### Install the Dependencies Using `setup.py`
 
-The project dependencies are managed via `requirements.txt`. To install them:
+Instead of manually installing dependencies via `requirements.txt`, you can now install the package with the following command:
 
 1. **Create a Virtual Environment** (optional but recommended):
 
@@ -121,10 +121,18 @@ The project dependencies are managed via `requirements.txt`. To install them:
    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
    ```
 
-2. **Install the dependencies**:
+2. **Install the package** (Core dependencies):
 
    ```bash
-   pip install -r requirements.txt
+   pip install .
+   ```
+
+3. **Install optional GPU dependencies (FlashAttention)**:
+
+   If you want to install FlashAttention for GPU acceleration, use the following command:
+
+   ```bash
+   pip install .[gpu]
    ```
 
 ### Additional Setup for CUDA or OpenVINO

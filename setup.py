@@ -5,9 +5,9 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="llm_agentic_system",  # Replace with your project name
+    name="LLM Agentic System for Software Development",  # Replace with your project name
     version="0.1",  # Your project version
-    author="Josh Gompert",  # Your name
+    author="Josh Gompert, Nathan Smith, and Kruti Shah",
     description="Autonomous Software Development System using LLM-based agents",
     long_description=long_description,
     long_description_content_type="text/markdown",  # Optional if using README.md
