@@ -5,6 +5,7 @@
 The memory submodule is an integral part of the **Autonomous Software Development System**, providing a robust and high-performance memory management framework. This module leverages **Pandas DataFrames** and **embeddings** to ensure fast and reliable memory storage and retrieval. Designed with flexibility in mind, it supports accelerated embeddings via **CUDA** and **OpenVINO**, as well as a basic embedding mechanism for environments without hardware acceleration.
 
 <img src="memory_image.png" alt="Memory Module Image" width="800">
+
 ## Key Features
 
 - **Hybrid Memory Architecture**: Efficiently handles short-term and long-term memory, allowing both quick recalls and deep memory searches.
