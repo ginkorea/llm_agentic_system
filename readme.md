@@ -106,7 +106,7 @@ requirements.txt
 ### Clone the Repository
 
 ```bash
-git lfs clone https://github.com/ginkorea/llm_agentic_system.git
+git clone https://github.com/ginkorea/llm_agentic_system.git
 cd llm_agentic_system
 ```
 
