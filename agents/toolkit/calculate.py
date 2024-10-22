@@ -10,3 +10,4 @@ def calculate(expression: str) -> str | Any:
     except Exception as e:
         # Return the error message if evaluation fails
         return f"Error: {e}"
+
