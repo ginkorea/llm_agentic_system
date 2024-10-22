@@ -86,7 +86,7 @@ class PreFrontalCortex(Lobe):
             model_name="gpt-4o-mini",
             temperature=0.7,
             memory_limit=3,
-            system_message="You are responsible for reflexive thinking and quick decision-making."
+            system_message="You are responsible for reflexive thinking and quick decision-making, you act as the control center for the brain."
         )
 
 
@@ -99,13 +99,14 @@ class FrontalLobe(Lobe):
             model_name="gpt-4o",
             temperature=0.8,
             memory_limit=12,
-            system_message="You are responsible for handling higher-level thinking, complex reasoning, and decision-making."
+            system_message="You are responsible for handling higher-level thinking, complex reasoning, and more rational decision-making."
         )
 
 
 # Occipital Lobe: Pattern recognition and visual processing
 class OccipitalLobe(Lobe):
     """Processes visual information and handles tasks related to pattern recognition."""
+    #TODO: Add image processing capabilities
 
     def __init__(self):
         super().__init__(
