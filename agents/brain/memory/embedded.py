@@ -1,14 +1,14 @@
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
-from pydantic import Field, PrivateAttr
+from pydantic import Field
 import pandas as pd
 from agents.brain.memory.simple import SimpleMemory
+
 
 class EmbeddedMemory(SimpleMemory):
     """Base memory class that provides shared functionality for embedding storage and search."""
 
     embedded: bool = True
-
     embedding_size: int = 1024  # Adjusted to match model's hidden_size
 
     long_term_df: pd.DataFrame = Field(
@@ -19,20 +19,24 @@ class EmbeddedMemory(SimpleMemory):
     )
 
     def _generate_embedding(self, text: str) -> np.ndarray:
-        """
-        Core embedding generation method, meant to be overwritten by subclasses.
-        This is where the actual embedding logic resides.
-        """
-        # Placeholder embedding generation logic (to be overwritten by subclasses)
-        embedding = np.random.rand(self.embedding_size).astype(np.float32)  # Simulated embedding output
+        """Generate embeddings from input text without any acceleration."""
+
+        # Here, we create a basic embedding by averaging character ASCII values
+        embedding = np.zeros(self.embedding_size, dtype=np.float32)
+
+        # Create a simple text vectorization (e.g., bag-of-words or character embedding)
+        text_vector = np.array([ord(char) for char in text], dtype=np.float32)
+
+        # Pad or truncate to match the embedding size
+        if len(text_vector) > self.embedding_size:
+            embedding = text_vector[:self.embedding_size]  # Truncate
+        else:
+            embedding[:len(text_vector)] = text_vector  # Fill with text vector
+
         return embedding
 
     def store_memory(self, user_input: str, response: str) -> None:
-        """
-        Store memory (short-term and long-term) along with generated embeddings.
-        :param user_input: Input provided by the user.
-        :param response: System's response to the input.
-        """
+        """Store memory (short-term and long-term) along with generated embeddings."""
         combined_text = user_input + " " + response
 
         # Generate fixed-size embedding
@@ -43,7 +47,7 @@ class EmbeddedMemory(SimpleMemory):
 
     def embedding_search(self, query: str, memory_df: pd.DataFrame, top_n: int = 3) -> pd.DataFrame:
         """Search for the top N closest matches based on embeddings in the provided memory DataFrame."""
-        query_embedding = self._generate_embedding(query)  # Generate the embedding for the query
+        query_embedding = self._generate_embedding(query)
 
         # Extract the stored embeddings from the memory DataFrame
         embeddings = np.vstack(memory_df['embedding'].values)
@@ -58,12 +62,14 @@ class EmbeddedMemory(SimpleMemory):
         return memory_df.iloc[top_indices]
 
     def search_memory(self, query: str, long_term: bool = False, top_n: int = 3) -> pd.DataFrame:
-        """
-        Perform an embedding search on the stored memory (short-term or long-term).
-        :param query: The search query used to find relevant memories.
-        :param long_term: Boolean flag to determine if long-term memory should be searched.
-        :param top_n: The number of top search results to return.
-        :return: DataFrame of the top N search results based on similarity.
-        """
+        """Perform an embedding search on the stored memory (short-term or long-term)."""
         memory_df = self.long_term_df if long_term else self.short_term_df
         return self.embedding_search(query, memory_df, top_n)
+
+
+# Test the class
+if __name__ == "__main__":
+    memory = EmbeddedMemory()
+    sample_text = "Test embedding generation"
+    embedding = memory._generate_embedding(sample_text)
+    print(f"Generated embedding: {embedding}")
