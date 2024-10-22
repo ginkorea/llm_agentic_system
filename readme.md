@@ -1,5 +1,9 @@
 # Autonomous Software Development System
 
+# Still Under Development - Not Ready for Deployment
+
+## By Josh Gompert, Nathan Smith, and Kruti Shah
+
 ## Overview
 
 This project focuses on building an **autonomous software development system** using **LLM-based agents** and a **multi-lobe architecture**. The system manages the entire software development lifecycle, including:
