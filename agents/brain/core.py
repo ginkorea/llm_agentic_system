@@ -1,11 +1,7 @@
 # agents/brain/core.py
-from .build_prompt import default_prompt_builder
-from .examples import prompt_examples
-from .lobes import (
-    PreFrontalCortex, OccipitalLobe, FrontalLobe, TemporalLobe, ParietalLobe,
-    Cerebellum, BrocasArea, Amygdala, CerebralCortex
-)
-from .hippocampus import Hippocampus
+from agents.brain.utils.build_prompt import default_prompt_builder
+from agents.brain.utils.examples import prompt_examples
+from agents.brain.modules.simple_modules import ControlModule, MainModule, MemoryModule
 import json
 
 
@@ -31,31 +27,24 @@ class Brain:
 
         self.toolkit = toolkit  # Add toolkit to Brain
 
-        # Initialize lobes using the specialized classes
-        self.lobes = [
-            PreFrontalCortex(),
-            FrontalLobe(),
-            OccipitalLobe(),
-            TemporalLobe(),
-            ParietalLobe(),
-            Cerebellum(),
-            BrocasArea(),
-            Amygdala(),
-            CerebralCortex(),
-            Hippocampus(self)
+        # Initialize modules using the specialized classes
+        self.modules = [
+            ControlModule(),
+            MainModule(),
+            MemoryModule(brain=self)
         ]
 
-    def get_lobe_info(self):
+    def get_modules_info(self):
         """
-        Dynamically generates a list of available lobes and their descriptions.
+        Dynamically generates a list of available modules and their descriptions.
         """
-        lobe_info = {}
-        for idx, lobe in enumerate(self.lobes):
-            lobe_info[idx] = {
-                'name': lobe.__class__.__name__,
-                'description': lobe.system_message  # Assuming each lobe has a system_message attribute
+        module_info = {}
+        for idx, module in enumerate(self.modules):
+            module_info[idx] = {
+                'name': module.__class__.__name__,
+                'description': module.system_message  # Assuming each module has a system_message attribute
             }
-        return lobe_info
+        return module_info
 
     def get_tool_info(self):
         """
@@ -66,32 +55,32 @@ class Brain:
 
     def determine_action(self, user_input: str) -> dict:
         """
-        Use the PreFrontalCortex to determine if the input should be handled by a tool or a lobe.
+        Use the PreFrontalCortex to determine if the input should be handled by a tool or a module.
 
         Returns:
             - Dictionary containing action information.
         """
-        # Get tool and lobe information
+        # Get tool and module information
         tool_info = self.get_tool_info()
-        lobe_info = self.get_lobe_info()
+        module_info = self.get_modules_info()
 
         # Build tool descriptions
         tool_descriptions = "\n".join([f"{name}: {desc}" for name, desc in tool_info.items()])
 
-        # Build lobe descriptions
-        lobe_descriptions = "\n".join(
-            [f"{idx}: {info['name']} - {info['description']}" for idx, info in lobe_info.items()]
+        # Build module descriptions
+        module_descriptions = "\n".join(
+            [f"{idx}: {info['name']} - {info['description']}" for idx, info in module_info.items()]
         )
 
         # Build examples
         examples = prompt_examples
 
         # Construct the prompt for the PreFrontalCortex to make a decision
-        prompt = default_prompt_builder(tool_descriptions=tool_descriptions, lobe_descriptions=lobe_descriptions,
+        prompt = default_prompt_builder(tool_descriptions=tool_descriptions, module_descriptions=module_descriptions,
                                         examples=examples, user_input=user_input)
 
         # The PreFrontalCortex determines which action to take
-        prefrontal_cortex = self.lobes[0]  # Assuming PreFrontalCortex is at index 0
+        prefrontal_cortex = self.modules[0]  # Assuming PreFrontalCortex is at index 0
         decision_response = prefrontal_cortex.process(user_input=prompt, memory=self.memory.short_term_df)
 
         # Parse the JSON response
@@ -112,36 +101,36 @@ class Brain:
                         "refined_prompt": refined_prompt
                     }
             else:
-                lobe_index = int(decision.get('lobe_index', 0))
+                module_index = int(decision.get('module_index', 0))
                 return {
                     "use_tool": False,
-                    "lobe_index": lobe_index,
-                    "lobe_name": self.lobes[lobe_index].__class__.__name__,
+                    "module_index": module_index,
+                    "module_name": self.modules[module_index].__class__.__name__,
                     "refined_prompt": refined_prompt
                 }
         except (json.JSONDecodeError, KeyError, ValueError):
             # If parsing fails, default to using the FrontalLobe
             return {
                 "use_tool": False,
-                "lobe_index": 1,  # FrontalLobe
-                "lobe_name": "FrontalLobe",
+                "module_index": 1,  # FrontalLobe
+                "module_name": "FrontalLobe",
                 "refined_prompt": user_input
             }
 
     def process_input(self, user_input: str) -> str:
         """
-        Process the input by deciding whether to use a tool or a lobe.
+        Process the input by deciding whether to use a tool or a module.
         """
         action = self.determine_action(user_input)
         if action["use_tool"]:
             # Use the specified tool with the refined prompt
             result = self.use_tool(action["refined_prompt"], action["tool_index"])
         else:
-            # Use the specified lobe to generate a response
-            selected_lobe = self.lobes[action["lobe_index"]]
+            # Use the specified module to generate a response
+            selected_module = self.modules[action["module_index"]]
             if self.verbose:
-                print(f"Using lobe '{selected_lobe.__class__.__name__}' to process the input.")
-            result = selected_lobe.process(user_input=action["refined_prompt"], memory=self.memory.short_term_df)
+                print(f"Using module '{selected_module.__class__.__name__}' to process the input.")
+            result = selected_module.process(user_input=action["refined_prompt"], memory=self.memory.short_term_df)
 
         # Store the interaction in memory
         self.store_memory(user_input, result)
@@ -152,13 +141,13 @@ class Brain:
         """Store the user input and response in memory."""
         self.memory.store_memory('user_input: '+ str(user_input),'response: ' + str(response))
 
-    def get_lobe_by_name(self, lobe_name: str):
+    def get_module_by_name(self, module_name: str):
         """
-        Retrieve a lobe instance by its class name.
+        Retrieve a module instance by its class name.
         """
-        for lobe in self.lobes:
-            if lobe.__class__.__name__ == lobe_name:
-                return lobe
+        for module in self.modules:
+            if module.__class__.__name__ == module_name:
+                return module
         return None
 
     def use_tool(self, user_input: str, tool_index: int) -> str:

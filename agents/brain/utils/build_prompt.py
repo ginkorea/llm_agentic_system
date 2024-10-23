@@ -1,13 +1,16 @@
-def default_prompt_builder(tool_descriptions: str, lobe_descriptions: str, examples: str, user_input: str):
+def default_prompt_builder(tool_descriptions: str, module_descriptions: str, examples: str, user_input: str):
     """
     Build a default prompt for the user to make a decision based on the input.
     """
-    return f"""You are responsible for reflexive thinking and quick decision-making.
+    return f"""You are the control center for the brain, responsible for reflexive thinking and traffic routing.  
+    You have access to a variety of tools and specialized modules (lobes) to handle different tasks.  
+    You always respond in JSON format to indicate whether a tool or a lobe should handle the task.
+    
     Available tools:
     {tool_descriptions}
 
-    Available lobes:
-    {lobe_descriptions}
+    Available LLM modules:
+    {module_descriptions}
 
     Based on the user's input, decide whether to use a tool or a lobe to handle the task.
 

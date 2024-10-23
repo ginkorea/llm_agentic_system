@@ -1,8 +1,8 @@
-from agents.brain.lobes import Lobe
+from agents.brain.modules.module import Module
 import pandas as pd
 
 
-class Hippocampus(Lobe):
+class Hippocampus(Module):
     def __init__(self, brain):
         super().__init__(
             memory_limit=10,
@@ -74,7 +74,7 @@ class Hippocampus(Lobe):
                     f"Error: {str(e)}. Attempting refinement with PreFrontalCortex. (Retry {retry_count}/{max_retries})")
 
                 # Use PreFrontalCortex to refine the prompt and pass the memory
-                prefrontal_cortex = self.brain.get_lobe_by_name("PreFrontalCortex")
+                prefrontal_cortex = self.brain.get_module_by_name("PreFrontalCortex")
                 if prefrontal_cortex:
                     # Pass both user_input and memory to the process
                     user_input = prefrontal_cortex.process(f"Error: {str(e)}. Please refine the prompt.", memory)

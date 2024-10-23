@@ -1,9 +1,8 @@
 from agents.toolkit.bag import BagOfTools
-from agents.brain.core import Brain
 
 # Base Agent class
 class Agent:
-    def __init__(self, forget_threshold: int = 10, verbose: bool = True, memory_type: str = 'simple'):
+    def __init__(self, forget_threshold: int = 10, verbose: bool = True, memory_type: str = 'simple', brain_type: str = 'simple'):
         # Set the verbose flag
         self.verbose = verbose
 
@@ -12,7 +11,12 @@ class Agent:
         self.toolkit.get_tools()
 
         # Initialize brain with toolkit
-        self.brain = Brain(toolkit=self.toolkit, memory_type=memory_type, verbose=verbose, forget_threshold=forget_threshold)
+        if brain_type == 'simple':
+            from agents.brain.core import Brain
+            self.brain = Brain(toolkit=self.toolkit, forget_threshold=forget_threshold, verbose=verbose, memory_type=memory_type)
+        elif brain_type == 'cognitive':
+            from agents.brain.cognitive import CognitiveBrain
+            self.brain = CognitiveBrain(toolkit=self.toolkit, forget_threshold=forget_threshold, verbose=verbose, memory_type=memory_type)
 
     def process_input(self, user_input: str) -> str:
         """
@@ -36,7 +40,7 @@ class Agent:
 # Example usage
 if __name__ == "__main__":
     # Instantiate the base Agent
-    agent = Agent()
+    agent = Agent(brain_type='cognitive')
 
     # Start interaction loop
     agent.run()
