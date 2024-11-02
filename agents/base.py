@@ -17,6 +17,9 @@ class Agent:
         elif brain_type == 'cognitive':
             from agents.brain.cognitive import CognitiveBrain
             self.brain = CognitiveBrain(toolkit=self.toolkit, forget_threshold=forget_threshold, verbose=verbose, memory_type=memory_type)
+        elif brain_type == 'code':
+            from agents.brain.code_brain_model import CodeBrain
+            self.brain = CodeBrain(toolkit=self.toolkit, forget_threshold=forget_threshold, verbose=verbose, memory_type=memory_type)
 
     def process_input(self, user_input: str) -> str:
         """
@@ -40,7 +43,7 @@ class Agent:
 # Example usage
 if __name__ == "__main__":
     # Instantiate the base Agent
-    agent = Agent(brain_type='cognitive')
+    agent = Agent(brain_type='code')
 
     # Start interaction loop
     agent.run()

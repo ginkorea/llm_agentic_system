@@ -7,15 +7,14 @@ from pydantic import Field, PrivateAttr, ConfigDict
 from agents.brain.memory.embedded import EmbeddedMemory
 from agents.brain.memory.model.get import Models
 
+
 class CudaMemoryWithEmbeddings(EmbeddedMemory):
     """Memory class that uses CUDA for acceleration with dynamic model and tokenizer management."""
 
     model_config = ConfigDict(protected_namespaces=())
     model_name: str = Field(default="")
     model_path: str = Field(default="")
-    device: torch.device = Field(
-        default_factory=lambda: torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    )
+    device: torch.device = Field(default_factory=lambda: torch.device("cuda" if torch.cuda.is_available() else "cpu"))
 
     _model: AutoModel = PrivateAttr()
     _tokenizer: AutoTokenizer = PrivateAttr()
@@ -44,7 +43,7 @@ class CudaMemoryWithEmbeddings(EmbeddedMemory):
         self._model = AutoModel.from_pretrained(model_dir, config=config, trust_remote_code=True).to(self.device)
 
     def _generate_embedding(self, text: str) -> np.ndarray:
-        """Generate text embeddings using mean pooling and FlashAttention for acceleration."""
+        """Custom embedding generation using CUDA and FlashAttention."""
         inputs = self._tokenizer(
             text, return_tensors="pt", padding=True, truncation=True
         ).to(self.device)

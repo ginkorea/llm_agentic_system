@@ -1,4 +1,4 @@
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-prompts';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import RegisterPage from '../src/register/RegisterPage.vue';

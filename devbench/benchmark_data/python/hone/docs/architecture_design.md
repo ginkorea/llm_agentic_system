@@ -16,7 +16,7 @@ Below is the text-based representation of the file tree for the `Hone` project, 
 │   ├── __init__.py
 │   ├── hone.py
 │   ├── __main__.py
-│   ├── utils
+│   ├── prompts
 │   │   ├── __init__.py
 │   │   ├── csv_utils.py
 │   │   ├── json_utils.py

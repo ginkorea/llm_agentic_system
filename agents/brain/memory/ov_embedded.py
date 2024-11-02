@@ -10,17 +10,14 @@ from agents.brain.memory.model.get import Models
 class OpenvinoMemoryWithEmbeddings(EmbeddedMemory):
     """Memory class that uses OpenVINO for acceleration with dynamic model selection using Pydantic."""
 
-    # Define Pydantic model configuration to avoid conflicts
     model_config = ConfigDict(protected_namespaces=())
-
-    # Pydantic-managed fields
     model_name: str = Field(default="model_fp16.onnx")
     model_path: str = Field(default="")
     ie: Core = Field(default_factory=Core)
 
-    # Private attributes for OpenVINO compiled model and tokenizer
     _compiled_model: Core = PrivateAttr()
     _tokenizer: AutoTokenizer = PrivateAttr()
+
 
     def __init__(self, **kwargs):
         """Initialize OpenVINO memory and set up the selected model and tokenizer."""

@@ -40,7 +40,7 @@ class TestTextCNN(unittest.TestCase):
         - Linear
         """
         model = TextCNN(self.model_tester.prepare_config_args(), 1000, 2)
-        # flatten out nested sub-modules.
+        # flatten out nested sub-lobes.
         all_layers = list(model.modules())
 
         # check for the existence of the specified layers.

@@ -9,7 +9,7 @@ def default_prompt_builder(tool_descriptions: str, module_descriptions: str, exa
     Available tools:
     {tool_descriptions}
 
-    Available LLM modules:
+    Available brain lobes (llm modules):
     {module_descriptions}
 
     Based on the user's input, decide whether to use a tool or a lobe to handle the task.

@@ -1,4 +1,4 @@
-from agents.brain.modules.module import Module
+from agents.brain.lobes.module import Module
 import pandas as pd
 
 

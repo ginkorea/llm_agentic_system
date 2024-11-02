@@ -32,7 +32,7 @@ def do_setup():
     setup(
         name='subeval',
         version='0.1.0',
-        description='LLM and MLLM utils, collected by Kenny',
+        description='LLM and MLLM prompts, collected by Kenny',
         # url="",
         author="Haodong Duan",
         long_description=readme,

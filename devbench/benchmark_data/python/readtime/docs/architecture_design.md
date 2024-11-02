@@ -9,7 +9,7 @@ Below is a text-based representation of the file tree.
 │   ├── api.py
 │   ├── __init__.py
 │   ├── result.py
-│   └── utils.py
+│   └── prompts.py
 ```
 
 Examples:

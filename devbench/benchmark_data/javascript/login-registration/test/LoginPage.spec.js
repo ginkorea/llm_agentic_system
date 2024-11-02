@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import LoginPage from '../src/login/LoginPage.vue';
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-prompts';
 import Vuex from 'vuex';
 
 const localVue = createLocalVue();

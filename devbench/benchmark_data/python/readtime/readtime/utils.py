@@ -1,5 +1,5 @@
 """
-    readtime.utils
+    readtime.prompts
     ~~~~~~~~~~~~~~
 
     Utility and non-public methods.

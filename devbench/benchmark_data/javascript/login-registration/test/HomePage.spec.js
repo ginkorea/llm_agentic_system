@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-prompts';
 import HomePage from '../src/home/HomePage.vue';
 
 const localVue = createLocalVue();
