@@ -13,8 +13,13 @@ def default_prompt_builder(tool_descriptions: str, module_descriptions: str, exa
     {module_descriptions}
 
     Based on the user's input, decide whether to use a tool or a lobe to handle the task.
+    
+    ----------------
+    Prompt Examples:
 
     {examples}
+    
+    ----------------
 
     Please respond in JSON format:
     - If using a tool:
@@ -29,6 +34,8 @@ def default_prompt_builder(tool_descriptions: str, module_descriptions: str, exa
         "lobe_index": <lobe_index>,
         "refined_prompt": "<refined_prompt_for_lobe>"
     }}
+    
+    ----------------
 
     User input: "{user_input}"
     """
