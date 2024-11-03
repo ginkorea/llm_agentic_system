@@ -1,6 +1,12 @@
 from langchain_openai import ChatOpenAI
 from langchain.schema import SystemMessage, HumanMessage, AIMessage
 from typing import List, Dict, Optional
+from agents.brain.prompts.structured_prompt import StructuredPrompt
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from agents.brain.core import Brain
 
 
 class Module:
@@ -11,7 +17,7 @@ class Module:
     It can be customized to integrate specific functionalities as needed.
     """
 
-    def __init__(self, model_name: str = None, temperature: float = None, memory_limit: int = 10,
+    def __init__(self, model_name: str = None, temperature: float = None, memory_limit: Optional[int] = None,
                  system_message: Optional[str] = None, initialize_model: bool = True, alt_system_message: Optional[str] = None):
         self.model_name = model_name
         self.temperature = temperature
@@ -24,6 +30,9 @@ class Module:
             self.model = ChatOpenAI(model_name=self.model_name, temperature=self.temperature)
         else:
             self.model = None  # No model is required for lobes like Hippocampus
+
+        # Initialize the prompt builder for structured prompts
+        self.prompt_builder = None
 
     def get_info(self):
         """Returns configuration information about the lobe."""
@@ -42,7 +51,7 @@ class Module:
         response = self.model.invoke(prompt_messages)  # Pass prompt directly
         return response.content.strip()
 
-    def build_prompt_messages(self, user_input: str, memory: list):
+    def build_memory_context(self, user_input: str, memory: list):
         """Construct the prompt messages for the language model using system and user messages.
 
         This includes the system message, past user inputs, and the current user input.
@@ -66,3 +75,13 @@ class Module:
         print(f"Temperature: {self.temperature}")
         print(f"Memory Limit: {self.memory_limit}")
         print(f"System Message: {self.system_message}")
+
+    def build_prompt_builder(self, brain: Optional['Brain'] = None, modules=None, tools=None, examples=None):
+        """Initialize the prompt builder using either the brain instance or separate components."""
+        if brain:
+            self.prompt_builder = StructuredPrompt(tools=brain.tool_descriptions, modules=brain.module_descriptions,
+                                                   examples=brain.examples)
+        elif modules and tools and examples:
+            self.prompt_builder = StructuredPrompt(tools=tools, modules=modules, examples=examples)
+        else:
+            raise ValueError("Either brain or modules, tools, and examples must be provided to build prompt_builder.")

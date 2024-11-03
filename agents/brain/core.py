@@ -1,7 +1,9 @@
 # core.py
+from typing import Tuple, Any
 
-from agents.brain.prompts.build_prompt import default_prompt_builder
-from agents.brain.prompts.examples import ExamplesBase as BaseExamples
+from pandas import DataFrame
+
+from agents.brain.prompts.examples.base_examples import ExamplesBase as BaseExamples
 from agents.brain.lobes.simple_modules import ControlModule, MainModule, MemoryModule
 import json
 
@@ -11,6 +13,7 @@ class Brain:
         self.verbose = verbose
         self.include_routing_module = include_routing_module
         self.milestone = {}
+        self.goal = None  # Define overarching goal for chaining mode
 
         # Initialize memory based on the memory_type parameter
         self.memory = None
@@ -24,6 +27,10 @@ class Brain:
         self.tool_descriptions = self.build_tool_descriptions()
         self.module_descriptions = self.build_module_descriptions(include_routing_module)
         self.examples = BaseExamples()
+
+        # Set the first module as the router for prompt handling
+        self.router = self.modules[0]
+        self.previous_output = False
 
     def initialize_memory(self, memory_type, forget_threshold):
         if memory_type == 'cuda':
@@ -63,25 +70,38 @@ class Brain:
         if self.verbose: print(f"Module information initialized: {module_info}")
         return "\n".join([f"{idx}: {info['name']} - {info['description']}" for idx, info in module_info.items()])
 
-    def determine_action(self, user_input: str) -> dict:
+    def initialize_prompt_builders(self):
         """
-        Use the routing module to determine if the input should be handled by a tool or a module.
+        Initialize the prompt builders for all modules.
+        This method should be called after tool and module descriptions are generated.
         """
-        # Generate prompt
-        prompt = default_prompt_builder(
-            tool_descriptions=self.tool_descriptions,
-            module_descriptions=self.module_descriptions,
-            examples=self.examples.get_examples(),
-            user_input=user_input
-        )
+        for module in self.modules:
+            module.build_prompt_builder(
+                brain=self
+            )
+
+    def determine_action(self, user_input: str, previous_output: bool = False) -> dict:
+        """
+        Use the router to determine if the input should be handled by a tool or a module.
+        """
+        # Generate prompt using router's StructuredPrompt
+        try:
+            prompt = self.router.prompt_builder.build_prompt(user_input, previous_output)
+        except AttributeError:
+            self.initialize_prompt_builders()
+            print("Prompt builders initialized.")
+            print("Re-running prompt generation.")
+            print(f"Router: {self.router}")
+            prompt = self.router.prompt_builder.build_prompt(user_input, previous_output)
         if self.verbose: print(f"Constructed prompt: {prompt}")
 
-        router = self.modules[0]
+        # Retrieve short-term memory as context
         short_term_memory = self.memory.recall_memory(0, self.memory.short_term_length).to_dict('records')
-        prompt_messages = router.build_prompt_messages(user_input=prompt, memory=short_term_memory)
-        decision_response = router.process(prompt_messages)
+        prompt_messages = self.router.build_memory_context(user_input=prompt, memory=short_term_memory)
 
-        # Process the decision in JSON format
+        # Process prompt to obtain decision
+        decision_response = self.router.process(prompt_messages)
+
         try:
             decision = json.loads(decision_response)
             use_tool = decision.get('use_tool', False)
@@ -113,40 +133,45 @@ class Brain:
                 "refined_prompt": user_input
             }
 
-
-    def process_input(self, user_input: str) -> str:
+    def process_input(self, prompt_input: str, chaining_mode: bool = False) -> tuple[str | DataFrame, Any] | str:
         """
         Process the input by deciding whether to use a tool or a module, with a formatted memory context.
         """
-        action = self.determine_action(user_input)
-        formatted_memory = self.memory.format_memory()  # Get formatted memory context
+        if chaining_mode:
+            if not self.check_goal_achieved():
+                action = self.determine_action(prompt_input, previous_output=self.previous_output)
+                self.previous_output = True
+                return self.execute_action(action)
+            else:
+                return "Goal achieved."
+        return self.execute_action(self.determine_action(prompt_input))
 
+    def execute_action(self, action):
+        """
+        Execute the given action based on the use_tool flag and return the result.
+        Avoid double-logging in chaining mode.
+        """
         if action["use_tool"]:
-            result = self.use_tool(action["refined_prompt"], action["tool_index"])
-            # Store tool response in memory with tool name
-            self.store_memory(user_input, result, module=action["tool_name"])
+            result, using = self.use_tool(action["refined_prompt"], action["tool_index"]), action["tool_name"]
+            if self.verbose: print(f"Using tool '{using}' to process the input.")
+
         else:
             selected_module = self.modules[action["module_index"]]
-            if self.verbose:
-                print(f"Using module '{selected_module.__class__.__name__}' to process the input.")
+            result, using = selected_module.process(action["refined_prompt"]), selected_module.__class__.__name__
+            if self.verbose: print(f"Using module '{using}' to process the input.")
+        print(f"Result: {result}")
+        print(f"Using: {using}")
+        print(action["refined_prompt"])
+        self.store_memory(action["refined_prompt"], result, module=using)
 
-            # Set short-term memory length dynamically
-            self.memory.set_short_term_length(selected_module.memory_limit)
+        return result, using
 
-            # Prepare prompt with formatted memory context
-            prompt_messages = [{"role": "system", "content": selected_module.system_message}] + formatted_memory
-            prompt_messages.append({"role": "user", "content": action["refined_prompt"]})
-
-            # Send prompt to model and get response
-            result = selected_module.process(prompt_messages)
-
-            # Store module response in memory with module name
-            self.store_memory(user_input, result, module=selected_module.__class__.__name__)
-
-        return result
+    def check_goal_achieved(self):
+        # Placeholder for goal-checking logic
+        return False
 
     def store_memory(self, user_input: str, response: str, module: str = ""):
-        """Store the user input, response, and module/tool name in memory."""
+        """Store the user input, response, and module/tool name in memory only if not already stored."""
         self.memory.store_memory(user_input, response, module=module)
 
     def get_module_by_name(self, module_name: str, include_routing_module: bool = False):

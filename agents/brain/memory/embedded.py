@@ -31,6 +31,7 @@ class EmbeddedMemory(SimpleMemory):
         response_str = response if isinstance(response, str) else str(response)
 
         # Generate embedding from combined text
+
         combined_text = user_input + " " + response_str
         embedding = embedding or self._generate_embedding(combined_text)
 

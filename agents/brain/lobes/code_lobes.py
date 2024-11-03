@@ -1,4 +1,6 @@
 from agents.brain.lobes.module import Module
+from agents.brain.prompts.structured_prompt import ControllerPrompt
+
 
 
 # ManagerFunction: Task management and decision-making
@@ -10,8 +12,9 @@ class TaskRouter(Module):
             model_name="gpt-4o-mini",
             temperature=0.4,
             memory_limit=3,
-            system_message="You manage task routing and decision-making, sending tasks to other lobes, do not use this for actual tasks."
+            system_message="You manage task routing and decision-making, sending tasks to other lobes, do not use this for actual tasks.",
         )
+
 
 
 # LogicLobe: Code logic structuring and algorithm development
@@ -38,7 +41,6 @@ class DebuggerLobe(Module):
             memory_limit=7,
             system_message=None,  # System message not supported in o1-mini
             alt_system_message="You identify, explain, and resolve common code errors using advanced reasoning."
-
         )
 
 

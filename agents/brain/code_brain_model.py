@@ -3,11 +3,14 @@ from agents.brain.lobes.code_lobes import (
     TaskRouter, LogicLobe, DebuggerLobe, SeniorDev, SyntaxLobe,
     DocumentationLobe, TestingLobe, OptimizerLobe, RefactorLobe
 )
-from agents.brain.prompts.code_examples import CodeExamples
+from agents.brain.prompts.examples.code_examples import CodeExamples
 
 class CodeBrain(Brain):
     def __init__(self, toolkit, forget_threshold: int = 10, verbose: bool = True, memory_type='cuda'):
         super().__init__(toolkit, forget_threshold, verbose, memory_type)
+
+        self.tool_descriptions = self.build_tool_descriptions()
+
 
         # Add code-focused lobes to the brain
         self.modules = [
@@ -23,6 +26,6 @@ class CodeBrain(Brain):
         ]
 
         # Pre-generate descriptions for tools and modules
-        self.tool_descriptions = self.build_tool_descriptions()
         self.module_descriptions = self.build_module_descriptions(include_routing_module=False)
         self.examples = CodeExamples()
+        self.router = self.modules[0]

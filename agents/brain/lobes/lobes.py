@@ -1,4 +1,5 @@
 from agents.brain.lobes.module import Module
+from agents.brain.prompts.structured_prompt import ControllerPrompt
 
 # PreFrontalCortex: Reflexive thinking and decision-making
 class PreFrontalCortex(Module):
@@ -6,11 +7,13 @@ class PreFrontalCortex(Module):
 
     def __init__(self):
         super().__init__(
-            model_name="gpt-4o-mini",  # Supports system messages
+            model_name="gpt-4o-mini",
             temperature=0.7,
             memory_limit=3,
-            system_message="You are responsible for reflexive thinking and quick decision-making, acting as the control center for the brain."
+            system_message="You are responsible for reflexive thinking and quick decision-making, acting as the control center for the brain.",
         )
+
+
 
 # FrontalLobe: Higher-level thinking and decision-making
 class FrontalLobe(Module):
@@ -117,5 +120,5 @@ if __name__ == "__main__":
     module = CerebralCortex()
     print(module.get_info())
     print(module.process(["What is the capital of France?"]))
-    print(module.build_prompt_messages("What is the capital of France?", []))
+    print(module.build_memory_context("What is the capital of France?", []))
     module.print_model_info()

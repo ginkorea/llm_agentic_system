@@ -1,4 +1,4 @@
-from agents.brain.prompts.examples import ExamplesBase
+from agents.brain.prompts.examples.base_examples import ExamplesBase
 
 class CodeExamples(ExamplesBase):
     def __init__(self):

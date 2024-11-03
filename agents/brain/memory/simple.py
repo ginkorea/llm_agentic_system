@@ -24,9 +24,9 @@ class SimpleMemory(BaseMemory):
 
     # simple.py
 
-    def store_memory(self, user_input: str, response, embedding: np.ndarray = None, module: str = "") -> None:
+    def store_memory(self, user_input: str, response: str, embedding: np.ndarray = None, module: str = "") -> None:
         """
-        Store a new user input, response, optional vectorized embedding, and module name into memory.
+        Store a new user input, response, optional vectorized embedding, and module name into memory if not already stored.
 
         :param user_input: User query or input.
         :param response: Model response, which will be converted to a string if not already.
@@ -36,15 +36,26 @@ class SimpleMemory(BaseMemory):
         # Convert response to a string if it is not already a string
         response_str = response if isinstance(response, str) else str(response)
 
-        new_memory = pd.DataFrame([{
-            "user_input": user_input,
-            "response": response_str,
-            "embedding": embedding,
-            "module": module
-        }])
-        self.long_term_df = pd.concat([self.long_term_df, new_memory], ignore_index=True)
-        self.save_to_csv("memory.csv", long_term=True)
-        print("Memory saved to memory.csv")
+        # Check if this entry already exists
+        if not ((self.long_term_df["user_input"] == user_input) &
+                (self.long_term_df["response"] == response_str)).any():
+
+            # If it doesn't exist, add it
+            new_memory = pd.DataFrame([{
+                "user_input": user_input,
+                "response": response_str,
+                "embedding": embedding,
+                "module": module
+            }])
+
+            # Concatenate new memory
+            self.long_term_df = pd.concat([self.long_term_df, new_memory], ignore_index=True)
+
+            # Optionally save to CSV for persistence
+            self.save_to_csv("memory.csv", long_term=True)
+            print("Memory saved to memory.csv")
+        else:
+            print("Duplicate entry detected, not adding to memory.")
 
     def recall_memory(self, start: int, end: int, long_term: bool = False) -> pd.DataFrame:
         """

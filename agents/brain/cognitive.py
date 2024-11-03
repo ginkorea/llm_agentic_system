@@ -4,7 +4,7 @@ from agents.brain.lobes.lobes import (
     Cerebellum, BrocasArea, Amygdala, CerebralCortex
 )
 from agents.brain.lobes.hippocampus import Hippocampus
-from agents.brain.prompts.cognitive_examples import CognitiveExamples
+from agents.brain.prompts.examples.cognitive_examples import CognitiveExamples
 class CognitiveBrain(Brain):
     def __init__(self, toolkit, forget_threshold: int = 10, verbose: bool = True, memory_type='cuda'):
         super().__init__(toolkit, forget_threshold, verbose, memory_type)
@@ -27,3 +27,4 @@ class CognitiveBrain(Brain):
         self.tool_descriptions = self.build_tool_descriptions()
         self.module_descriptions = self.build_module_descriptions(include_routing_module=True)
         self.examples = CognitiveExamples()
+        self.router = self.modules[0]
