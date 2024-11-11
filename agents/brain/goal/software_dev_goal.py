@@ -1,5 +1,5 @@
-from agents.goal.goal import Goal
-from agents.goal.milestones.software_dev.software_dev_milestones import UMLMilestone, UsageExampleMilestone, UnitTestMilestone, OracleTestMilestone, ConvergenceMilestone
+from agents.brain.goal.goal import Goal
+from agents.brain.goal.milestones.software_dev.software_dev_milestones import UMLMilestone, UsageExampleMilestone, UnitTestMilestone, OracleTestMilestone, ConvergenceMilestone
 
 class SoftwareDevelopmentGoal(Goal):
     def __init__(self, description, milestones, goal_file=None):
@@ -12,3 +12,4 @@ class SoftwareDevelopmentGoal(Goal):
             ConvergenceMilestone()
         ]
         super().__init__(description, milestones, goal_file)
+

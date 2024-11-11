@@ -1,36 +1,44 @@
 # core.py
-from typing import Tuple, Any
+from typing import Any
 
 from pandas import DataFrame
 
-from agents.brain.prompts.examples.base_examples import ExamplesBase as BaseExamples
 from agents.brain.lobes.simple_modules import ControlModule, MainModule, MemoryModule
+from agents.brain.prompts.examples.base_examples import ExamplesBase
+
+
 import json
 
 
 class Brain:
-    def __init__(self, toolkit, forget_threshold: int = 10, verbose: bool = True, memory_type='embedded', include_routing_module: bool = False):
+    def __init__(self, toolkit, forget_threshold=10, verbose=True, memory_type='embedded', include_routing_module=False, goal=None, goal_file=None):
         self.verbose = verbose
         self.include_routing_module = include_routing_module
-        self.milestone = {}
-        self.goal = None  # Define overarching goal for chaining mode
-
-        # Initialize memory based on the memory_type parameter
         self.memory = None
         self.initialize_memory(memory_type, forget_threshold)
-
-        # Initialize toolkit and modules
         self.toolkit = toolkit
         self.modules = self.load_modules()
-
-        # Pre-generate tool and module descriptions
         self.tool_descriptions = self.build_tool_descriptions()
         self.module_descriptions = self.build_module_descriptions(include_routing_module)
-        self.examples = BaseExamples()
-
-        # Set the first module as the router for prompt handling
+        self.examples = ExamplesBase()
         self.router = self.modules[0]
         self.previous_output = False
+        if goal: self.goal, self.goal_file = goal, goal_file
+        else: self.goal, self.goal_file = None, None # No goal set
+
+    def judge_output(self, output: str) -> bool:
+        """
+        Evaluate if the current output satisfies the current milestone's requirements.
+        """
+        current_milestone = self.goal.current_milestone()
+        if current_milestone:
+            is_achieved = current_milestone.is_achieved(self, output)
+            if is_achieved:
+                if self.verbose:
+                    print(f"Milestone '{current_milestone.description}' achieved.")
+                self.goal.update_progress()
+            return is_achieved
+        return False
 
     def initialize_memory(self, memory_type, forget_threshold):
         if memory_type == 'cuda':
@@ -135,40 +143,24 @@ class Brain:
 
     def process_input(self, prompt_input: str, chaining_mode: bool = False) -> tuple[str | DataFrame, Any] | str:
         """
-        Process the input by deciding whether to use a tool or a module, with a formatted memory context.
+        Process the input by deciding whether to use a tool or a module, and judge the output.
         """
-        if chaining_mode:
-            if not self.check_goal_achieved():
-                action = self.determine_action(prompt_input, previous_output=self.previous_output)
-                self.previous_output = True
-                return self.execute_action(action)
-            else:
-                return "Goal achieved."
-        return self.execute_action(self.determine_action(prompt_input))
-
-    def execute_action(self, action):
-        """
-        Execute the given action based on the use_tool flag and return the result.
-        Avoid double-logging in chaining mode.
-        """
-        if action["use_tool"]:
-            result, using = self.use_tool(action["refined_prompt"], action["tool_index"]), action["tool_name"]
-            if self.verbose: print(f"Using tool '{using}' to process the input.")
-
-        else:
-            selected_module = self.modules[action["module_index"]]
-            result, using = selected_module.process(action["refined_prompt"]), selected_module.__class__.__name__
-            if self.verbose: print(f"Using module '{using}' to process the input.")
-        print(f"Result: {result}")
-        print(f"Using: {using}")
-        print(action["refined_prompt"])
-        self.store_memory(action["refined_prompt"], result, module=using)
-
+        result, using = self.execute_action(self.determine_action(prompt_input))
+        if chaining_mode and self.goal and not self.goal.is_complete():
+            self.judge_output(result)
         return result, using
 
-    def check_goal_achieved(self):
-        # Placeholder for goal-checking logic
-        return False
+    def execute_action(self, action):
+        if action["use_tool"]:
+            result = self.use_tool(action["refined_prompt"], action["tool_index"])
+        else:
+            selected_module = self.modules[action["module_index"]]
+            result = selected_module.process(action["refined_prompt"])
+        self.store_memory(action["refined_prompt"], result)
+        return result, action.get("module_name", "Unknown Module")
+
+    def check_goal_achieved(self) -> bool:
+        return self.goal.is_complete()
 
     def store_memory(self, user_input: str, response: str, module: str = ""):
         """Store the user input, response, and module/tool name in memory only if not already stored."""

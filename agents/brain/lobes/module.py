@@ -79,9 +79,13 @@ class Module:
     def build_prompt_builder(self, brain: Optional['Brain'] = None, modules=None, tools=None, examples=None):
         """Initialize the prompt builder using either the brain instance or separate components."""
         if brain:
-            self.prompt_builder = StructuredPrompt(tools=brain.tool_descriptions, modules=brain.module_descriptions,
-                                                   examples=brain.examples)
-        elif modules and tools and examples:
-            self.prompt_builder = StructuredPrompt(tools=tools, modules=modules, examples=examples)
-        else:
-            raise ValueError("Either brain or modules, tools, and examples must be provided to build prompt_builder.")
+            modules, tools, examples = self.parse_brain(brain)
+        self.prompt_builder = StructuredPrompt(tools, modules, examples)
+
+    @staticmethod
+    def parse_brain(brain: 'Brain'):
+        """Parse the brain instance to extract necessary information for the module."""
+        modules = brain.module_descriptions
+        tools = brain.tool_descriptions
+        examples = brain.examples.get_examples()
+        return modules, tools, examples

@@ -10,6 +10,6 @@ class Milestone(ABC):
         self.fallback = fallback
 
     @abstractmethod
-    def is_achieved(self, agent):
+    def is_achieved(self, brain, input_data):
         """Check if the milestone has been achieved. This should be overridden in each subclass."""
-        pass
+        return True
