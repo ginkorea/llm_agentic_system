@@ -1,17 +1,26 @@
 # core.py
+
 from typing import Any
-
 from pandas import DataFrame
-
 from agents.brain.lobes.simple_modules import ControlModule, MainModule, MemoryModule
 from agents.brain.prompts.examples.base_examples import ExamplesBase
-
-
 import json
 
 
 class Brain:
     def __init__(self, toolkit, forget_threshold=10, verbose=True, memory_type='embedded', include_routing_module=False, goal=None, goal_file=None):
+        """
+        Initializes the Brain with memory, tools, and modules.
+
+        Parameters:
+        - toolkit: Collection of tools available for the Brain.
+        - forget_threshold: Threshold for memory forgetting.
+        - verbose: If True, prints debugging information.
+        - memory_type: Type of memory to initialize.
+        - include_routing_module: Whether to include a routing module.
+        - goal: The main goal object for the Brain.
+        - goal_file: File for goal-related information, if applicable.
+        """
         self.verbose = verbose
         self.include_routing_module = include_routing_module
         self.memory = None
@@ -21,14 +30,20 @@ class Brain:
         self.tool_descriptions = self.build_tool_descriptions()
         self.module_descriptions = self.build_module_descriptions(include_routing_module)
         self.examples = ExamplesBase()
-        self.router = self.modules[0]
+        self.router = self.modules[0]  # Set the first module as the router
         self.previous_output = False
-        if goal: self.goal, self.goal_file = goal, goal_file
-        else: self.goal, self.goal_file = None, None # No goal set
+        self.goal = goal
+        self.goal_file = goal_file
 
     def judge_output(self, output: str) -> bool:
         """
-        Evaluate if the current output satisfies the current milestone's requirements.
+        Evaluates if the current output meets the current milestone's criteria.
+
+        Parameters:
+        - output: The output to evaluate.
+
+        Returns:
+        - True if the milestone is achieved, otherwise False.
         """
         current_milestone = self.goal.current_milestone()
         if current_milestone:
@@ -41,6 +56,13 @@ class Brain:
         return False
 
     def initialize_memory(self, memory_type, forget_threshold):
+        """
+        Initializes the memory based on the memory type specified.
+
+        Parameters:
+        - memory_type: Type of memory to use.
+        - forget_threshold: Threshold for memory forgetting.
+        """
         if memory_type == 'cuda':
             from .memory.cuda_embedded import CudaMemoryWithEmbeddings
             self.memory = CudaMemoryWithEmbeddings(forget_threshold=forget_threshold)
@@ -55,6 +77,12 @@ class Brain:
             self.memory = SimpleMemory(forget_threshold=forget_threshold)
 
     def load_modules(self):
+        """
+        Loads the default modules for the Brain.
+
+        Returns:
+        - A list of module instances.
+        """
         return [
             ControlModule(),
             MainModule(),
@@ -62,11 +90,26 @@ class Brain:
         ]
 
     def build_tool_descriptions(self) -> str:
+        """
+        Builds descriptions for all tools in the toolkit.
+
+        Returns:
+        - A formatted string with tool descriptions.
+        """
         tool_info = {tool.name: tool.description for tool in self.toolkit.tools}
         if self.verbose: print(f"Tool information initialized: {tool_info}")
         return "\n".join([f"{name}: {desc}" for name, desc in tool_info.items()])
 
     def build_module_descriptions(self, include_routing_module: bool) -> str:
+        """
+        Builds descriptions for all modules.
+
+        Parameters:
+        - include_routing_module: Whether to include the routing module in descriptions.
+
+        Returns:
+        - A formatted string with module descriptions.
+        """
         module_info = {}
         start_index = 0 if include_routing_module else 1
         for idx, module in enumerate(self.modules[start_index:], start=start_index):
@@ -80,36 +123,36 @@ class Brain:
 
     def initialize_prompt_builders(self):
         """
-        Initialize the prompt builders for all modules.
-        This method should be called after tool and module descriptions are generated.
+        Initializes prompt builders for all modules.
+        Should be called after generating tool and module descriptions.
         """
         for module in self.modules:
-            module.build_prompt_builder(
-                brain=self
-            )
+            module.build_prompt_builder(brain=self)
 
-    def determine_action(self, user_input: str, previous_output: bool = False) -> dict:
+    def add_memory_context(self, prompt: str) -> list:
         """
-        Use the router to determine if the input should be handled by a tool or a module.
-        """
-        # Generate prompt using router's StructuredPrompt
-        try:
-            prompt = self.router.prompt_builder.build_prompt(user_input, previous_output)
-        except AttributeError:
-            self.initialize_prompt_builders()
-            print("Prompt builders initialized.")
-            print("Re-running prompt generation.")
-            print(f"Router: {self.router}")
-            prompt = self.router.prompt_builder.build_prompt(user_input, previous_output)
-        if self.verbose: print(f"Constructed prompt: {prompt}")
+        Retrieves and formats the memory context for a given prompt.
 
-        # Retrieve short-term memory as context
+        Parameters:
+        - prompt: The current prompt for which memory context is needed.
+
+        Returns:
+        - A formatted list of memory entries for use in structured prompts.
+        """
         short_term_memory = self.memory.recall_memory(0, self.memory.short_term_length).to_dict('records')
-        prompt_messages = self.router.build_memory_context(user_input=prompt, memory=short_term_memory)
+        return self.router.build_memory_context(user_input=prompt, memory=short_term_memory)
 
-        # Process prompt to obtain decision
-        decision_response = self.router.process(prompt_messages)
+    def encode_json(self, decision_response: str, user_input: str) -> dict:
+        """
+        Parses the JSON response from the decision process and extracts relevant information.
 
+        Parameters:
+        - decision_response: The JSON string response from the router.
+        - user_input: The original input from the user, used as a fallback.
+
+        Returns:
+        - A structured dictionary indicating whether to use a tool or module, along with indices and prompts.
+        """
         try:
             decision = json.loads(decision_response)
             use_tool = decision.get('use_tool', False)
@@ -118,13 +161,12 @@ class Brain:
             if use_tool:
                 tool_name = decision.get('tool_name')
                 tool_index = next((idx for idx, tool in enumerate(self.toolkit.tools) if tool.name == tool_name), None)
-                if tool_index is not None:
-                    return {
-                        "use_tool": True,
-                        "tool_index": tool_index,
-                        "tool_name": tool_name,
-                        "refined_prompt": refined_prompt
-                    }
+                return {
+                    "use_tool": True,
+                    "tool_index": tool_index,
+                    "tool_name": tool_name,
+                    "refined_prompt": refined_prompt
+                }
             else:
                 module_index = int(decision.get('module_index', 1 if not self.include_routing_module else 0))
                 return {
@@ -133,7 +175,9 @@ class Brain:
                     "module_name": self.modules[module_index].__class__.__name__,
                     "refined_prompt": refined_prompt
                 }
+
         except (json.JSONDecodeError, KeyError, ValueError):
+            # Default to MainModule if parsing fails
             return {
                 "use_tool": False,
                 "module_index": 1,
@@ -141,9 +185,42 @@ class Brain:
                 "refined_prompt": user_input
             }
 
+    def determine_action(self, user_input: str, previous_output: bool = False) -> dict:
+        """
+        Determines if the input should be handled by a tool or a module.
+
+        Parameters:
+        - user_input: The input from the user or task.
+        - previous_output: If True, incorporates previous module's output for chaining.
+
+        Returns:
+        - A structured dictionary indicating the action to take.
+        """
+        try:
+            prompt = self.router.prompt_builder.build_prompt(user_input, previous_output)
+        except AttributeError:
+            self.initialize_prompt_builders()
+            if self.verbose:
+                print("Re-running prompt generation.")
+            prompt = self.router.prompt_builder.build_prompt(user_input, previous_output)
+
+        if self.verbose:
+            print(f"Constructed prompt: {prompt}")
+
+        prompt_messages = self.add_memory_context(prompt)
+        decision_response = self.router.process(prompt_messages)
+        return self.encode_json(decision_response, user_input)
+
     def process_input(self, prompt_input: str, chaining_mode: bool = False) -> tuple[str | DataFrame, Any] | str:
         """
-        Process the input by deciding whether to use a tool or a module, and judge the output.
+        Processes the input by deciding whether to use a tool or module and evaluates milestone completion.
+
+        Parameters:
+        - prompt_input: The input prompt to process.
+        - chaining_mode: If True, checks milestone completion in chaining mode.
+
+        Returns:
+        - The result of executing the action and the module/tool used.
         """
         result, using = self.execute_action(self.determine_action(prompt_input))
         if chaining_mode and self.goal and not self.goal.is_complete():
@@ -151,6 +228,15 @@ class Brain:
         return result, using
 
     def execute_action(self, action):
+        """
+        Executes the given action based on whether a tool or module is selected.
+
+        Parameters:
+        - action: The structured dictionary with details about the action to execute.
+
+        Returns:
+        - The result of the action and the name of the module/tool used.
+        """
         if action["use_tool"]:
             result = self.use_tool(action["refined_prompt"], action["tool_index"])
         else:
@@ -159,16 +245,27 @@ class Brain:
         self.store_memory(action["refined_prompt"], result)
         return result, action.get("module_name", "Unknown Module")
 
-    def check_goal_achieved(self) -> bool:
-        return self.goal.is_complete()
-
     def store_memory(self, user_input: str, response: str, module: str = ""):
-        """Store the user input, response, and module/tool name in memory only if not already stored."""
+        """
+        Stores the user input, response, and module/tool name in memory.
+
+        Parameters:
+        - user_input: The original input from the user.
+        - response: The output response to store.
+        - module: The name of the module/tool used.
+        """
         self.memory.store_memory(user_input, response, module=module)
 
     def get_module_by_name(self, module_name: str, include_routing_module: bool = False):
         """
-        Retrieve a module instance by its class name, with the option to include the routing module.
+        Retrieves a module instance by its class name.
+
+        Parameters:
+        - module_name: Name of the module to retrieve.
+        - include_routing_module: Whether to include the routing module.
+
+        Returns:
+        - The module instance if found, otherwise None.
         """
         start_index = 0 if include_routing_module else 1
         for module in self.modules[start_index:]:
@@ -177,12 +274,21 @@ class Brain:
         return None
 
     def use_tool(self, user_input: str, tool_index: int) -> str:
+        """
+        Uses the specified tool with the given input.
+
+        Parameters:
+        - user_input: The input to provide to the tool.
+        - tool_index: Index of the tool to use.
+
+        Returns:
+        - The result from using the tool.
+        """
         chosen_tool = self.toolkit.tools[tool_index]
         try:
             if chosen_tool.name == 'search':
-                # Parse user_input to extract the query and n_sites if needed
                 query = user_input
-                n_sites = 5  # Set default or parse from user_input
+                n_sites = 5  # Default number of sites to search
                 expression = {'query_parameters': {'query': query, 'n_sites': n_sites}}
             else:
                 expression = user_input

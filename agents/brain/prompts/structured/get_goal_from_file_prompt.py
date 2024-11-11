@@ -41,6 +41,10 @@ class GoalBuilderPrompt(StructuredPrompt):
         ----------------
 
         Based on the content above, create a goal statement that captures the primary objective.  RESPOND IN LESS THAN 3 SENTENCES.
+        
+        example_1: "Develop a mobile app that allows users to track their daily exercise and nutrition with the following features: ..."
+        example_2: "Create a web-based platform for managing customer data and generating reports based on user input that ..."
+        
         """
         print("self.prompt for GoalBuilder:", self.prompt)
         return self.prompt

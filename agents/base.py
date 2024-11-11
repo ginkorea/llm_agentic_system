@@ -30,9 +30,10 @@ class Agent:
     def run(self):
         if self.chaining:
             current_input = self.brain.goal.get_progress_description()
-            while not self.brain.check_goal_achieved():
+            while not self.brain.goal.is_complete():
                 result, module_used = self.brain.process_input(current_input, chaining_mode=True)
-                print(f"Output from {module_used}:", result)
+                if self.verbose:
+                    print(f"Output from {module_used}:", result)
                 current_input = result
         else:
             while True:

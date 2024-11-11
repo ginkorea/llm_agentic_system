@@ -46,12 +46,14 @@ class StructuredPrompt:
             """
         return self.prompt
 
-    def reset_prompt(self) -> None:
+    def reset_prompt(self, goal=None) -> None:
         """
         Resets the prompt to the base prompt.
         """
-        self.prompt = self.base_prompt
-
+        if goal:
+            self.prompt = goal.get_progress_description() + self.base_prompt
+        else:
+            self.prompt = self.base_prompt
 
 
 
