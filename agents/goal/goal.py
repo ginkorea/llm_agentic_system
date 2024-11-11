@@ -15,6 +15,10 @@ class Goal:
         if self.current_milestone() and self.current_milestone().is_achieved(agent):
             self.current_milestone_index += 1
 
+    def fallback(self):
+        fallback_index = self.current_milestone().fallback
+        self.current_milestone_index += fallback_index
+
     def is_complete(self):
         return self.current_milestone_index >= len(self.milestones)
 
