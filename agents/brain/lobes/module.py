@@ -1,7 +1,7 @@
 from langchain_openai import ChatOpenAI
 from langchain.schema import SystemMessage, HumanMessage, AIMessage
 from typing import List, Dict, Optional
-from agents.brain.prompts.structured_prompt import StructuredPrompt
+from agents.brain.prompts.structured.structured_prompt import StructuredPrompt
 
 from typing import TYPE_CHECKING
 

@@ -1,6 +1,4 @@
 from agents.brain.lobes.module import Module
-from agents.brain.prompts.structured_prompt import ControllerPrompt
-
 
 
 # ManagerFunction: Task management and decision-making
@@ -126,9 +124,9 @@ class RefactorLobe(Module):
 
 if __name__ == "__main__":
     # Example test of DebuggerLobe and SeniorDev instances
-    from const.sk import kc
 
-    manager = TaskManager()
+
+    manager = TaskRouter()
     debugger = DebuggerLobe()
     senior_dev = SeniorDev()
 

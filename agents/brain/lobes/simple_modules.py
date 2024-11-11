@@ -1,6 +1,5 @@
 from agents.brain.lobes.lobes import (PreFrontalCortex, FrontalLobe)
 from agents.brain.lobes.hippocampus import Hippocampus
-from agents.brain.prompts.structured_prompt import ControllerPrompt
 
 
 class ControlModule(PreFrontalCortex):

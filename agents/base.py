@@ -1,8 +1,10 @@
 from agents.toolkit.bag import BagOfTools
+from agents.goal.goal import Goal
+from agents.goal.milestones.milestone import Milestone
 
 # Base Agent class
 class Agent:
-    def __init__(self, forget_threshold: int = 10, verbose: bool = True, memory_type: str = 'simple', brain_type: str = 'simple', chaining: bool = False, goal: str = None, milestones: list = None):
+    def __init__(self, forget_threshold: int = 10, verbose: bool = True, memory_type: str = 'simple', brain_type: str = 'simple', chaining: bool = False, goal_description=None, milestones=None):
         # Set the verbose flag
         self.verbose = verbose
 
@@ -13,9 +15,11 @@ class Agent:
         self.chaining = chaining
 
         # Set the goal and milestones for chaining mode
+        milestone_objects = []
         if chaining:
-            self.goal = goal
-            self.milestone = milestones
+            milestone_objects = [Milestone(description, check_func) for description, check_func in milestones]
+            self.goal = Goal(goal_description, milestone_objects)
+
         else:
             self.goal = None
             self.milestone = None
@@ -29,6 +33,9 @@ class Agent:
             self.brain = CognitiveBrain(toolkit=self.toolkit, forget_threshold=forget_threshold, verbose=verbose, memory_type=memory_type)
         elif brain_type == 'code':
             from agents.brain.code_brain_model import CodeBrain
+            if chaining:
+                from agents.goal.software_dev_goal import SoftwareDevelopmentGoal
+                self.goal = SoftwareDevelopmentGoal(goal_description, milestone_objects, goal_file=None)
             self.brain = CodeBrain(toolkit=self.toolkit, forget_threshold=forget_threshold, verbose=verbose, memory_type=memory_type)
 
     def process_input(self, user_input: str) -> str:
@@ -50,6 +57,8 @@ class Agent:
                 # Process the current input through the brain
                 result, using = self.process_input(current_input)
 
+
+
                 # Output the result for debugging
                 print(f"Output from {using}:", result)
 
@@ -65,11 +74,12 @@ class Agent:
                 response = self.brain.process_input(user_input)
                 print("Agent:", response)
 
-
     def goal_achieved(self):
-        """Determine if the goal has been achieved by checking milestones or criteria."""
-        # Define logic to check if goal criteria or milestones have been met
-        return False  # Placeholder
+        """Check if the overall goal has been achieved by updating and checking milestones."""
+        if self.goal:
+            self.goal.update_progress(self)
+            return self.goal.is_complete()
+        return False
 
 # Example usage
 if __name__ == "__main__":

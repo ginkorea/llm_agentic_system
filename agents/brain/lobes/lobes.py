@@ -1,5 +1,5 @@
 from agents.brain.lobes.module import Module
-from agents.brain.prompts.structured_prompt import ControllerPrompt
+
 
 # PreFrontalCortex: Reflexive thinking and decision-making
 class PreFrontalCortex(Module):
@@ -115,8 +115,6 @@ class CerebralCortex(Module):
 # Test the CerbralCortex module
 
 if __name__ == "__main__":
-    from const.sk import kc
-
     module = CerebralCortex()
     print(module.get_info())
     print(module.process(["What is the capital of France?"]))
