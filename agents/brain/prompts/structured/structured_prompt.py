@@ -1,5 +1,6 @@
 # structured_prompt.py
 
+from agents.brain.goal.goal import Goal
 from typing import Optional
 
 class StructuredPrompt:
@@ -10,14 +11,15 @@ class StructuredPrompt:
     """
 
     def __init__(self, tools: Optional[str] = None, modules: Optional[str] = None,
-                 examples: Optional[str] = None):
+                 examples: Optional[str] = None, goal: Optional[Goal] = None):
         self.tools = tools or "No tools available."
         self.modules = modules or "No modules available."
         self.examples = examples or "No examples provided."
         self.base_prompt = "You are a brain module, responsible for handling specific task as part of a larger system. Respond to the following prompt based on the input."
-        self.prompt = self.base_prompt  # Initialize prompt to base prompt
+        self.goal = goal # Goal object for tracking progress
+        self.prompt = self.base_prompt # Initialize prompt to base prompt
 
-    def build_prompt(self, prompt_input: str, previous_output: bool = False, previous_module: Optional[str] = None) -> str:
+    def build_prompt(self, prompt_input: str, previous_output: bool = False, previous_module: Optional[str] = None, goal: Goal = None) -> str:
         """
         Constructs the prompt based on user input, tools, modules, and examples.
         If `previous_output` is True, formats the prompt to incorporate previous output.
@@ -54,6 +56,14 @@ class StructuredPrompt:
             self.prompt = goal.get_progress_description() + self.base_prompt
         else:
             self.prompt = self.base_prompt
+
+    def set_goal(self, goal: Goal) -> None:
+        """
+        Sets the goal object for tracking progress.
+        """
+        self.goal = goal
+
+
 
 
 

@@ -1,5 +1,5 @@
 from typing import Optional
-from agents.brain.prompts.structured.structured_prompt import StructuredPrompt
+from agents.brain.prompts.structured import StructuredPrompt
 
 class ControllerPrompt(StructuredPrompt):
     """

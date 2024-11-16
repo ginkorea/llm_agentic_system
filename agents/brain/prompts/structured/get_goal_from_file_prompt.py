@@ -1,7 +1,8 @@
 # goal_builder_prompt.py
 
 from typing import Optional
-from agents.brain.prompts.structured.structured_prompt import StructuredPrompt
+from agents.brain.prompts.structured import StructuredPrompt
+from agents.brain.goal.goal import Goal
 
 class GoalBuilderPrompt(StructuredPrompt):
     """
@@ -21,7 +22,7 @@ class GoalBuilderPrompt(StructuredPrompt):
         """
         self.reset_prompt()  # Initialize prompt to GoalBuilder's base prompt
 
-    def build_prompt(self, prd_text: str, previous_output: bool = False, previous_module: Optional[str] = None) -> str:
+    def build_prompt(self, prd_text: str, previous_output: bool = False, previous_module: Optional[str] = None, goal: Goal = None) -> str:
         """
         Constructs the prompt based on the provided PRD or requirements document text.
 

@@ -6,8 +6,8 @@ from agents.brain.lobes.lobes import (
 from agents.brain.lobes.hippocampus import Hippocampus
 from agents.brain.prompts.examples.cognitive_examples import CognitiveExamples
 class CognitiveBrain(Brain):
-    def __init__(self, toolkit, forget_threshold: int = 10, verbose: bool = True, memory_type='cuda'):
-        super().__init__(toolkit, forget_threshold, verbose, memory_type, goal_file=None, goal=None)
+    def __init__(self, toolkit, forget_threshold: int = 10, verbose: bool = True, memory_type='cuda', goal_file=None, goal=None):
+        super().__init__(toolkit, forget_threshold, verbose, memory_type, goal_file=goal_file, goal=goal)
 
         # Add cognitive lobes to the brain
         self.modules = [

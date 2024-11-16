@@ -1,9 +1,6 @@
 from agents.brain.core import Brain
-from agents.brain.lobes.code_lobes import (
-    TaskRouter, LogicLobe, DebuggerLobe, SeniorDev, SyntaxLobe,
-    DocumentationLobe, TestingLobe, OptimizerLobe, RefactorLobe, GoalSetter
-)
-from agents.brain.prompts.examples.code_examples import CodeExamples
+from agents.brain.lobes.code import TaskRouter, GoalSetter, SoftwareDesigner, EnvironmentSetupManager
+from agents.brain.prompts.examples import CodeExamples
 from agents.brain.goal.software_dev_goal import SoftwareDevelopmentGoal
 
 class CodeBrain(Brain):
@@ -14,16 +11,10 @@ class CodeBrain(Brain):
 
         # Add code-focused lobes to the brain
         self.modules = [
-            TaskRouter(),      # Task manager directing to other lobes
-            LogicLobe(),            # Responsible for structuring code logic
-            DebuggerLobe(),         # Primary debugger for initial error resolution
-            SeniorDev(),            # Advanced debugging for complex issues
-            SyntaxLobe(),           # Generates syntax and boilerplate code
-            DocumentationLobe(),    # Creates documentation and comments
-            TestingLobe(),          # Generates tests to verify code functionality
-            OptimizerLobe(),        # Optimizes code for efficiency and readability
-            RefactorLobe(),          # Refactors code to improve clarity and best practices
-            GoalSetter()            # Sets and manages software development goals
+            TaskRouter(),               # Task manager directing to other lobes
+            SoftwareDesigner(),         # Designs software architecture and logic
+            EnvironmentSetupManager(),  # Sets up the development environment
+            GoalSetter()                # Sets and manages software development goals
         ]
 
         # Pre-generate descriptions for tools and modules
@@ -33,15 +24,43 @@ class CodeBrain(Brain):
         self.goal_setter = self.modules[-1]
         self.initialize_prompt_builders()
 
+        # Load PRD content from file
+        self.knowledge_base.update(self.load_prd_from_file())
+
         # Set the goal and milestones for chaining mode
         self.goal = SoftwareDevelopmentGoal(None, None, goal_file=goal_file)
         self.goal.description = self.goal.set_unique_goal_from_file(brain=self)
 
+
         if self.verbose:
             print("CodeBrain initialized.")
+            print("PRD: ", self.knowledge_base["prd"] if "prd" in self.knowledge_base else "No PRD loaded.")
             print("Goal set:", self.goal.description)
             for i, milestone in enumerate(self.goal.milestones):
                 print(f"Milestone {i}: {milestone.description}")
+
+
+    def load_prd_from_file(self) -> dict[str, str]:
+        """
+        Reads the PRD content from the specified file.
+
+        Parameters:
+        - None
+
+        Returns:
+        - dict: A dictionary containing the PRD content with the key 'prd'.
+        """
+        key = "prd"
+        try:
+            with open(self.goal_file, "r") as prd_file:
+                return {key: prd_file.read()}
+        except FileNotFoundError:
+            print(f"Error: The file '{self.goal_file}' was not found.")
+            return {key: ""}
+        except Exception as e:
+            print(f"Error reading the file '{self.goal_file}': {e}")
+            return {key: ""}
+
 
 
 

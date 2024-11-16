@@ -3,7 +3,7 @@
 from typing import Any
 from pandas import DataFrame
 from agents.brain.lobes.simple_modules import ControlModule, MainModule, MemoryModule
-from agents.brain.prompts.examples.base_examples import ExamplesBase
+from agents.brain.prompts.examples import ExamplesBase
 import json
 
 
@@ -34,6 +34,7 @@ class Brain:
         self.previous_output = False
         self.goal = goal
         self.goal_file = goal_file
+        self.knowledge_base = {}
 
     def judge_output(self, output: str) -> bool:
         """

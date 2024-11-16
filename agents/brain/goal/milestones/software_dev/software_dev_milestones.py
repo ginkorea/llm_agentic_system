@@ -1,8 +1,8 @@
 from agents.brain.goal.milestones.milestone import Milestone
 
-class UMLMilestone(Milestone):
+class SoftwareDesignMilestone(Milestone):
     def __init__(self):
-        super().__init__("Complete UML Design")
+        super().__init__("Complete UML and Architecture Design")
 
     def is_achieved(self, brain, input_data):
         print("Checking if UML is achieved...")
