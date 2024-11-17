@@ -1,128 +1,78 @@
-from agents.brain.prompts.examples import ExamplesBase
+from agents.brain.prompts.examples import SoftwareDesignExamples
+from agents.brain.prompts.structured import SoftwareDesignPrompt
+from agents.brain.lobes.module import Module
+from typing import Optional
+from agents.brain.core import Brain
 
 
-class EnvironmentSetupExamples(ExamplesBase):
-    """
-    Examples for the EnvironmentSetupManager, focused on generating dependency files.
-    """
+class SoftwareDesigner(Module):
+    """Handles the design phase, generating UML diagrams and architecture designs from PRD input."""
 
     def __init__(self):
-        super().__init__()
-        self.prd_example = self.get_prd_example()
-        self.uml_example = self.get_uml_example()
-        self.architecture_example = self.get_architecture_example()
-        self.requirements_txt_example = self.get_requirements_txt_example()
+        super().__init__(
+            model_name="gpt-4o",
+            temperature=0.5,
+            memory_limit=3,
+            system_message="You generate UML diagrams and architecture designs based on the provided PRD.",
+        )
+        self.examples = SoftwareDesignExamples()
 
-    @staticmethod
-    def get_prd_example() -> str:
+    def build_prompt_builder(self, brain: Optional['Brain'] = None, modules=None, tools=None, examples=None):
         """
-        Returns the sample PRD.
+        Builds a structured prompt builder specific to the SoftwareDesignLobe.
         """
-        return """
-        # Project Overview
-        The `DataAnalyzer` application processes and visualizes large datasets.
+        self.prompt_builder = SoftwareDesignPrompt(examples=self.examples.get_examples())
 
-        # Features
-        1. Data ingestion and transformation.
-        2. Integration with machine learning pipelines for model training.
-        3. Customizable visualization tools.
-
-        # Technical Details
-        - **Programming Language**: Python
-        - **Dependencies**:
-            - Pandas for data manipulation.
-            - NumPy for numerical computations.
-            - Matplotlib for visualizations.
-
-        # Use Cases
-        - A data scientist preparing data for machine learning.
-        - An analyst generating reports from datasets.
+    def process_input(self, prd_text: str) -> str:
         """
+        Simulates processing the input PRD and generating UML and architecture outputs.
 
-    @staticmethod
-    def get_uml_example() -> str:
+        Parameters:
+        - prd_text: The Product Requirements Document (PRD) input.
+
+        Returns:
+        - The generated UML and architecture design as a single string.
         """
-        Returns the UML diagram example.
-        """
-        return """
-        ```plaintext
-        @startuml
-        class DataIngestion {
-            +loadData(source: string): DataFrame
-        }
+        self.build_prompt_builder()
+        return self.prompt_builder.build_prompt(prd_text)
 
-        class DataTransformation {
-            +transformData(data: DataFrame): DataFrame
-        }
 
-        class Visualization {
-            +generateGraph(data: DataFrame, graphType: string): void
-        }
+# Test the SoftwareDesignLobe with a sample PRD
+if __name__ == "__main__":
+    # Initialize the lobe
+    from const.sk import kc as sk
+    software_design_lobe = SoftwareDesigner()
 
-        DataIngestion --> DataTransformation
-        DataTransformation --> Visualization
-        @enduml
-        ```
-        """
+    # Sample PRD input
+    sample_prd = """
+    # Project Overview
+    The `Task Tracker` application is designed to streamline task management for small teams, enabling members to create, assign, and track tasks with real-time updates. The system focuses on simplicity and efficiency.
 
-    @staticmethod
-    def get_architecture_example() -> str:
-        """
-        Returns the Architecture Design example.
-        """
-        return """
-        ```plaintext
-        ## Architecture Design for DataAnalyzer Application
+    # Features
+    1. **Task Management**: Users can create, assign, and update tasks with descriptions, priorities, and deadlines.
+    2. **Team Collaboration**: Each team has a dashboard showing task status and team activity.
+    3. **Notifications**: Alerts for approaching deadlines and task updates.
 
-        ### Components
-        1. **Frontend**:
-            - Framework: ReactJS
-            - Features: Data upload and visualization dashboard.
+    # Constraints
+    - Must support both desktop and mobile devices.
+    - The system should handle up to 100 simultaneous users.
 
-        2. **Backend**:
-            - Framework: Flask
-            - Features: Data processing and API endpoints.
+    # Technical Details
+    - **Frontend**: ReactJS for cross-platform compatibility.
+    - **Backend**: Node.js for task management APIs.
+    - **Database**: PostgreSQL for secure and structured data storage.
 
-        3. **Database**:
-            - Type: PostgreSQL
-            - Features: Storing processed datasets and user configurations.
+    # Use Cases
+    1. A team lead assigns tasks to members with deadlines and priorities.
+    2. Team members update task progress and set task statuses to `In Progress` or `Complete`.
+    3. A user receives notifications for approaching deadlines and task changes.
+    """
 
-        4. **Visualization**:
-            - Libraries: Matplotlib and Plotly for graph generation.
-        ```
-        """
+    # Generate and display the output
+    prompt_output = software_design_lobe.process_input(sample_prd)
+    print("Generated Prompt:\n")
+    print(prompt_output)
+    output = software_design_lobe.model.invoke(prompt_output)
+    print("\nGenerated Output:\n")
+    print(output.content)
 
-    @staticmethod
-    def get_requirements_txt_example() -> str:
-        """
-        Returns an example requirements.txt file.
-        """
-        return """
-        ```plaintext
-        # requirements.txt
-        pandas==1.3.3
-        numpy==1.21.2
-        matplotlib==3.4.3
-        flask==2.0.1
-        react==17.0.2
-        plotly==5.3.1
-        ```
-        """
-
-    def get_examples(self) -> str:
-        """
-        Concatenates the PRD example, UML diagram, architecture design, and requirements.txt example into one string.
-        """
-        return f"""
-        # PRD Example
-        {self.prd_example}
-
-        # UML Diagram Example
-        {self.uml_example}
-
-        # Architecture Design Example
-        {self.architecture_example}
-
-        # Requirements.txt Example
-        {self.requirements_txt_example}
-        """
