@@ -18,12 +18,13 @@ class Module:
     """
 
     def __init__(self, model_name: str = None, temperature: float = None, memory_limit: Optional[int] = None,
-                 system_message: Optional[str] = None, initialize_model: bool = True, alt_system_message: Optional[str] = None):
+                 system_message: Optional[str] = None, initialize_model: bool = True, alt_system_message: Optional[str] = None, verbose: bool = False):
         self.model_name = model_name
         self.temperature = temperature
         self.memory_limit = memory_limit
         self.system_message = system_message
         self.alt_system_message = alt_system_message
+        self.verbose = verbose
 
         # Initialize the language model if the parameters are provided
         if initialize_model and self.model_name and self.temperature is not None:
@@ -76,11 +77,14 @@ class Module:
         print(f"Memory Limit: {self.memory_limit}")
         print(f"System Message: {self.system_message}")
 
-    def build_prompt_builder(self, brain: Optional['Brain'] = None, modules=None, tools=None, examples=None):
-        """Initialize the prompt builder using either the brain instance or separate components."""
+    def build_prompt_builder(self, brain: Optional['Brain'] = None, modules=None,
+                             tools=None, examples=None, **kwargs):
+        """
+        Initialize the prompt builder using either the brain instance or separate components.
+        """
         if brain:
             modules, tools, examples = self.parse_brain(brain)
-        self.prompt_builder = StructuredPrompt(tools, modules, examples)
+        self.prompt_builder = StructuredPrompt(tools=tools, modules=modules, examples=examples, **kwargs)
 
     @staticmethod
     def parse_brain(brain: 'Brain'):

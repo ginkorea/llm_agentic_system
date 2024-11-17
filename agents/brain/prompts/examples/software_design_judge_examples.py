@@ -1,4 +1,3 @@
-# software_design_judge_examples.py
 from agents.brain.prompts.examples import ExamplesBase
 
 class SoftwareDesignJudgeExamples(ExamplesBase):
@@ -66,8 +65,22 @@ class SoftwareDesignJudgeExamples(ExamplesBase):
     def get_feedback_example() -> str:
         return """
         Feedback:
-        - UML Diagram: Missing key classes (e.g., User). Cardinality is not specified.
-        - Architecture Design: Does not mention real-time updates via WebSockets.
+        [
+            {
+                "type": "uml",
+                "score": 0.85,
+                "pass/fail": "pass",
+                "reason": "All key classes and relationships are defined. Cardinality is specified for all associations.",
+                "recommendation": "No major changes needed. Consider improving the readability of class names."
+            },
+            {
+                "type": "architecture",
+                "score": 0.65,
+                "pass/fail": "fail",
+                "reason": "Real-time updates via WebSockets are not mentioned, and the deployment strategy is incomplete.",
+                "recommendation": "Add details about WebSocket integration for real-time updates and specify the deployment strategy."
+            }
+        ]
         """
 
     def get_examples(self) -> str:

@@ -1,6 +1,10 @@
 from agents.brain.prompts.examples import ExamplesBase
 
 class CodeExamples(ExamplesBase):
+    """
+    Examples for the CodeBrain model, including tools and modules.
+    """
+
     def __init__(self):
         super().__init__()
         self.define_tool_examples()
@@ -9,91 +13,70 @@ class CodeExamples(ExamplesBase):
     def define_tool_examples(self):
         # Adding examples for specific tools within CodeBrain
 
+        # Example for 'search' tool
+        self.add_tool_example(
+            user_input="Find Python libraries for data visualization",
+            tool_name="search",
+            refined_prompt="Python libraries for data visualization"
+        )
+
         # Example for 'calculate' tool
         self.add_tool_example(
-            user_input="calculate 10 * 5",
+            user_input="What is 25 times 4?",
             tool_name="calculate",
-            refined_prompt="10 * 5"
+            refined_prompt="25 * 4"
         )
 
         # Example for 'get_page' tool
         self.add_tool_example(
-            user_input="fetch content from https://example.com",
+            user_input="Fetch the webpage content of https://example.com",
             tool_name="get_page",
             refined_prompt="https://example.com"
         )
 
-        # Example for 'search' tool
-        self.add_tool_example(
-            user_input="Find the latest Python tutorials online",
-            tool_name="search",
-            refined_prompt="latest Python tutorials"
-        )
-
         # Example for 'visualize_file_structure' tool
         self.add_tool_example(
-            user_input="Show me the file structure of my project directory",
+            user_input="Show the directory structure of my project",
             tool_name="visualize_file_structure",
-            refined_prompt="project directory structure"
+            refined_prompt="directory structure of project"
         )
 
     def define_module_examples(self):
-        # Adding examples for specific lobes/modules within CodeBrain
+        # Adding examples for specific modules/lobes in CodeBrain
 
-        # Example for 'LogicLobe'
+        # Example for 'TaskRouter'
         self.add_module_example(
-            user_input="Generate the main logic for a function that sorts a list",
-            lobe_index=1,  # LogicLobe index in CodeBrain's module list
-            refined_prompt="Create main logic for a list-sorting function."
+            user_input="Delegate tasks to appropriate lobes for software design",
+            lobe_index=0,  # TaskRouter index in CodeBrain's module list
+            refined_prompt="Route task to appropriate lobe for software design"
         )
 
-        # Example for 'DebuggerLobe'
+        # Example for 'SoftwareDesigner'
         self.add_module_example(
-            user_input="Debug the function to identify why it returns None",
-            lobe_index=2,  # DebuggerLobe index
-            refined_prompt="Analyze the function for potential reasons it returns None."
+            user_input="Generate UML diagram and architecture design for the PRD",
+            lobe_index=1,  # SoftwareDesigner index
+            refined_prompt="Create UML diagram and architecture design from PRD."
         )
 
-        # Example for 'SeniorDev'
+        # Example for 'SoftwareDesignJudge'
         self.add_module_example(
-            user_input="Resolve complex issue in recursive function causing stack overflow",
-            lobe_index=3,  # SeniorDev index
-            refined_prompt="Examine recursive function to fix stack overflow error."
+            user_input="Evaluate the UML and architecture for compliance with PRD",
+            lobe_index=2,  # SoftwareDesignJudge index
+            refined_prompt="Assess UML and architecture against PRD requirements."
         )
 
-        # Example for 'SyntaxLobe'
+        # Example for 'EnvironmentSetupManager'
         self.add_module_example(
-            user_input="Generate the correct syntax for a Python dictionary comprehension",
-            lobe_index=4,  # SyntaxLobe index
-            refined_prompt="Generate syntax for a dictionary comprehension in Python."
+            user_input="Generate requirements.txt and other setup files for the project",
+            lobe_index=3,  # EnvironmentSetupManager index
+            refined_prompt="Create environment setup files based on PRD and design."
         )
 
-        # Example for 'DocumentationLobe'
+        # Example for 'GoalSetter'
         self.add_module_example(
-            user_input="Add documentation to the sorting function",
-            lobe_index=5,  # DocumentationLobe index
-            refined_prompt="Create documentation for the sorting function."
-        )
-
-        # Example for 'TestingLobe'
-        self.add_module_example(
-            user_input="Write unit tests for the list sorting function",
-            lobe_index=6,  # TestingLobe index
-            refined_prompt="Generate unit tests to validate list sorting function."
-        )
-
-        # Example for 'OptimizerLobe'
-        self.add_module_example(
-            user_input="Optimize the sort function for better performance",
-            lobe_index=7,  # OptimizerLobe index
-            refined_prompt="Enhance performance of the sorting function."
-        )
-
-        # Example for 'RefactorLobe'
-        self.add_module_example(
-            user_input="Refactor the code to improve readability",
-            lobe_index=8,  # RefactorLobe index
-            refined_prompt="Refactor code to enhance readability."
+            user_input="Define milestones for completing the software development goal",
+            lobe_index=4,  # GoalSetter index
+            refined_prompt="Set milestones for achieving the software development goal."
         )
 
 # Example instantiation and retrieval

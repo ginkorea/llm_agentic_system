@@ -32,6 +32,7 @@ class Goal:
         goal_prompt = brain.goal_setter.prompt_builder.build_prompt(requirements_text, '')
         print(f"Goal prompt: {goal_prompt}")
         unique_goal = brain.goal_setter.process(goal_prompt)
+        brain.memory.store_memory(goal_prompt, unique_goal, module="GoalSetter")
         print(f"Unique goal set: {unique_goal}")
         return unique_goal
 
@@ -40,5 +41,5 @@ class Goal:
         """Returns a formatted description of the goal and current milestone for the prompt."""
         progress = f"Goal: {self.description}\n"
         progress += f"Milestone {self.current_milestone_index + 1}/{len(self.milestones)}: {self.current_milestone().description}\n"
-        progress += f"Progress: {self.current_milestone_index + 1}/{len(self.milestones)} milestones completed.\n"
+        progress += f"Progress: {self.current_milestone_index}/{len(self.milestones)} milestones completed.\n"
         return progress

@@ -1,0 +1,1 @@
+from agents.brain.goal.goal import Goal

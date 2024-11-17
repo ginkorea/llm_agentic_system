@@ -17,12 +17,6 @@ class Agent:
             from agents.brain.cognitive import CognitiveBrain
             self.brain = CognitiveBrain(toolkit=self.toolkit, forget_threshold=forget_threshold, verbose=verbose, memory_type=memory_type, goal=goal, goal_file=goal_file)
 
-    def process_input(self, user_input: str) -> str:
-        """
-        Process the input through the brain, which decides whether to use a tool or lobe.
-        """
-        return self.brain.process_input(user_input)
-
     def store_memory(self, user_input: str, response: str, module: str):
         """Store the user input and response in memory."""
         self.brain.memory.store(user_input, response, module)
@@ -31,17 +25,23 @@ class Agent:
         if self.chaining:
             current_input = self.brain.goal.get_progress_description()
             while not self.brain.goal.is_complete():
-                result, module_used = self.brain.process_input(current_input, chaining_mode=True)
+                results, judge_output, achieved, using = self.brain.process_input(current_input, chaining_mode=True)
+                current_input = self.concat_results(results, judge_output, achieved, using)
                 if self.verbose:
-                    print(f"Output from {module_used}:", result)
-                current_input = result
+                    print(current_input)
         else:
             while True:
                 user_input = input("You: ")
                 if user_input.lower() == "exit":
                     break
-                response, _ = self.brain.process_input(user_input)
+                response, _, _, _ = self.brain.process_input(user_input)
                 print("Agent:", response)
+
+    @staticmethod
+    def concat_results(original_results, judge_results, achieved, using):
+        """Concatenate the results from the original input and the judge output."""
+        results = f"Original Results:\n{original_results}\nusing {using}\nGoal Achieved: {achieved} \nJudge Results:\n{judge_results}"
+        return results
 
 
     def goal_achieved(self):

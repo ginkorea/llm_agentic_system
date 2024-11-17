@@ -23,7 +23,7 @@ class SoftwareDesignPrompt(StructuredPrompt):
         Do not include any additional text. Just return the two code blocks.
         """
 
-    def build_prompt(self, prd_text: str, previous_output: bool = False, previous_module: Optional[str] = None, goal: Goal = None) -> str:
+    def build_prompt(self, prd_text: str, previous_output: bool = False, previous_module: Optional[str] = None, goal: Goal = None, **kwargs) -> str:
         """
         Builds the prompt to generate UML diagrams and architecture designs.
 
@@ -33,7 +33,7 @@ class SoftwareDesignPrompt(StructuredPrompt):
         Returns:
         - A formatted prompt string.
         """
-        return f"""
+        self.prompt = f"""
         {self.base_prompt}
         
         Example PRD and Outputs:
@@ -41,11 +41,16 @@ class SoftwareDesignPrompt(StructuredPrompt):
         {self.examples}
         
         ----------------
+        The examples above are for reference only. Your design should be based on the provided PRD.
+        Ensure you provide as much detail as possible in your UML Diagram and Architecture Design, this will be more in depth than the examples provided and should be tailored to the PRD.
 
-        PRD to Analyze:
+        PRD to Analyze (below):
         ----------------
         {prd_text}
         ----------------
 
-        Generate the outputs as described above.
+        Generate the outputs as described above.  Ensure that prior to code block include the title of the output in markdown (i.e. # UML Diagram or # Architecture Design)
         """
+        return self.prompt
+
+

@@ -18,39 +18,41 @@ class EnvironmentSetupManager(Module):
         self.examples = EnvironmentSetupExamples()
         self.prompt_input = None
 
-    def build_prompt_builder(self, brain: Optional[Brain] = None, modules=None, tools=None, examples=None):
+    def build_prompt_builder(self, brain: Optional[Brain] = None, modules=None, tools=None, examples=None, raw_output=None):
         """
         Builds a structured prompt builder specific to the EnvironmentSetupManager.
         Uses the brain's knowledge base with keys `prd`, `uml`, and `architecture` to format the prompt input.
         """
-        if brain and brain.knowledge_base:
-            prd = brain.knowledge_base.get("prd", "").strip()
-            uml = brain.knowledge_base.get("uml", "").strip()
-            architecture = brain.knowledge_base.get("architecture", "").strip()
+        try:
+            if brain and brain.knowledge_base:
+                prd = brain.knowledge_base.get("prd", "").strip()
+                uml = brain.knowledge_base.get("uml", "").strip()
+                architecture = brain.knowledge_base.get("architecture", "").strip()
 
-            if not prd:
-                raise ValueError("PRD data is missing from the knowledge base.")
-            if not uml:
-                raise ValueError("UML Diagram data is missing from the knowledge base.")
-            if not architecture:
-                raise ValueError("Architecture Design data is missing from the knowledge base.")
+                if not prd:
+                    raise ValueError("PRD data is missing from the knowledge base.")
+                if not uml:
+                    raise ValueError("UML Diagram data is missing from the knowledge base.")
+                if not architecture:
+                    raise ValueError("Architecture Design data is missing from the knowledge base.")
 
-            # Format the combined input for the prompt
-            formatted_input = f"""
-            # PRD
-            {prd}
-
-            # UML Diagram
-            {uml}
-
-            # Architecture Design
-            {architecture}
-            """
-        else:
-            raise ValueError("Brain knowledge base is empty or not provided.")
+                # Format the combined input for the prompt
+                formatted_input = f"""
+                # PRD
+                {prd}
+    
+                # UML Diagram
+                {uml}
+    
+                # Architecture Design
+                {architecture}
+                """
+                self.prompt_input = formatted_input
+        except ValueError as e:
+            print(f"Error in EnvironmentSetupManager.build_prompt_builder: {e}")
 
         self.prompt_builder = EnvironmentSetupPrompt(examples=self.examples.get_examples())
-        self.prompt_input = formatted_input
+
 
     def process_input(self, brain: Brain) -> str:
         """
@@ -108,7 +110,7 @@ if __name__ == "__main__":
         output = env_setup_manager.process_input(brain=b)
         print("Generated Artifacts:\n")
         print(output)
-    except ValueError as e:
-        print(f"Error: {e}")
+    except ValueError as er:
+        print(f"Error: {er}")
 
 

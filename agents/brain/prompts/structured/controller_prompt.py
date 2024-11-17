@@ -41,7 +41,7 @@ class ControllerPrompt(StructuredPrompt):
         {{
             "use_tool": false,
             "lobe_index": <lobe_index>,
-            "refined_prompt": "<refined_prompt_for_lobe>"
+            "refined_prompt": "<full original prompt> + '|' + <refined_prompt_for_lobe>"
         }}
         ----------------
         """

@@ -18,7 +18,7 @@ class EnvironmentSetupPrompt(StructuredPrompt):
         The output should include properly formatted code blocks with filenames as comments.
         """
 
-    def build_prompt(self, prompt_input: str, previous_output: bool = False, previous_module: Optional[str] = None, goal: Goal = None) -> str:
+    def build_prompt(self, prompt_input: str, previous_output: bool = False, previous_module: Optional[str] = None, goal: Goal = None, **kwargs) -> str:
         """
         Builds the prompt to generate environment setup files.
 

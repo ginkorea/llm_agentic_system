@@ -1,6 +1,6 @@
 # core.py
 
-from typing import Any
+from typing import Any, Tuple
 from pandas import DataFrame
 from agents.brain.lobes.simple_modules import ControlModule, MainModule, MemoryModule
 from agents.brain.prompts.examples import ExamplesBase
@@ -36,7 +36,7 @@ class Brain:
         self.goal_file = goal_file
         self.knowledge_base = {}
 
-    def judge_output(self, output: str) -> bool:
+    def judge_output(self, output: str) -> tuple[bool, str]:
         """
         Evaluates if the current output meets the current milestone's criteria.
 
@@ -46,15 +46,23 @@ class Brain:
         Returns:
         - True if the milestone is achieved, otherwise False.
         """
+        # ANSI escape codes for color
+        green = "\033[92m"  # Green text
+        red = "\033[91m"  # Red text
+        reset = "\033[0m"  # Reset text color to default
+
         current_milestone = self.goal.current_milestone()
+        judge = current_milestone.description + "Judge"
         if current_milestone:
-            is_achieved = current_milestone.is_achieved(self, output)
+            is_achieved, judge_output = current_milestone.is_achieved(self, output)
+            self.memory.store_memory(output, judge_output, module=judge)
             if is_achieved:
-                if self.verbose:
-                    print(f"Milestone '{current_milestone.description}' achieved.")
+                print(f"{green}Milestone '{current_milestone.description}' achieved.{reset}")
                 self.goal.update_progress()
-            return is_achieved
-        return False
+            else:
+                print(f"{red}Milestone '{current_milestone.description}' not achieved.{reset}")
+            return is_achieved, judge_output
+        return False, ""
 
     def initialize_memory(self, memory_type, forget_threshold):
         """
@@ -72,10 +80,10 @@ class Brain:
             self.memory = OpenvinoMemoryWithEmbeddings(forget_threshold=forget_threshold)
         elif memory_type == 'embedded':
             from .memory.embedded import EmbeddedMemory
-            self.memory = EmbeddedMemory(forget_threshold=forget_threshold)
+            self.memory = EmbeddedMemory()
         else:
             from .memory.simple import SimpleMemory
-            self.memory = SimpleMemory(forget_threshold=forget_threshold)
+            self.memory = SimpleMemory()
 
     def load_modules(self):
         """
@@ -210,9 +218,11 @@ class Brain:
 
         prompt_messages = self.add_memory_context(prompt)
         decision_response = self.router.process(prompt_messages)
-        return self.encode_json(decision_response, user_input)
+        return_json = self.encode_json(decision_response, user_input)
+        self.memory.store_memory(user_input, return_json, module="Router")
+        return return_json
 
-    def process_input(self, prompt_input: str, chaining_mode: bool = False) -> tuple[str | DataFrame, Any] | str:
+    def process_input(self, prompt_input: str, chaining_mode: bool = False) -> tuple[str | DataFrame, str, bool, str]:
         """
         Processes the input by deciding whether to use a tool or module and evaluates milestone completion.
 
@@ -225,8 +235,10 @@ class Brain:
         """
         result, using = self.execute_action(self.determine_action(prompt_input))
         if chaining_mode and self.goal and not self.goal.is_complete():
-            self.judge_output(result)
-        return result, using
+            achieved, judge_output = self.judge_output(result)
+        else:
+            achieved, judge_output = False, ""
+        return result, judge_output, achieved, using
 
     def execute_action(self, action):
         """
@@ -243,7 +255,7 @@ class Brain:
         else:
             selected_module = self.modules[action["module_index"]]
             result = selected_module.process(action["refined_prompt"])
-        self.store_memory(action["refined_prompt"], result)
+        self.store_memory(action["refined_prompt"], result, module=action.get("module_name", "Unknown Module"))
         return result, action.get("module_name", "Unknown Module")
 
     def store_memory(self, user_input: str, response: str, module: str = ""):

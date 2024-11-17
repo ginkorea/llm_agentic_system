@@ -1,5 +1,5 @@
 from agents.brain.core import Brain
-from agents.brain.lobes.code import TaskRouter, GoalSetter, SoftwareDesigner, EnvironmentSetupManager
+from agents.brain.lobes.code import TaskRouter, GoalSetter, SoftwareDesigner, EnvironmentSetupManager, SoftwareDesignJudge
 from agents.brain.prompts.examples import CodeExamples
 from agents.brain.goal.software_dev_goal import SoftwareDevelopmentGoal
 
@@ -13,6 +13,7 @@ class CodeBrain(Brain):
         self.modules = [
             TaskRouter(),               # Task manager directing to other lobes
             SoftwareDesigner(),         # Designs software architecture and logic
+            SoftwareDesignJudge(),      # Evaluates the quality of software design
             EnvironmentSetupManager(),  # Sets up the development environment
             GoalSetter()                # Sets and manages software development goals
         ]
