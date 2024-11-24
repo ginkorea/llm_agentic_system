@@ -124,4 +124,4 @@ class SoftwareDesignExamples(ExamplesBase):
         """
         Concatenates the PRD example, UML output, and architecture design into one string.
         """
-        return f"{self.prd_example}\n\n{self.uml_output_example}\n\n{self.architecture_design_example}"
+        return f"{self.get_prd()}\n\n{self.get_uml()}\n\n{self.get_architecture()}"

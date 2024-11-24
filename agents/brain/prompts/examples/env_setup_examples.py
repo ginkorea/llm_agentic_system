@@ -58,4 +58,4 @@ class EnvironmentSetupExamples(ExamplesBase):
         """
         Concatenates the PRD example and requirements.txt example into one string.
         """
-        return f"{self.prd_example}\n\n{self.requirements_txt_example}"
+        return f"{self.get_prd()}\n\n{self.get_requirements_txt()}"

@@ -86,13 +86,13 @@ class SoftwareDesignJudgeExamples(ExamplesBase):
     def get_examples(self) -> str:
         return f"""
         # PRD Example
-        {self.prd_example}
+        {self.get_prd()}
 
         # UML Diagram Example
-        {self.uml_example}
+        {self.get_uml()}
 
         # Architecture Design Example
-        {self.architecture_example}
+        {self.get_architecture()}
 
         # Feedback Example
         {self.feedback_example}

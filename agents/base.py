@@ -1,8 +1,12 @@
 from agents.toolkit.bag import BagOfTools
+import logging
 
 # Base Agent class
 class Agent:
     def __init__(self, forget_threshold=10, verbose=True, memory_type='simple', brain_type='simple', chaining=False, goal=None, goal_file=None):
+        self.logger = logging.getLogger(self.__class__.__name__)  # Logger specific to Agent
+        self.logger.setLevel(logging.DEBUG if verbose else logging.INFO)
+        self.logger.info("Initializing Agent...")
         self.verbose = verbose
         self.toolkit = BagOfTools()
         self.toolkit.get_tools()

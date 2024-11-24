@@ -4,3 +4,5 @@ from agents.brain.prompts.structured.get_goal_from_file_prompt import GoalBuilde
 from agents.brain.prompts.structured.controller_prompt import ControllerPrompt
 from agents.brain.prompts.structured.env_setup_prompt import EnvironmentSetupPrompt
 from agents.brain.prompts.structured.software_design_judge_prompt import SoftwareDesignJudgePrompt
+from agents.brain.prompts.structured.code_writer_prompt import CodeWriterPrompt
+from agents.brain.prompts.structured.acceptance_test_prompt import AcceptanceTestGeneratorPrompt
