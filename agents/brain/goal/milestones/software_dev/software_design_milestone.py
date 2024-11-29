@@ -1,7 +1,6 @@
-from typing import Tuple
-
 import colorama
 from agents.brain.goal.milestones import Milestone
+import re
 
 
 class SoftwareDesignMilestone(Milestone):
@@ -44,6 +43,8 @@ class SoftwareDesignMilestone(Milestone):
         passes = self.check_for_three_passes(judge_output)
         if passes:
             self.dump_files(brain)
+            required_classes = self.extract_classes_from_uml(uml_class)
+            brain.knowledge_base["required_classes"] = required_classes
             return True, f"{green}UML and Architecture Design validated and stored in the knowledge base.{reset}"
         else:
             return False, f"{red}UML and Architecture Design failed validation. Please review the output and make necessary corrections.{reset}"
@@ -52,6 +53,19 @@ class SoftwareDesignMilestone(Milestone):
     def check_for_three_passes(judges_output: str) -> bool:
         pass_count = judges_output.count('"pass/fail": "pass"')
         return pass_count >= 3
+
+    @staticmethod
+    def extract_classes_from_uml(uml_data):
+        """
+        Extracts required classes from the UML Class Diagram.
+
+        Args:
+            uml_data (str): UML Class Diagram in text format.
+
+        Returns:
+            set: Set of required class names.
+        """
+        return set(re.findall(r"class (\w+)", uml_data))
 
     @staticmethod
     def save_file(file_name: str, data: str):

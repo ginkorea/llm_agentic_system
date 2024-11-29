@@ -11,11 +11,24 @@ class CodeWriterPrompt(StructuredPrompt):
     def __init__(self, tools=None, modules=None, examples=None, goal=None):
         super().__init__(tools=tools, modules=modules, examples=examples, goal=goal)
         self.base_prompt = """
-        You are a code generation expert. Your task is to analyze the PRD, UML Diagram, and Architecture Design to generate:
-        - One Python file per class described in the UML Diagram.
+        You are a code generation expert. Your task is to analyze the PRD, UML Class and Sequence Diagrams, and Architecture Design to generate:
+        - One Python file per class described in the UML Class Diagram.
         - A `main.py` file integrating all classes.
 
         Each output should be a properly formatted Python code block with the filename as a comment at the top.
+        
+        for example the main.py file should look like this:
+        ```python
+        # main.py
+        import class1
+        import class2
+        import class3
+        
+        if __name__ == "__main__":
+        # your code here ...
+        ```
+        
+        generate one code block per class and one for the main.py file.
         """
 
     def build_prompt(self, prompt_input: str, previous_output: bool = False,
@@ -35,11 +48,44 @@ class CodeWriterPrompt(StructuredPrompt):
         {self.examples}
 
         ----------------
+        
+        The examples above are for reference only. Your code should be based on the provided input below.
+        Analyze the following PRD, UML Diagram, and Architecture Design to generate Python code files:
 
-        Input Data:
+        Input:
         ----------------
+        
+        Prompt Input:
         {prompt_input}
+                
+        PRD: 
+        {kwargs.get("prd", "PRD not found")}    
+        
+        UML Class Diagram:
+        {kwargs.get("uml_class", "UML Class Diagram not found")}
+        
+        UML Sequence Diagram:
+        {kwargs.get("uml_sequence", "UML Sequence Diagram not found")}
+        
+        Architecture Design:
+        {kwargs.get("architecture", "Architecture Design not found")}
 
-        Generate the Python code files as described above.
+        Implement the Following Required Classes:
+        ----------------
+        {kwargs.get("required_classes", "No required classes found.")}
+        ----------------
+        
+        The following classes are already implemented in the code base below:
+        ----------------
+        {kwargs.get("implemented_classes", "No implemented classes found.")}
+        ----------------
+        
+        Existing Code Base:
+        ----------------
+        {kwargs.get("code_base", "No existing code base found.")}
+        
+        ----------------
+                
+        Generate the Python code files as described above, one code block per class and one for the `main.py` file.
         """
         return self.prompt

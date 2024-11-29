@@ -36,7 +36,7 @@ class Brain:
         self.previous_output = False
         self.goal = goal
         self.goal_file = goal_file
-        self.knowledge_base = {}
+        self.knowledge_base = {'code': {}}
         self.work_folder = work_folder # Folder for storing work files
 
     def judge_output(self, output: str) -> tuple[bool, str]:

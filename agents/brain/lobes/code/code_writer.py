@@ -24,25 +24,21 @@ class CodeWriter(Module):
         Initializes the prompt builder using the CodeWriterPrompt class.
         """
         examples = self.examples.get_examples() if examples is None else examples
+        prd, uml, architecture = brain.knowledge_base.get("prd", ""), brain.knowledge_base.get("uml", ""), brain.knowledge_base.get("architecture", "")
+        required_classes = brain.knowledge_base.get("required_classes", "")
+        code_base = brain.knowledge_base.get("code", "")
+        implemented_classes = code_base.items() if code_base else []
+        kwargs.update({
+            "required_classes": required_classes,
+            "implemented_classes": implemented_classes,
+            "prd": prd,
+            "uml": uml,
+            "architecture": architecture,
+            "code_base": code_base
+        })
         self.prompt_builder = CodeWriterPrompt(modules=modules, tools=tools, examples=examples, **kwargs)
 
-    def generate_code(self, prd: str, uml: str, architecture: str) -> str:
-        """
-        Generates Python code files.
 
-        Parameters:
-        - prd: Product Requirements Document text.
-        - uml: UML Diagram text.
-        - architecture: Architecture Design text.
-
-        Returns:
-        - Generated Python code as a string.
-        """
-        if not self.prompt_builder:
-            self.build_prompt_builder()
-        prompt_input = f"# PRD\n{prd}\n\n# UML\n{uml}\n\n# Architecture\n{architecture}"
-        prompt = self.prompt_builder.build_prompt(prompt_input)
-        return self.model.process(prompt)
 
 
 # Test the CodeWriter module with sample PRD, UML, and Architecture Design
