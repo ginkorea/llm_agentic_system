@@ -8,7 +8,7 @@ import logging
 
 
 class Brain:
-    def __init__(self, toolkit, forget_threshold=10, verbose=True, memory_type='embedded', include_routing_module=False, goal=None, goal_file=None):
+    def __init__(self, toolkit, forget_threshold=10, verbose=True, memory_type='embedded', include_routing_module=False, goal=None, goal_file=None, work_folder="workbench"):
         """
         Initializes the Brain with memory, tools, and modules.
 
@@ -37,6 +37,7 @@ class Brain:
         self.goal = goal
         self.goal_file = goal_file
         self.knowledge_base = {}
+        self.work_folder = work_folder # Folder for storing work files
 
     def judge_output(self, output: str) -> tuple[bool, str]:
         """

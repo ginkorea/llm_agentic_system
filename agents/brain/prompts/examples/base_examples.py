@@ -8,7 +8,7 @@ class ExamplesBase:
         self.module_examples = []
         self.file_examples = {
             "prd": """
-            # prd
+            # PRD
             - **Title**: Inventory Management System (IMS)
             - **Introduction**: The IMS is designed to streamline inventory tracking, reduce stock discrepancies,
               and optimize supply chain operations for businesses of all sizes.
@@ -25,64 +25,64 @@ class ExamplesBase:
               - Role-Based Access: Secure the system with roles such as Admin, Manager, and Viewer.
             """,
             "uml_class": """
-            # uml diagrams
-            - **Class Diagram**:
-              ```mermaid
-              classDiagram
-                class InventoryManager {
-                  +viewInventory(): List
-                  +updateStock(itemId: int, quantity: int): bool
-                  +generateReport(startDate: Date, endDate: Date): Report
-                }
+            # UML Class Diagram
+            ```mermaid
+            classDiagram
+              class InventoryManager {
+                +viewInventory(): List
+                +updateStock(itemId: int, quantity: int): bool
+                +generateReport(startDate: Date, endDate: Date): Report
+              }
 
-                class Item {
-                  +id: int
-                  +name: string
-                  +quantity: int
-                  +location: Location
-                }
+              class Item {
+                +id: int
+                +name: string
+                +quantity: int
+                +location: Location
+              }
 
-                class Location {
-                  +id: int
-                  +name: string
-                  +address: string
-                }
+              class Location {
+                +id: int
+                +name: string
+                +address: string
+              }
 
-                class Report {
-                  +generateTurnoverReport(startDate: Date, endDate: Date): List
-                }
+              class Report {
+                +generateTurnoverReport(startDate: Date, endDate: Date): List
+              }
 
-                InventoryManager --> Item : manages >>
-                InventoryManager --> Report : creates >>
-                Item --> Location : stored_in >>
-              ```,
-            "uml_sequence": ""
-            - **Sequence Diagram**:
-              ```mermaid
-              sequenceDiagram
-                participant User
-                participant API
-                participant InventoryManager
-                participant Database
+              InventoryManager --> Item : manages >>
+              InventoryManager --> Report : creates >>
+              Item --> Location : stored_in >>
+            ```
+            """,
+            "uml_sequence": """
+            # UML Sequence Diagram
+            ```mermaid
+            sequenceDiagram
+              participant User
+              participant API
+              participant InventoryManager
+              participant Database
 
-                User->>API: Request inventory data
-                API->>InventoryManager: Fetch inventory data
-                InventoryManager->>Database: Query stock levels
-                Database-->>InventoryManager: Return stock data
-                InventoryManager-->>API: Send inventory data
-                API-->>User: Display inventory levels
+              User->>API: Request inventory data
+              API->>InventoryManager: Fetch inventory data
+              InventoryManager->>Database: Query stock levels
+              Database-->>InventoryManager: Return stock data
+              InventoryManager-->>API: Send inventory data
+              API-->>User: Display inventory levels
 
-                User->>API: Update stock levels
-                API->>InventoryManager: Validate update
-                InventoryManager->>Database: Update stock records
-                Database-->>InventoryManager: Confirmation
-                InventoryManager-->>API: Success response
-                API-->>User: Stock update successful
-              ```
+              User->>API: Update stock levels
+              API->>InventoryManager: Validate update
+              InventoryManager->>Database: Update stock records
+              Database-->>InventoryManager: Confirmation
+              InventoryManager-->>API: Success response
+              API-->>User: Stock update successful
+            ```
             """,
             "architecture": """
-            # Inventory Management System (IMS) - Architecture
-            - **Description**: The architecture for the IMS is designed for scalability, reliability, and real-time inventory tracking.
+            # Architecture Design
+            - **Description**: The IMS architecture is designed for scalability, reliability, and real-time inventory tracking.
             - **Components**:
               - **Frontend**: A React.js web interface for managing and viewing inventory.
               - **Backend**: A Python-based Flask API for business logic and database interactions.
@@ -108,7 +108,7 @@ class ExamplesBase:
               ```
             """,
             "code_output": """
-            ### Inventory Management System (IMS) - Code Output
+            # Code Example
             - **main.py**:
               ```python
               from ims import app
@@ -130,7 +130,7 @@ class ExamplesBase:
               ```
             """,
             "requirements": """
-            ### Inventory Management System (IMS) - Requirements.txt
+            # Requirements
             ```
             Flask==2.1.1
             SQLAlchemy==1.4.32
@@ -142,38 +142,28 @@ class ExamplesBase:
             ```python
             import subprocess
             import sys
-            def run_lice(arguments):
-                cmd = [sys.executable, 'lice/core.py'] + arguments
+
+            def test_get_inventory():
+                cmd = [sys.executable, "ims/routes/inventory.py"]
                 result = subprocess.run(cmd, capture_output=True, text=True)
-                return result.stdout, result.stderr, result.returncode
-
-            def test_default_license_generation():
-                stdout, stderr, returncode = run_lice([])
-                assert "All rights reserved." in stdout
-                assert returncode == 0
-
-            def test_specified_license_generation():
-                stdout, stderr, returncode = run_lice(['mit'])
-                assert "Permission is hereby granted" in stdout
-                assert returncode == 0
+                assert "Inventory Retrieved Successfully" in result.stdout
 
             if __name__ == "__main__":
-                test_default_license_generation()
-                test_specified_license_generation()
-                ```
+                test_get_inventory()
+            ```
             """,
             "unit_test": """
             # Unit Tests
             ```python
             import unittest
-            from lice.core import clean_path, extract_vars, generate_license
-            class TestCoreFunctions(unittest.TestCase):
-                def test_clean_path(self):
-                    self.assertEqual(clean_path("."), os.getcwd())
-                def test_generate_license(self):
-                    template = "{{ year }} - {{ project }}"
-                    context = {"year": "2024", "project": "TestProject"}
-                    self.assertEqual(generate_license(template, context), "2024 - TestProject")
+            from ims.models import Item
+
+            class TestItemModel(unittest.TestCase):
+                def test_item_initialization(self):
+                    item = Item(id=1, name="Widget", quantity=100, location="Warehouse A")
+                    self.assertEqual(item.name, "Widget")
+                    self.assertEqual(item.quantity, 100)
+
             if __name__ == "__main__":
                 unittest.main()
             ```
@@ -225,7 +215,7 @@ class ExamplesBase:
         Returns:
         - A dictionary of the requested UML example or the whole UML category.
         """
-        uml = self.file_examples["uml_class"] + self.file_examples["uml_sequence"]
+        uml = self.file_examples["uml_class"] +"\n" + self.file_examples["uml_sequence"]
         return uml
 
     def get_uml_class(self) -> str:

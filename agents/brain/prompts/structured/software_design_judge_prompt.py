@@ -12,7 +12,7 @@ class SoftwareDesignJudgePrompt(StructuredPrompt):
         super().__init__(examples=examples)
         self.base_prompt = """
         You are an expert in software design evaluation. Your task is to:
-        - Analyze the provided UML Diagram and Architecture Design.
+        - Analyze the provided UML Class and Sequence Diagrams and Architecture Design.
         - Evaluate their alignment with the PRD and their adherence to design principles.
         - Provide feedback on strengths and areas for improvement.
 
@@ -23,7 +23,7 @@ class SoftwareDesignJudgePrompt(StructuredPrompt):
         - Conformance: Adherence to community and industry standards.
 
         Provide your feedback in a structured JSON format with the following fields:
-        - `type`: Specify if the evaluation is for "uml" or "architecture".
+        - `type`: Specify if the evaluation is for "uml_class", "uml_sequence", or "architecture".
         - `score`: A numeric value between 0 and 1 indicating the evaluation score.
         - `pass/fail`: Indicate "pass" if the score is 0.7 or higher, otherwise "fail".
         - `reason`: Describe the rationale behind the given score.
@@ -58,8 +58,11 @@ class SoftwareDesignJudgePrompt(StructuredPrompt):
         PRD:
         {knowledge_base.get("prd", "PRD not found")}
 
-        UML Diagram:
-        {knowledge_base.get("uml", "UML Diagram not found")}
+        UML Class Diagram:
+        {knowledge_base.get("uml_class", "UML Class Diagram not found")}
+        
+        UML Sequence Diagram:
+        {knowledge_base.get("uml_sequence", "UML Sequence Diagram not found")}
 
         Architecture Design:
         {knowledge_base.get("architecture", "Architecture Design not found")}

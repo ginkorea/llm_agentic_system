@@ -7,80 +7,64 @@ class SoftwareDesignJudgeExamples(ExamplesBase):
 
     def __init__(self):
         super().__init__()
-        self.prd_example = self.get_prd_example()
-        self.uml_example = self.get_uml_example()
-        self.architecture_example = self.get_architecture_example()
-        self.feedback_example = self.get_feedback_example()
+        self.feedback_example = self.get_expanded_feedback()
 
     @staticmethod
-    def get_prd_example() -> str:
-        return """
-        # Project Overview
-        The `Task Tracker` application is designed to streamline task management for small teams.
+    def get_uml_feedback() -> str:
+        """
+        Feedback for UML Class and Sequence diagrams.
+        """
+        return f"""
+        UML Class Feedback:
+        {{
+            "type": "uml_class",
+            "score": 0.90,
+            "pass/fail": "pass",
+            "reason": "Classes such as InventoryManager, Item, and Location are well-defined, with appropriate methods and attributes. Relationships between classes are correctly represented, and cardinality is specified for associations.",
+            "recommendation": "Consider improving the naming conventions of some methods to better reflect their purpose, and ensure consistent documentation for all methods."
+        }}
 
-        # Features
-        - Task Management: Create, assign, and update tasks.
-        - Team Collaboration: Dashboard for task status.
-        - Notifications: Alerts for approaching deadlines.
-
-        # Technical Details
-        - Frontend: ReactJS
-        - Backend: Node.js
-        - Database: PostgreSQL
+        UML Sequence Feedback:
+        {{
+            "type": "uml_sequence",
+            "score": 0.85,
+            "pass/fail": "pass",
+            "reason": "The sequence diagram effectively captures user interactions with the system, including inventory queries and updates. Actors and participants are clearly identified, and key interactions are outlined.",
+            "recommendation": "Add error-handling flows, such as cases where inventory queries fail or updates are invalid, to make the diagram more comprehensive."
+        }}
         """
 
     @staticmethod
-    def get_uml_example() -> str:
-        return """
-        ```plaintext
-        @startuml
-        class Task {
-            +taskID: int
-            +title: string
-        }
-
-        class Team {
-            +teamID: int
-        }
-
-        Task --> Team
-        @enduml
-        ```
+    def get_architecture_feedback() -> str:
+        """
+        Feedback for Architecture Design.
+        """
+        return f"""
+        Architecture Feedback:
+        {{
+            "type": "architecture",
+            "score": 0.75,
+            "pass/fail": "pass",
+            "reason": "The architecture includes a robust separation of concerns with distinct components for the frontend (React.js), backend (Flask), and database (PostgreSQL). However, details on WebSocket integration for real-time updates are missing.",
+            "recommendation": "Include specifics about how the WebSocket server will interact with the backend and clients. Additionally, provide a detailed deployment strategy, including hosting and scalability considerations."
+        }}
         """
 
-    @staticmethod
-    def get_architecture_example() -> str:
-        return """
-        ```plaintext
-        ## Architecture Design for Task Tracker Application
-
-        ### Components
-        1. **Frontend**: ReactJS
-        2. **Backend**: Node.js
-        3. **Database**: PostgreSQL
-        ```
+    def get_expanded_feedback(self) -> str:
         """
+        Consolidated expanded feedback including UML Class, UML Sequence, and Architecture.
+        """
+        return f"""
+        # Consolidated Feedback
 
-    @staticmethod
-    def get_feedback_example() -> str:
-        return """
-        Feedback:
-        [
-            {
-                "type": "uml",
-                "score": 0.85,
-                "pass/fail": "pass",
-                "reason": "All key classes and relationships are defined. Cardinality is specified for all associations.",
-                "recommendation": "No major changes needed. Consider improving the readability of class names."
-            },
-            {
-                "type": "architecture",
-                "score": 0.65,
-                "pass/fail": "fail",
-                "reason": "Real-time updates via WebSockets are not mentioned, and the deployment strategy is incomplete.",
-                "recommendation": "Add details about WebSocket integration for real-time updates and specify the deployment strategy."
-            }
-        ]
+        ## UML Class Diagram Feedback
+        {self.get_uml_feedback()}
+
+        ## UML Sequence Diagram Feedback
+        {self.get_uml_feedback()}
+
+        ## Architecture Design Feedback
+        {self.get_architecture_feedback()}
         """
 
     def get_examples(self) -> str:
@@ -88,8 +72,11 @@ class SoftwareDesignJudgeExamples(ExamplesBase):
         # PRD Example
         {self.get_prd()}
 
-        # UML Diagram Example
-        {self.get_uml()}
+        # UML Class Diagram Example
+        {self.get_uml_class()}
+
+        # UML Sequence Diagram Example
+        {self.get_uml_sequence()}
 
         # Architecture Design Example
         {self.get_architecture()}
