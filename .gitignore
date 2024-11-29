@@ -6,3 +6,4 @@ misc.xml
 memory.csv
 
 agents/toolkit/test_env/*
+application.log
