@@ -1,3 +1,4 @@
+import argparse
 import logging
 from agents.base import Agent
 
@@ -11,21 +12,62 @@ logging.basicConfig(
     ]
 )
 
-if __name__ == "__main__":
-    # Set parameters for testing
-    brain_type = 'code'  # Options: 'code', 'simple', 'cognitive'
-    memory_type = 'cuda'  # Options: 'embedded', 'cuda', 'openvino'
-    chaining_mode = True  # Enable chaining mode
-    goal = "Develop a Python Package based on the PRD."  # Goal description
-    goal_file = 'devbench/benchmark_data/python/lice/PRD.md'
+def parse_arguments():
+    """
+    Parse command-line arguments for the agent configuration.
 
-    # Initialize agent
+    Returns:
+        Namespace: Parsed arguments.
+    """
+    parser = argparse.ArgumentParser(description="Run the agent with customizable options.")
+
+    # Add arguments with defaults
+    parser.add_argument(
+        "--brain_type",
+        type=str,
+        default="code",
+        choices=["code", "simple", "cognitive"],
+        help="Type of brain to use (default: 'code')."
+    )
+    parser.add_argument(
+        "--memory_type",
+        type=str,
+        default="cuda",
+        choices=["embedded", "cuda", "openvino"],
+        help="Type of memory to use (default: 'cuda')."
+    )
+    parser.add_argument(
+        "--chaining_mode",
+        type=bool,
+        default=True,
+        help="Enable or disable chaining mode (default: True)."
+    )
+    parser.add_argument(
+        "--goal",
+        type=str,
+        default="Develop a Python Package based on the PRD.",
+        help="Goal description for the agent (default: 'Develop a Python Package based on the PRD.')."
+    )
+    parser.add_argument(
+        "--goal_file",
+        type=str,
+        default="devbench/benchmark_data/python/lice/PRD.md",
+        help="Path to the goal file (default: 'devbench/benchmark_data/python/lice/PRD.md')."
+    )
+
+    return parser.parse_args()
+
+if __name__ == "__main__":
+    # Parse arguments
+    args = parse_arguments()
+
+    # Initialize agent with parsed arguments
     agent = Agent(
-        brain_type=brain_type,
-        memory_type=memory_type,
-        chaining=chaining_mode,
-        goal=goal,
-        goal_file=goal_file
+        brain_type=args.brain_type,
+        memory_type=args.memory_type,
+        chaining=args.chaining_mode,
+        goal=args.goal,
+        goal_file=args.goal_file
     )
 
     # Run the agent
