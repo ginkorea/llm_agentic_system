@@ -1,9 +1,9 @@
 from agents.brain.prompts.examples.base_examples import ExamplesBase
 
 
-class AcceptanceTestExamples(ExamplesBase):
+class UnitTestExamples(ExamplesBase):
     """
-    Examples for Acceptance Test Generation.
+    Examples for Unit Test Generation.
     """
 
     def __init__(self):
@@ -17,9 +17,9 @@ class AcceptanceTestExamples(ExamplesBase):
         # Example UML Class Diagram:
         {self.get_uml_class()}
         
-        # Example Code: 
+        # Example Code
         {self.get_code_output()}
-        
-        # Example Acceptance Test Code
-        {self.get_acceptance_test()}
+
+        # Example Unit Test Code
+        {self.get_unit_test()}
         """

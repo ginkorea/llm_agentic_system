@@ -1,15 +1,16 @@
 from agents.brain.goal.goal import Goal
-from agents.brain.goal.milestones.software_dev import SoftwareDesignMilestone, EnvSetupMilestone, UnitTestMilestone, OracleTestMilestone, ConvergenceMilestone
+from agents.brain.goal.milestones.software_dev import (SoftwareDesignMilestone, EnvSetupMilestone, ImplementationMilestone,
+                                                       AcceptanceTestMilestone, UnitTestMilestone)
 
 class SoftwareDevelopmentGoal(Goal):
-    def __init__(self, description, milestones, goal_file=None):
-        description = "Complete software development process according to PRD"
+    def __init__(self, goal_file=None):
+        description = "Complete the software development process according to PRD"
         milestones = [
             SoftwareDesignMilestone(),
             EnvSetupMilestone(),
-            UnitTestMilestone(),
-            OracleTestMilestone(),
-            ConvergenceMilestone()
+            ImplementationMilestone(),
+            AcceptanceTestMilestone(),
+            UnitTestMilestone()
         ]
         super().__init__(description, milestones, goal_file)
 

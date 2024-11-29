@@ -284,12 +284,14 @@ class Brain:
         refined_prompt = action["refined_prompt"]
         if action["use_tool"]:
             result = self.use_tool(refined_prompt, action["tool_index"])
+            self.store_memory(refined_prompt, result, module=action["tool_name"])
         else:
             selected_module = self.modules[action["module_index"]]
             self.memory.short_term_length = selected_module.memory_limit
-            prompt_with_memory_context = self.add_memory_context(refined_prompt, module=selected_module)
-            result = selected_module.process(prompt_with_memory_context)
-            self.store_memory(refined_prompt, result, module=action.get("module_name", "Unknown Module"))
+            built_prompt = selected_module.prompt_builder.build_prompt(refined_prompt)
+            built_prompt_with_memory_context = self.add_memory_context(built_prompt, module=selected_module)
+            result = selected_module.process(built_prompt_with_memory_context)
+            self.store_memory(built_prompt, result, module=action.get("module_name", "Unknown Module"))
         return result, action.get("module_name", "Unknown Module")
 
     def store_memory(self, user_input: str, response: str, module: str = ""):

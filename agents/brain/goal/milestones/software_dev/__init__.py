@@ -1,3 +1,7 @@
 from agents.brain.goal.milestones.software_dev.software_design_milestone import SoftwareDesignMilestone
 from agents.brain.goal.milestones.software_dev.environment_milestone import EnvSetupMilestone
+from agents.brain.goal.milestones.software_dev.implementation_milestone import ImplementationMilestone
+from agents.brain.goal.milestones.software_dev.test_milestone import TestMilestone
+from agents.brain.goal.milestones.software_dev.acceptance_test_milestone import AcceptanceTestMilestone
+from agents.brain.goal.milestones.software_dev.unit_test_milestone import UnitTestMilestone
 from agents.brain.goal.milestones.software_dev.software_dev_milestones import UsageExampleMilestone, UnitTestMilestone, OracleTestMilestone, ConvergenceMilestone

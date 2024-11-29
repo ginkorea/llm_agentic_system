@@ -9,6 +9,31 @@ class RunExistingVenvInput(BaseModel):
     env_name: str = "env"
     arguments: list[str] = 'default_factory'  # Optional list of command-line arguments
 
+class CodeRunner:
+    """
+    A wrapper class for running Python files in existing virtual environments.
+    """
+
+    def __init__(self, env_name="env"):
+        self.env_name = env_name
+
+    def run(self, file_path: str, arguments: list[str] = None) -> str:
+        """
+        Run a Python file in the configured virtual environment.
+
+        Args:
+            file_path (str): Path to the Python file.
+            arguments (list[str]): Optional list of command-line arguments.
+
+        Returns:
+            str: Output of the code execution or error message.
+        """
+        if arguments is None:
+            arguments = []
+
+        input_data = RunExistingVenvInput(file_path=file_path, env_name=self.env_name, arguments=arguments)
+        return run_code_in_existing_virtualenv.invoke({"input_data": input_data.model_dump()})
+
 
 @tool
 def run_code_in_existing_virtualenv(input_data: RunExistingVenvInput) -> str:
@@ -58,12 +83,16 @@ def run_code_in_existing_virtualenv(input_data: RunExistingVenvInput) -> str:
     except Exception as e:
         return f"An error occurred: {e}"
 
+
+
 if __name__ == "__main__":
-    # Example Usage: Run Code in Existing Virtual Environment
-    run_input = RunExistingVenvInput(
-        file_path="example_script.py",  # path to example Python file
-        env_name="test_env",
+    # Initialize the CodeRunner
+    code_runner = CodeRunner(env_name="test_env")
+
+    # Run an example script
+    result = code_runner.run(
+        file_path="example_script.py",  # Path to the Python file to execute
         arguments=["--arg1", "value1", "--flag"]
     )
-    run_result = run_code_in_existing_virtualenv.invoke({"input_data": run_input.dict()})
-    print(run_result)
+
+    print(result)

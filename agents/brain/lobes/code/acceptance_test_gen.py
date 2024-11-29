@@ -1,10 +1,11 @@
 from agents.brain.lobes.module import Module
-from agents.brain.prompts.examples.acceptance_test_examples import AcceptanceTestGeneratorExamples
-from agents.brain.prompts.structured.acceptance_test_prompt import AcceptanceTestGeneratorPrompt
+from agents.brain.prompts.examples.acceptance_test_examples import AcceptanceTestExamples
+from agents.brain.prompts.structured.acceptance_test_prompt import AcceptanceTestPrompt
+
 
 class AcceptanceTestGenerator(Module):
     """
-    Generates both acceptance tests and unit tests based on requirements.
+    Generates acceptance tests based on PRD, UML Diagram, and Architecture Design.
     """
 
     def __init__(self):
@@ -12,41 +13,27 @@ class AcceptanceTestGenerator(Module):
             model_name="gpt-4o",
             temperature=0.5,
             memory_limit=5,
-            system_message="Generate Python tests for validating system functionality.",
+            system_message="Analyze the PRD, UML Diagram, and Architecture Design to generate acceptance tests.",
         )
-        self.examples = AcceptanceTestGeneratorExamples()
+        self.examples = AcceptanceTestExamples()
         self.prompt_builder = None
 
     def build_prompt_builder(self, brain=None, modules=None, tools=None, examples=None, **kwargs):
         """
-        Initializes the prompt builder using AcceptanceTestGeneratorPrompt.
+        Initializes the prompt builder using the AcceptanceTestPrompt class.
         """
         examples = self.examples.get_examples() if examples is None else examples
-        self.prompt_builder = AcceptanceTestGeneratorPrompt(modules=modules, tools=tools, examples=examples, **kwargs)
+        prd = brain.knowledge_base.get("prd", "")
+        uml_class = brain.knowledge_base.get("uml_class", "")
+        architecture = brain.knowledge_base.get("architecture", "")
+        code_files = brain.knowledge_base.get("code", {})
 
-    def generate_tests(self, requirements: str) -> str:
-        """
-        Generates both acceptance and unit tests based on provided requirements.
+        kwargs.update({
+            "prd": prd,
+            "uml_class": uml_class,
+            "architecture": architecture,
+            "code_files": code_files,
+        })
+        self.prompt_builder = AcceptanceTestPrompt(modules=modules, tools=tools, examples=examples, **kwargs)
 
-        Parameters:
-        - requirements: System requirements or descriptions.
 
-        Returns:
-        - Generated Python test code as a string.
-        """
-        if not self.prompt_builder:
-            self.build_prompt_builder()
-        prompt = self.prompt_builder.build_prompt(requirements)
-        return self.model.process(prompt)
-
-    def process(self, requirements: str) -> str:
-        """
-        Processes the input requirements and generates Python test files.
-
-        Parameters:
-        - requirements: System requirements or descriptions.
-
-        Returns:
-        - Generated Python test code as a string.
-        """
-        return self.generate_tests(requirements)

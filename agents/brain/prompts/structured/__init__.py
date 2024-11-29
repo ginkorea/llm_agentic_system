@@ -5,4 +5,4 @@ from agents.brain.prompts.structured.controller_prompt import ControllerPrompt
 from agents.brain.prompts.structured.env_setup_prompt import EnvironmentSetupPrompt
 from agents.brain.prompts.structured.software_design_judge_prompt import SoftwareDesignJudgePrompt
 from agents.brain.prompts.structured.code_writer_prompt import CodeWriterPrompt
-from agents.brain.prompts.structured.acceptance_test_prompt import AcceptanceTestGeneratorPrompt
+from agents.brain.prompts.structured.acceptance_test_prompt import AcceptanceTestPrompt
