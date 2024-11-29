@@ -17,7 +17,7 @@ class TaskRouter(Module):
         )
         self.examples = CodeExamples()
 
-    def build_prompt_builder(self, brain: Optional['Brain'] = None, modules=None, tools=None, examples=None):
+    def build_prompt_builder(self, brain: Optional['Brain'] = None, modules=None, tools=None, examples=None, raw_output=None):
         """Builds a structured prompt builder for the module."""
         modules, tools, examples = self.parse_brain(brain)
         self.prompt_builder = ControllerPrompt(tools=tools, modules=modules,
