@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import colorama
 from agents.brain.goal.milestones import Milestone
 
@@ -25,7 +27,7 @@ class SoftwareDesignMilestone(Milestone):
         reset = colorama.Style.RESET_ALL
 
         print(f"{cyan}Checking UML and Architecture Design validity and storing in the knowledge base.{reset}")
-        uml_class, uml_sequence, architecture = SoftwareDesignMilestone.parse_input_data(_input_data)
+        uml_class, uml_sequence, architecture = self.parse_input_data(_input_data)
         if uml_class and uml_sequence and architecture:
             brain.knowledge_base["uml_class"] = uml_class
             brain.knowledge_base["uml_sequence"] = uml_sequence
@@ -39,17 +41,17 @@ class SoftwareDesignMilestone(Milestone):
         print(f"{cyan}SoftwareDesignJudge Input: {judge_module.prompt_input}{reset}")
         judge_output = judge_module.process(judge_module.prompt_input)
         print(f"{cyan}SoftwareDesignJudge Output: {judge_output}{reset}")
-        passes = SoftwareDesignMilestone.check_for_two_passes(judge_output)
+        passes = self.check_for_three_passes(judge_output)
         if passes:
-            SoftwareDesignMilestone.dump_files(brain)
+            self.dump_files(brain)
             return True, f"{green}UML and Architecture Design validated and stored in the knowledge base.{reset}"
         else:
             return False, f"{red}UML and Architecture Design failed validation. Please review the output and make necessary corrections.{reset}"
 
     @staticmethod
-    def check_for_two_passes(judges_output: str):
+    def check_for_three_passes(judges_output: str) -> bool:
         pass_count = judges_output.count('"pass/fail": "pass"')
-        return pass_count > 2
+        return pass_count >= 3
 
     @staticmethod
     def save_file(file_name: str, data: str):
@@ -62,14 +64,17 @@ class SoftwareDesignMilestone(Milestone):
         uml_sequence = brain.knowledge_base.get("uml_sequence", "")
         architecture = brain.knowledge_base.get("architecture", "")
         if uml_class:
-            SoftwareDesignMilestone.save_file("uml_class.md", uml_class)
+            SoftwareDesignMilestone.save_file("uml_class.uml", uml_class)
         if uml_sequence:
-            SoftwareDesignMilestone.save_file("uml_sequence.md", uml_sequence)
+            SoftwareDesignMilestone.save_file("uml_sequence.uml", uml_sequence)
         if architecture:
             SoftwareDesignMilestone.save_file("architecture.md", architecture)
 
     @staticmethod
     def extract_code_block(text: str) -> str:
+        """
+        Extracts a code block enclosed in triple backticks (```).
+        """
         start = text.find("```")
         if start == -1:
             return ""
@@ -77,18 +82,48 @@ class SoftwareDesignMilestone(Milestone):
         return text[start + 3:end].strip() if end != -1 else ""
 
     @staticmethod
-    def find_component_start(text: str) -> tuple[int, int, int]:
+    def find_component_ranges(text: str) -> tuple[int, int, int, int, int, int]:
+        """
+        Finds the start and end indices for UML Class, UML Sequence, and Architecture sections.
+        """
         uml_class_start = text.find("# UML Class Diagram")
         uml_sequence_start = text.find("# UML Sequence Diagram")
         architecture_start = text.find("# Architecture Design")
-        return uml_class_start, uml_sequence_start, architecture_start
+        end_of_text = len(text)
+
+        # Find the boundaries for each component
+        uml_class_end = uml_sequence_start if uml_sequence_start != -1 else architecture_start
+        uml_sequence_end = architecture_start if architecture_start != -1 else end_of_text
+        architecture_end = end_of_text
+
+        return (
+            uml_class_start,
+            uml_class_end,
+            uml_sequence_start,
+            uml_sequence_end,
+            architecture_start,
+            architecture_end,
+        )
 
     @staticmethod
     def parse_input_data(_input_data: str) -> tuple[str, str, str]:
-        start_class, start_sequence, start_arch = SoftwareDesignMilestone.find_component_start(_input_data)
-        if start_class == -1 or start_sequence == -1 or start_arch == -1:
+        """
+        Parses the input data to extract UML Class Diagram, UML Sequence Diagram, and Architecture Design.
+        """
+        (
+            uml_class_start,
+            uml_class_end,
+            uml_sequence_start,
+            uml_sequence_end,
+            architecture_start,
+            architecture_end,
+        ) = SoftwareDesignMilestone.find_component_ranges(_input_data)
+
+        if uml_class_start == -1 or uml_sequence_start == -1 or architecture_start == -1:
             return "", "", ""
-        uml_class = SoftwareDesignMilestone.extract_code_block(_input_data[start_class:start_sequence])
-        uml_sequence = SoftwareDesignMilestone.extract_code_block(_input_data[start_sequence:start_arch])
-        architecture = SoftwareDesignMilestone.extract_code_block(_input_data[start_arch:])
+
+        uml_class = SoftwareDesignMilestone.extract_code_block(_input_data[uml_class_start:uml_class_end])
+        uml_sequence = SoftwareDesignMilestone.extract_code_block(_input_data[uml_sequence_start:uml_sequence_end])
+        architecture = SoftwareDesignMilestone.extract_code_block(_input_data[architecture_start:architecture_end])
+
         return uml_class, uml_sequence, architecture
