@@ -4,3 +4,5 @@ llmas.iml
 misc.xml
 .idea/*
 memory.csv
+
+agents/toolkit/test_env/*
