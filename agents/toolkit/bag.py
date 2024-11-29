@@ -2,6 +2,8 @@ from agents.toolkit.search import search
 from agents.toolkit.get_page import get_page
 from agents.toolkit.calculate import calculate
 from agents.toolkit.visualize_file_structure import visualize_file_structure
+from agents.toolkit.create_virtual_environment import create_virtualenv_with_requirements, CreateVenvInput
+from agents.toolkit.run_code_in_virtual_environment import run_code_in_existing_virtualenv, RunExistingVenvInput
 
 from langchain_core.tools.structured import \
     StructuredTool  # Importing StructuredTool to use as a type for structured tools
@@ -18,6 +20,8 @@ class BagOfTools:
         self.get_page = get_page  # Tool to get a web page's content
         self.calculate = calculate  # Tool to evaluate mathematical expressions
         self.visualize_file_structure = visualize_file_structure  # Tool to visualize file structures
+        self.create_virtualenv_with_requirements = create_virtualenv_with_requirements
+        self.run_code_in_existing_virtualenv = run_code_in_existing_virtualenv
         self.bind_tools()  # Automatically bind all tools
 
     def bind_tools(self):
