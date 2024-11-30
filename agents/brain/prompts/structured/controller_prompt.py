@@ -44,5 +44,18 @@ class ControllerPrompt(StructuredPrompt):
             "refined_prompt": "<full original prompt> + '|' + <refined_prompt_for_lobe>"
         }}
         ----------------
+        
+        For instance if you are trying to generate a requirements.txt file, you might respond with:
+        {{
+            "use_tool": False,
+            "lobe_index": 3, # Index for EnvironmentRequirementsDeveloper
+            "refined_prompt": "Generate a requirements.txt file based on the provided PRD and Architecture Design...(full prompt)"
+        }}
+        or if you are tyring to write a code file, you might respond with:
+        {{
+            "use_tool": False,
+            "lobe_index": 4,
+            "refined_prompt": "Generate Python files based on the PRD, UML Diagram, and Architecture Design...(full prompt)"
+        }}
         """
         self.reset_prompt()  # Initialize prompt to Controller's base prompt

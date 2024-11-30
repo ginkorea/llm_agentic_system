@@ -18,22 +18,10 @@ class AcceptanceTestGenerator(Module):
         self.examples = AcceptanceTestExamples()
         self.prompt_builder = None
 
-    def build_prompt_builder(self, brain=None, modules=None, tools=None, examples=None, **kwargs):
+    def build_prompt_builder(self, brain=None, modules=None, tools=None, examples=None, raw_output=None):
         """
         Initializes the prompt builder using the AcceptanceTestPrompt class.
         """
-        examples = self.examples.get_examples() if examples is None else examples
-        prd = brain.knowledge_base.get("prd", "")
-        uml_class = brain.knowledge_base.get("uml_class", "")
-        architecture = brain.knowledge_base.get("architecture", "")
-        code_files = brain.knowledge_base.get("code", {})
-
-        kwargs.update({
-            "prd": prd,
-            "uml_class": uml_class,
-            "architecture": architecture,
-            "code_files": code_files,
-        })
-        self.prompt_builder = AcceptanceTestPrompt(modules=modules, tools=tools, examples=examples, **kwargs)
+        self.prompt_builder = AcceptanceTestPrompt(examples=self.examples.get_examples())
 
 

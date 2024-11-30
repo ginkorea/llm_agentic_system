@@ -1,7 +1,10 @@
 # code_writer_prompt.py
 
 from agents.brain.prompts.structured.structured_prompt import StructuredPrompt
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from agents.brain.core import Brain  # Import only for type checking
 
 class CodeWriterPrompt(StructuredPrompt):
     """
@@ -31,7 +34,7 @@ class CodeWriterPrompt(StructuredPrompt):
         generate one code block per class and one for the main.py file.
         """
 
-    def build_prompt(self, prompt_input: str, previous_output: bool = False,
+    def build_prompt(self, brain: 'Brain', prompt_input: str, previous_output: bool = False,
                      previous_module: Optional[str] = None, goal=None, **kwargs) -> str:
         """
         Builds the prompt for generating Python code files.
@@ -59,30 +62,30 @@ class CodeWriterPrompt(StructuredPrompt):
         {prompt_input}
                 
         PRD: 
-        {kwargs.get("prd", "PRD not found")}    
+        {brain.knowledge_base.get("prd", "PRD not found")}    
         
         UML Class Diagram:
-        {kwargs.get("uml_class", "UML Class Diagram not found")}
+        {brain.knowledge_base.get("uml_class", "UML Class Diagram not found")}
         
         UML Sequence Diagram:
-        {kwargs.get("uml_sequence", "UML Sequence Diagram not found")}
+        {brain.knowledge_base.get("uml_sequence", "UML Sequence Diagram not found")}
         
         Architecture Design:
-        {kwargs.get("architecture", "Architecture Design not found")}
+        {brain.knowledge_base.get("architecture", "Architecture Design not found")}
 
         Implement the Following Required Classes:
         ----------------
-        {kwargs.get("required_classes", "No required classes found.")}
+        {brain.knowledge_base.get("required_classes", "No required classes found.")}
         ----------------
         
         The following classes are already implemented in the code base below:
         ----------------
-        {kwargs.get("implemented_classes", "No implemented classes found.")}
+        {brain.knowledge_base.get("implemented_classes", "No implemented classes found.")}
         ----------------
         
         Existing Code Base:
         ----------------
-        {kwargs.get("code_base", "No existing code base found.")}
+        {brain.knowledge_base.get("code_base", "No existing code base found.")}
         
         ----------------
                 

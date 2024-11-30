@@ -14,7 +14,7 @@ class CreateVenvInput(BaseModel):
 @tool
 def create_virtualenv_with_requirements(input_data: CreateVenvInput) -> str:
     """
-    Create a virtual environment and install dependencies from requirements.txt.
+    Create a virtual environment and install dependencies from requirements.txt, not used for creating a requirements file.
 
     Args:
         input_data (CreateVenvInput): Contains the environment name and path to requirements.txt.

@@ -1,6 +1,11 @@
+from seobject import kwargs
+
 from agents.brain.prompts.structured import StructuredPrompt
 from agents.brain.goal.goal import Goal
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from agents.brain.core import Brain
 
 class EnvironmentSetupPrompt(StructuredPrompt):
     """
@@ -10,15 +15,15 @@ class EnvironmentSetupPrompt(StructuredPrompt):
     def __init__(self, examples=None):
         super().__init__(examples=examples)
         self.base_prompt = """
-        You are an environment setup expert. Your task is to analyze the provided PRD, UML Diagram, and Architecture Design to generate:
+        You are an environment setup expert. Your task is to analyze the provided PRD, and Architecture Design to generate:
         - A requirements.txt file listing Python dependencies for the backend.
-        - A package.json or equivalent file for the frontend, if applicable.
-        - Any additional setup files needed for the project.
+        - Frontend artifacts like HTML, CSS, and JavaScript files.
 
         The output should include properly formatted code blocks with filenames as comments.
         """
 
-    def build_prompt(self, prompt_input: str, previous_output: bool = False, previous_module: Optional[str] = None, goal: Goal = None, **kwargs) -> str:
+
+    def build_prompt(self, brain: 'Brain', prompt_input: str, previous_output: bool = False, previous_module: Optional[str] = None, goal: Goal = None) -> str:
         """
         Builds the prompt to generate environment setup files.
 
@@ -28,20 +33,37 @@ class EnvironmentSetupPrompt(StructuredPrompt):
         Returns:
         - A formatted prompt string.
         """
-        return f"""
-        {self.base_prompt}
+        self.reset_prompt()
+        self.prompt = self.base_prompt
 
-        Example PRD, UML Diagram, Architecture Design, and Outputs:
+        extended_prompt = f"""
+        Prompt Input: 
+        
+        {prompt_input}
+        
+        ---------------
+        
+        Example PRD Architecture Design, and Outputs:
+        
         ----------------
+        
         {self.examples}
 
         ----------------
 
-        PRD, UML Diagram, and Architecture Design to Analyze:
+        PRD and Architecture Design to Analyze:
+        
         ----------------
-        {prompt_input}
+        
+        PRD: {brain.knowledge_base['prd']}
+        
+        Architecture: {brain.knowledge_base['architecture']}
+        
         ----------------
 
         Generate the outputs as described above.
         """
+
+        self.prompt += extended_prompt
+        return self.prompt
 

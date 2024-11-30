@@ -1,4 +1,8 @@
 from agents.brain.prompts.structured.structured_prompt import StructuredPrompt
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from agents.brain.core import Brain
 
 
 class UnitTestPrompt(StructuredPrompt):
@@ -19,7 +23,7 @@ class UnitTestPrompt(StructuredPrompt):
         Include one test file per class or module, naming them as `test_<module_name>.py`.
         """
 
-    def build_prompt(self, prompt_input: str, **kwargs) -> str:
+    def build_prompt(self, brain: 'Brain', prompt_input: str, **kwargs) -> str:
         """
         Builds the prompt for generating unit tests.
 
@@ -37,14 +41,14 @@ class UnitTestPrompt(StructuredPrompt):
         ----------------
 
         PRD: 
-        {kwargs.get("prd", "PRD not found")}    
+        {brain.knowledge_base.get("prd", "PRD not found")}    
 
         UML Class Diagram:
-        {kwargs.get("uml_class", "UML Class Diagram not found")}
+        {brain.knowledge_base.get("uml_class", "UML Class Diagram not found")}
 
         Code Files:
         ----------------
-        {kwargs.get("code_files", "No code files found.")}
+        {brain.knowledge_base.get("code_files", "No code files found.")}
 
         ----------------
 

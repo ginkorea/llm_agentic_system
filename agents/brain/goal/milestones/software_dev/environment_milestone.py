@@ -5,7 +5,7 @@ from agents.toolkit.create_virtual_environment import create_virtualenv_with_req
 
 class EnvSetupMilestone(Milestone):
     def __init__(self):
-        super().__init__("Set up the development environment for the project based on the requirements.txt.")
+        super().__init__("Create a environment requirements.txt file based on the Architecture Design and PRD.")
 
     def is_achieved(self, brain, input_data) -> tuple[bool, str]:
         """

@@ -13,4 +13,5 @@ class SoftwareDevelopmentGoal(Goal):
             UnitTestMilestone()
         ]
         super().__init__(description, milestones, goal_file)
+        self.milestone_module_map = [1, 3, 4, 5, 6]
 

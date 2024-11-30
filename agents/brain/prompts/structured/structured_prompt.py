@@ -1,7 +1,11 @@
 # structured_prompt.py
 
 from agents.brain.goal.goal import Goal
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from agents.brain.core import Brain  # Import only for type checking
+
 
 class StructuredPrompt:
     """
@@ -19,8 +23,8 @@ class StructuredPrompt:
         self.goal = goal # Goal object for tracking progress
         self.prompt = self.base_prompt # Initialize prompt to base prompt
 
-    def build_prompt(self, prompt_input: str, previous_output: bool = False,
-                     previous_module: Optional[str] = None, goal: Goal = None, **kwargs) -> str:
+    def build_prompt(self, brain: 'Brain', prompt_input: str, previous_output: bool = False,
+                     previous_module: Optional[str] = None, goal: Goal = None) -> str:
         """
         Constructs the prompt based on user input, tools, modules, and examples.
         """
@@ -44,7 +48,7 @@ class StructuredPrompt:
         Resets the prompt to the base prompt.
         """
         if goal:
-            self.prompt = goal.get_progress_description() + self.base_prompt
+            self.prompt = goal.get_progress_description() + goal.current_milestone().description + self.base_prompt
         else:
             self.prompt = self.base_prompt
 

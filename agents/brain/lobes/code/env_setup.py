@@ -5,7 +5,7 @@ from typing import Optional
 from agents.brain.core import Brain
 
 
-class EnvironmentSetupManager(Module):
+class EnvironmentRequirementsDeveloper(Module):
     """Handles the environment setup phase, generating dynamic frontend and backend artifacts."""
 
     def __init__(self):
@@ -13,7 +13,7 @@ class EnvironmentSetupManager(Module):
             model_name="gpt-4o",
             temperature=0.5,
             memory_limit=3,
-            system_message="You analyze the PRD, UML Diagram, and Architecture Design to generate environment setup files like requirements.txt and frontend artifacts.",
+            system_message="Tool to generate the requirements to initialize the virtual environment from the PRD, UML Diagrams, and Architecture.",
         )
         self.examples = EnvironmentSetupExamples()
         self.prompt_input = None
@@ -25,26 +25,21 @@ class EnvironmentSetupManager(Module):
         """
         try:
             if brain and brain.knowledge_base:
-                prd = brain.knowledge_base.get("prd", "").strip()
-                uml = brain.knowledge_base.get("uml", "").strip()
-                architecture = brain.knowledge_base.get("architecture", "").strip()
+                prd = brain.knowledge_base.get("prd", "")
+                architecture = brain.knowledge_base.get("architecture", "")
 
                 if not prd:
                     raise ValueError("PRD data is missing from the knowledge base.")
-                if not uml:
-                    raise ValueError("UML Diagram data is missing from the knowledge base.")
+
                 if not architecture:
                     raise ValueError("Architecture Design data is missing from the knowledge base.")
 
                 # Format the combined input for the prompt
                 formatted_input = f"""
-                # PRD
+                # PRD to analyze 
                 {prd}
     
-                # UML Diagram
-                {uml}
-    
-                # Architecture Design
+                # Architecture Design to analyze 
                 {architecture}
                 """
                 self.prompt_input = formatted_input
@@ -54,23 +49,7 @@ class EnvironmentSetupManager(Module):
         self.prompt_builder = EnvironmentSetupPrompt(examples=self.examples.get_examples())
 
 
-    def process_input(self, brain: Brain) -> str:
-        """
-        Processes the PRD, UML Diagram, and Architecture Design to generate dynamic artifacts.
 
-        Parameters:
-        - brain: The Brain instance containing the knowledge base.
 
-        Returns:
-        - The generated environment setup files as a single string.
-        """
-        # Ensure the prompt builder is initialized
-        self.build_prompt_builder(brain=brain)
-
-        # Generate environment setup files using LLM
-        _output = self.prompt_builder.build_prompt(self.prompt_input)
-        generated_artifacts = self.model.invoke(_output)
-
-        return generated_artifacts.content.strip()
 
 

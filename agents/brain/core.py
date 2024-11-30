@@ -181,46 +181,72 @@ class Brain:
 
     def encode_json(self, decision_response: str, user_input: str) -> dict:
         """
-        Parses the JSON response from the decision process and extracts relevant information.
+        Parses the JSON response from the router and extracts relevant details to determine the next action.
 
         Parameters:
         - decision_response: The JSON string response from the router.
-        - user_input: The original input from the user, used as a fallback.
+        - user_input: The original user input, used as a fallback.
 
         Returns:
-        - A structured dictionary indicating whether to use a tool or module, along with indices and prompts.
+        - A dictionary indicating whether to use a tool or a lobe, with relevant details.
         """
         try:
+            # Parse the JSON response
             decision = json.loads(decision_response)
-            use_tool = decision.get('use_tool', False)
-            refined_prompt = decision.get('refined_prompt', user_input)
+
+            # Validate and extract required keys
+            if 'use_tool' not in decision or 'refined_prompt' not in decision:
+                raise ValueError("Response JSON must contain 'use_tool' and 'refined_prompt' keys.")
+
+            use_tool = decision['use_tool']
+            refined_prompt = decision['refined_prompt']
 
             if use_tool:
+                # Extract tool-specific details
                 tool_name = decision.get('tool_name')
-                tool_index = next((idx for idx, tool in enumerate(self.toolkit.tools) if tool.name == tool_name), None)
+                if not tool_name:
+                    raise ValueError("Tool action specified but 'tool_name' is missing.")
+
+                tool_index = next(
+                    (idx for idx, tool in enumerate(self.toolkit.tools) if tool.name == tool_name),
+                    None
+                )
+                if tool_index is None:
+                    raise ValueError(f"Tool '{tool_name}' not found in the toolkit.")
+
                 return {
                     "use_tool": True,
-                    "tool_index": tool_index,
                     "tool_name": tool_name,
                     "refined_prompt": refined_prompt
                 }
             else:
-                module_index = int(decision.get('module_index', 1 if not self.include_routing_module else 0))
+                # Extract lobe-specific details
+                if 'lobe_index' not in decision:
+                    raise ValueError("Lobe action specified but 'lobe_index' is missing.")
+
+                lobe_index = decision['lobe_index']
+                if not isinstance(lobe_index, int) or lobe_index < 0 or lobe_index >= len(self.modules):
+                    raise ValueError(f"Invalid 'lobe_index': {lobe_index}. Must be a valid module index.")
+
                 return {
                     "use_tool": False,
-                    "module_index": module_index,
-                    "module_name": self.modules[module_index].__class__.__name__,
+                    "lobe_index": lobe_index,
                     "refined_prompt": refined_prompt
                 }
-
-        except (json.JSONDecodeError, KeyError, ValueError):
-            # Default to MainModule if parsing fails
+        except (json.JSONDecodeError, ValueError, KeyError) as e:
+            # Fallback to default behavior if parsing fails
+            self.logger.error(f"Error parsing JSON response: {e}. Falling back to Module By Milestone.")
+            module_index = self.get_module_index_from_milestone()
             return {
                 "use_tool": False,
-                "module_index": 1,
-                "module_name": "MainModule",
+                "lobe_index": module_index,
                 "refined_prompt": user_input
             }
+
+    def get_module_index_from_milestone(self) -> int:
+
+        return self.goal.milestone_module_map[self.goal.current_milestone_index]
+
 
     def determine_action(self, user_input: str, previous_output: bool = False) -> dict:
         """
@@ -233,14 +259,16 @@ class Brain:
         Returns:
         - A structured dictionary indicating the action to take.
         """
-
-        try:
-            prompt = self.router.prompt_builder.build_prompt(user_input, previous_output)
-        except AttributeError:
-            self.initialize_prompt_builders()
+        current_goal = self.goal.current_milestone().description if self.goal and not self.goal.is_complete() else None
+        if current_goal:
             if self.verbose:
-                print("Re-running prompt generation.")
-            prompt = self.router.prompt_builder.build_prompt(user_input, previous_output)
+                print(f"Current milestone: {current_goal}")
+            user_input = f"{current_goal}: {user_input} / focus on achieving the {current_goal} when choosing tools or modules."
+        try:
+            prompt = self.router.prompt_builder.build_prompt(self, user_input, previous_output)
+        except AttributeError:
+
+            prompt = self.router.prompt_builder.build_prompt(self, user_input, previous_output)
 
         if self.verbose:
             print(f"Constructed prompt: {prompt}")
@@ -286,12 +314,13 @@ class Brain:
             result = self.use_tool(refined_prompt, action["tool_index"])
             self.store_memory(refined_prompt, result, module=action["tool_name"])
         else:
-            selected_module = self.modules[action["module_index"]]
+            selected_module = self.modules[action["lobe_index"]]
             self.memory.short_term_length = selected_module.memory_limit
-            built_prompt = selected_module.prompt_builder.build_prompt(refined_prompt)
+            selected_module.build_prompt_builder(self)
+            built_prompt = selected_module.prompt_builder.build_prompt(self, refined_prompt)
             built_prompt_with_memory_context = self.add_memory_context(built_prompt, module=selected_module)
             result = selected_module.process(built_prompt_with_memory_context)
-            self.store_memory(built_prompt, result, module=action.get("module_name", "Unknown Module"))
+            self.store_memory(built_prompt, result, module=selected_module.__class__.__name__)
         return result, action.get("module_name", "Unknown Module")
 
     def store_memory(self, user_input: str, response: str, module: str = ""):

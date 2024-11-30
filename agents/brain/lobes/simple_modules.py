@@ -1,5 +1,5 @@
-from agents.brain.lobes.lobes import (PreFrontalCortex, FrontalLobe)
-from agents.brain.lobes.hippocampus import Hippocampus
+from agents.brain.lobes.cognitive.lobes import (PreFrontalCortex, FrontalLobe)
+from agents.brain.lobes.cognitive.hippocampus import Hippocampus
 
 
 class ControlModule(PreFrontalCortex):

@@ -1,85 +1,53 @@
+import re
+from typing import Optional, List, Dict
 from agents.brain.prompts.examples.software_design_judge_examples import SoftwareDesignJudgeExamples
 from agents.brain.prompts.structured.software_design_judge_prompt import SoftwareDesignJudgePrompt
 from agents.brain.lobes.module import Module
-from typing import List, Dict, Optional
 from agents.brain.core import Brain
 
 
 class SoftwareDesignJudge(Module):
-    """Parses and evaluates raw UML and Architecture Design outputs."""
+    """Parses and evaluates raw UML Class Diagram, Sequence Diagram, and Architecture Design."""
 
     def __init__(self):
         super().__init__(
             model_name="gpt-4o",
             temperature=0.4,
             memory_limit=3,
-            system_message="You are a software design evaluator. Parse and evaluate UML and Architecture Design.",
+            system_message="You are a software design evaluator. Parse and evaluate UML Class Diagram, Sequence Diagram, and Architecture Design.",
         )
         self.examples = SoftwareDesignJudgeExamples()
         self.prompt_input = None
 
     @staticmethod
-    def parse_output(raw_output: str) -> dict:
-        """
-        Parses raw output from the SoftwareDesigner into UML and Architecture sections.
+    def validate_uml_class(uml_class: str, required_classes: set) -> tuple[bool, str]:
+        if not uml_class:
+            return False, "UML Class Diagram is missing."
+        defined_classes = set(re.findall(r"class (\w+)", uml_class))
+        missing_classes = required_classes - defined_classes
+        if missing_classes:
+            return False, f"Missing classes: {', '.join(missing_classes)}"
+        return True, "UML Class Diagram is valid."
 
-        Parameters:
-        - raw_output: The raw string output from the SoftwareDesigner.
+    @staticmethod
+    def validate_uml_sequence(uml_sequence: str) -> tuple[bool, str]:
+        if not uml_sequence:
+            return False, "UML Sequence Diagram is missing."
+        
+        return True, "UML Sequence Diagram is valid."
 
-        Returns:
-        - A dictionary with keys `uml` and `architecture`, containing their respective content.
-        """
-        uml_start = raw_output.find("# UML Diagram")
-        arch_start = raw_output.find("# Architecture Design")
+    @staticmethod
+    def validate_architecture(architecture: str) -> tuple[bool, str]:
+        if not architecture:
+            return False, "Architecture Design is missing."
 
-        if uml_start == -1 or arch_start == -1:
-            raise ValueError("Unable to parse UML or Architecture Design from raw output.")
-
-        uml_end = arch_start  # UML ends where Architecture begins
-        uml_content = raw_output[uml_start:uml_end].strip()
-        arch_content = raw_output[arch_start:].strip()
-
-        return {
-            "uml": uml_content,
-            "architecture": arch_content
-        }
+        return True, "Architecture Design is valid."
 
     def build_prompt_builder(self, brain: Optional[Brain] = None, raw_output: str = None, **kwargs) -> None:
-        """
-        Builds a structured prompt for evaluating designs after parsing.
-
-        Parameters:
-        - brain: The current Brain instance.
-        """
-        try:
-            # Prepare the knowledge base for evaluation
-            self.prompt_input = {
-                "prd": brain.knowledge_base.get("prd", "PRD not found"),
-                "uml": brain.knowledge_base.get("uml", "UML Diagram not found"),
-                "architecture": brain.knowledge_base.get("architecture", "Architecture Design not found"),
-            }
-        except KeyError:
-            self.prompt_input = {
-                "prd": "PRD not found",
-                "uml": "UML Diagram not found",
-                "architecture": "Architecture Design not found",
-            }
-
+        self.prompt_input = {
+            "prd": brain.knowledge_base.get("prd", "PRD not found"),
+            "uml_class": brain.knowledge_base.get("uml_class", "UML Class Diagram not found"),
+            "uml_sequence": brain.knowledge_base.get("uml_sequence", "UML Sequence Diagram not found"),
+            "architecture": brain.knowledge_base.get("architecture", "Architecture Design not found"),
+        }
         self.prompt_builder = SoftwareDesignJudgePrompt(examples=self.examples.get_examples())
-
-    def process(self, prompt_messages: List[Dict[str, str]] = None) -> str:
-        """
-        Process the input using the configured language model with a structured prompt.
-
-        Parameters:
-        - prompt_messages: A list of dictionaries containing the formatted prompt messages (optional).
-
-        Returns:
-        - The response content as a stripped string.
-        """
-        self.prompt_builder.build_prompt("", knowledge_base=self.prompt_input)
-        response = self.model.invoke(self.prompt_builder.prompt)  # Pass prompt directly
-        return response.content.strip()
-
-
-

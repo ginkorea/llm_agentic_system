@@ -2,6 +2,7 @@ import argparse
 import logging
 from agents.base import Agent
 
+
 # Configure logging
 logging.basicConfig(
     level=logging.DEBUG,

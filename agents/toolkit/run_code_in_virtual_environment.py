@@ -11,7 +11,7 @@ class RunExistingVenvInput(BaseModel):
 
 class CodeRunner:
     """
-    A wrapper class for running Python files in existing virtual environments.
+    A wrapper class for running Python files in existing virtual environments, does not set up the virtual environment.
     """
 
     def __init__(self, env_name="env"):

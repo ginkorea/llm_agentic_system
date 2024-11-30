@@ -10,9 +10,9 @@ class TaskRouter(Module):
 
     def __init__(self):
         super().__init__(
-            model_name="gpt-4o-mini",
+            model_name="gpt-4o",
             temperature=0.4,
-            memory_limit=3,
+            memory_limit=0,
             system_message="You manage task routing and decision-making, sending tasks to other lobes, do not use this for actual tasks.",
         )
         self.examples = CodeExamples()

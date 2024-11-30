@@ -23,14 +23,5 @@ class UnitTestGenerator(Module):
         Initializes the prompt builder using the UnitTestPrompt class.
         """
         examples = self.examples.get_examples() if examples is None else examples
-        prd = brain.knowledge_base.get("prd", "")
-        uml_class = brain.knowledge_base.get("uml_class", "")
-        code_files = brain.knowledge_base.get("code", {})
-
-        kwargs.update({
-            "prd": prd,
-            "uml_class": uml_class,
-            "code_files": code_files,
-        })
-        self.prompt_builder = UnitTestPrompt(modules=modules, tools=tools, examples=examples, **kwargs)
+        self.prompt_builder = UnitTestPrompt(examples=examples)
 

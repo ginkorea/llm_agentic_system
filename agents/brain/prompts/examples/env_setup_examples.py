@@ -9,10 +9,12 @@ class EnvironmentSetupExamples(ExamplesBase):
 
     def get_examples(self) -> str:
         """
-        Concatenates the PRD example and requirements.txt example into one string.
+        Concatenates the PRD example, Architecture,  and requirements.txt example into one string.
         """
         examples_string = (f"PRD Example:\n"
                            f"{self.get_prd()}\n\n"
+                           f"Architecture Example:\n"
+                            f"{self.get_architecture()}\n\n"
                            f"Requirements.txt Example:\n"
                            f"{self.get_requirements_txt()}")
 

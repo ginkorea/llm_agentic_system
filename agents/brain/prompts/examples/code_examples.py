@@ -65,11 +65,11 @@ class CodeExamples(ExamplesBase):
             refined_prompt="Assess UML and architecture against PRD requirements."
         )
 
-        # Example for 'EnvironmentSetupManager'
+        # Example for 'EnvironmentRequirementsDeveloper'
         self.add_module_example(
-            user_input="Generate requirements.txt and other setup files for the project",
+            user_input="Create a environment requirements.txt file based on the Architecture Design and PRD.: Original Results:...\nusing SoftwareDesigner\n Goal Achieved: True",
             lobe_index=3,  # EnvironmentSetupManager index
-            refined_prompt="Create environment setup files based on PRD and design."
+            refined_prompt="Create the required setup files based on the PRD, and Architecture Design to include at a minimum the requirements.txt."
         )
 
         # Example for 'GoalSetter'

@@ -23,20 +23,6 @@ class SoftwareDesigner(Module):
         """
         self.prompt_builder = SoftwareDesignPrompt(examples=self.examples.get_examples())
 
-    def process(self, prd_text: str) -> str:
-        """
-        Simulates processing the input PRD and generating UML and architecture outputs.
-
-        Parameters:
-        - prd_text: The Product Requirements Document (PRD) input.
-
-        Returns:
-        - The generated UML and architecture design as a single string.
-        """
-        self.build_prompt_builder()
-        prompt = self.prompt_builder.build_prompt(prd_text)
-        _output = self.model.invoke(prompt)
-        return _output.content.strip()
 
 
 # Test the SoftwareDesignLobe with a sample PRD

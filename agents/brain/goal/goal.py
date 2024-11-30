@@ -8,9 +8,13 @@ class Goal:
         self.milestones = milestones
         self.current_milestone_index = 0
         self.goal_file = goal_file
+        self.milestone_module_map = {}
 
     def current_milestone(self):
         return self.milestones[self.current_milestone_index] if self.current_milestone_index < len(self.milestones) else None
+
+    def get_milestone_map(self):
+        return self.milestone_module_map[self.current_milestone_index]
 
     def update_progress(self):
         if self.current_milestone():

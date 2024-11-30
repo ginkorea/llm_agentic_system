@@ -1,5 +1,5 @@
 from agents.brain.core import Brain
-from agents.brain.lobes.code import TaskRouter, GoalSetter, SoftwareDesigner, EnvironmentSetupManager, SoftwareDesignJudge
+from agents.brain.lobes.code import TaskRouter, GoalSetter, SoftwareDesigner, EnvironmentRequirementsDeveloper, SoftwareDesignJudge, CodeWriter, AcceptanceTestGenerator, UnitTestGenerator
 from agents.brain.prompts.examples import CodeExamples
 from agents.brain.goal.software_dev_goal import SoftwareDevelopmentGoal
 
@@ -14,7 +14,10 @@ class CodeBrain(Brain):
             TaskRouter(),               # Task manager directing to other lobes
             SoftwareDesigner(),         # Designs software architecture and logic
             SoftwareDesignJudge(),      # Evaluates the quality of software design
-            EnvironmentSetupManager(),  # Sets up the development environment
+            EnvironmentRequirementsDeveloper(),  # Sets up the development environment
+            CodeWriter(),               # Writes code based on design and requirements
+            AcceptanceTestGenerator(),  # Generates acceptance tests for the software
+            UnitTestGenerator(),        # Generates unit tests for the software
             GoalSetter()                # Sets and manages software development goals
         ]
 
@@ -29,7 +32,7 @@ class CodeBrain(Brain):
         self.knowledge_base.update(self.load_prd_from_file())
 
         # Set the goal and milestones for chaining mode
-        self.goal = SoftwareDevelopmentGoal(None, None, goal_file=goal_file)
+        self.goal = SoftwareDevelopmentGoal(goal_file=goal_file)
         self.goal.description = self.goal.set_unique_goal_from_file(brain=self)
 
 

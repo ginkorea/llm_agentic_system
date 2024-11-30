@@ -1,6 +1,10 @@
 from agents.brain.prompts.structured.structured_prompt import StructuredPrompt
-from typing import Optional
 from agents.brain.goal.goal import Goal
+
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from agents.brain.core import Brain
 
 
 class SoftwareDesignJudgePrompt(StructuredPrompt):
@@ -32,7 +36,7 @@ class SoftwareDesignJudgePrompt(StructuredPrompt):
         """
 
     def build_prompt(
-            self,
+            self, brain: 'Brain',
             prompt_input: str,
             previous_output: bool = False,
             previous_module: Optional[str] = None,

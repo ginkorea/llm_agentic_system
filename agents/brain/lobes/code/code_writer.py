@@ -20,25 +20,9 @@ class CodeWriter(Module):
         self.examples = CodeWriterExamples()
         self.prompt_builder = None
 
-    def build_prompt_builder(self, brain=None, modules=None, tools=None, examples=None, **kwargs):
+    def build_prompt_builder(self, brain=None, modules=None, tools=None, examples=None, raw_output=None):
         """
         Initializes the prompt builder using the CodeWriterPrompt class.
         """
-        examples = self.examples.get_examples() if examples is None else examples
-        prd, uml_class, uml_sequence, architecture = (brain.knowledge_base.get("prd", ""),
-                                                      brain.knowledge_base.get("uml_class", ""),
-                                                      brain.knowledge_base.get("uml_sequence"),
-                                                      brain.knowledge_base.get("architecture", ""))
-        required_classes = brain.knowledge_base.get("required_classes", "")
-        code_base = brain.knowledge_base.get("code", "")
-        implemented_classes = code_base.items() if code_base else []
-        kwargs.update({
-            "required_classes": required_classes,
-            "implemented_classes": implemented_classes,
-            "prd": prd,
-            "uml_class": uml_class,
-            "uml_sequence": uml_sequence,
-            "architecture": architecture,
-            "code_base": code_base
-        })
-        self.prompt_builder = CodeWriterPrompt(modules=modules, tools=tools, examples=examples, **kwargs)
+
+        self.prompt_builder = CodeWriterPrompt(examples=self.examples.get_examples())

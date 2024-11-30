@@ -1,4 +1,8 @@
 from agents.brain.prompts.structured.structured_prompt import StructuredPrompt
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from agents.brain.core import Brain
 
 
 class AcceptanceTestPrompt(StructuredPrompt):
@@ -21,7 +25,7 @@ class AcceptanceTestPrompt(StructuredPrompt):
         Include one test file per component and ensure the main flow is tested in a separate `test_main.py` file.
         """
 
-    def build_prompt(self, prompt_input: str, **kwargs) -> str:
+    def build_prompt(self, brain: 'Brain', prompt_input: str, **kwargs) -> str:
         """
         Builds the prompt for generating acceptance tests.
 
@@ -39,17 +43,17 @@ class AcceptanceTestPrompt(StructuredPrompt):
         ----------------
 
         PRD: 
-        {kwargs.get("prd", "PRD not found")}    
+        {brain.knowledge_base.get("prd", "PRD not found")}    
 
         UML Class Diagram:
-        {kwargs.get("uml_class", "UML Class Diagram not found")}
+        {brain.knowledge_base.get("uml_class", "UML Class Diagram not found")}
 
         Architecture Design:
-        {kwargs.get("architecture", "Architecture Design not found")}
+        {brain.knowledge_base.get("architecture", "Architecture Design not found")}
 
         Code Files:
         ----------------
-        {kwargs.get("code_files", "No code files found.")}
+        {brain.knowledge_base.get("code_files", "No code files found.")}
 
         ----------------
 
