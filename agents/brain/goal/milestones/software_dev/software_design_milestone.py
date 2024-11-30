@@ -35,7 +35,7 @@ class SoftwareDesignMilestone(Milestone):
             result = judge_module.validate_uml_class(uml_class, brain.knowledge_base.get("required_classes", set()))
             if result[0]:  # Save if validation passes
                 brain.knowledge_base["uml_class"] = uml_class
-                self.save_file("uml_class.uml", uml_class)
+                self.save_file(brain.work_folder + "/uml_class.txt", uml_class)
             results.append(("UML Class Diagram", result))
         else:
             results.append(("UML Class Diagram", (False, "UML Class Diagram is missing or incomplete.")))
@@ -44,7 +44,7 @@ class SoftwareDesignMilestone(Milestone):
             result = judge_module.validate_uml_sequence(uml_sequence)
             if result[0]:  # Save if validation passes
                 brain.knowledge_base["uml_sequence"] = uml_sequence
-                self.save_file("uml_sequence.uml", uml_sequence)
+                self.save_file(brain.work_folder + "/uml_sequence.txt", uml_sequence)
             results.append(("UML Sequence Diagram", result))
         else:
             results.append(("UML Sequence Diagram", (False, "UML Sequence Diagram is missing or incomplete.")))
@@ -53,7 +53,7 @@ class SoftwareDesignMilestone(Milestone):
             result = judge_module.validate_architecture(architecture)
             if result[0]:  # Save if validation passes
                 brain.knowledge_base["architecture"] = architecture
-                self.save_file("architecture.md", architecture)
+                self.save_file(brain.work_folder + "/architecture.md", architecture)
             results.append(("Architecture Design", result))
         else:
             results.append(("Architecture Design", (False, "Architecture Design is missing or incomplete.")))
@@ -71,6 +71,7 @@ class SoftwareDesignMilestone(Milestone):
 
     @staticmethod
     def save_file(file_name: str, data: str):
+
         with open(file_name, "w") as file:
             file.write(data)
 
