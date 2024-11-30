@@ -32,7 +32,7 @@ if __name__ == "__main__":
     software_design_lobe = SoftwareDesigner()
 
     # Sample PRD input
-    sample_prd_file = '/home/gompert/workspace/llm_agentic_system/workbench/prd/PRD.md'
+    sample_prd_file = '/workbench/PRD.md'
     with open(sample_prd_file, 'r') as file:
         sample_prd = file.read()
 

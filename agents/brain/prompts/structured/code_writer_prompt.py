@@ -89,6 +89,7 @@ class CodeWriterPrompt(StructuredPrompt):
         
         ----------------
                 
-        Generate the Python code files as described above, one code block per class and one for the `main.py` file.
+        Generate the Python code files as described above, one code block per class and one for the `main.py` file  
+        Ensure that you add any folder or module nesting as well as '__init__.py' to make the modules works.
         """
         return self.prompt
