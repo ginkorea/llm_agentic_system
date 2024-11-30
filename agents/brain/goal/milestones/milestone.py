@@ -9,6 +9,7 @@ class Milestone(ABC):
         self.achieved = False
         self.m_id = milestone_id
         self.fallback = fallback
+        self.name = self.__class__.__name__
 
     @abstractmethod
     def is_achieved(self, brain, input_data) -> Tuple[bool, str]:

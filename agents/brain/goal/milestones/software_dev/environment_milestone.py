@@ -1,75 +1,88 @@
 import os
 import re
-import colorama
 from agents.brain.goal.milestones import Milestone
-from agents.toolkit.create_virtual_environment import create_virtualenv_with_requirements, CreateVenvInput
+from agents.toolkit.create_virtual_environment import CreateVenvInput, create_virtualenv_with_requirements
+
 
 class EnvSetupMilestone(Milestone):
     def __init__(self):
-        super().__init__("Create and set up the environment and files based on the PRD and Architecture Design.")
+        super().__init__("Environment Setup Milestone")
 
     @staticmethod
-    def parse_files(input_data: str) -> dict:
+    def parse_generated_files(input_data: str) -> dict:
         """
-        Parses the input to extract filenames, paths, and content.
+        Parses the generated output to extract filenames and file content.
 
         Args:
-            input_data (str): Raw output containing files.
+            input_data (str): The raw output from the LLM.
 
         Returns:
-            dict: A dictionary where keys are file paths and values are file content.
+            dict: A dictionary with filenames as keys and content as values.
         """
-        file_blocks = re.findall(r"# ([^\n]+)\n```(.*?)\n(.*?)```", input_data, re.DOTALL)
-        files = {filename.strip(): content.strip() for filename, _, content in file_blocks}
-        return files
+        # Match file blocks: "# filename\n```<content>```"
+        code_blocks = re.findall(r"# (\S+)\n```(?:\w+\n)?(.*?)```", input_data, re.DOTALL)
 
-    def is_achieved(self, brain, input_data: str) -> tuple[bool, str]:
+        # Remove trailing explanations or comments after code
+        parsed_files = {filename: content.strip() for filename, content in code_blocks}
+        return parsed_files
+
+    @staticmethod
+    def validate_environment(brain, parsed_files: dict) -> tuple[bool, str]:
         """
-        Parses, validates, and saves files, then sets up the virtual environment.
+        Validates the environment setup based on the parsed files.
 
-        Parameters:
-        - brain: The Brain instance managing the system's knowledge and tools.
-        - input_data: The raw output from the `EnvironmentSetupManager`.
+        Args:
+            brain: The Brain instance managing the system's knowledge and tools.
+            parsed_files (dict): A dictionary containing the filenames and their content.
 
         Returns:
-        - Tuple[bool, str]: A tuple containing:
-            - A boolean indicating if the milestone was achieved.
-            - A string with the success or error message.
+            tuple: A boolean indicating success and a message.
         """
-        green = colorama.Fore.GREEN
-        red = colorama.Fore.RED
-        cyan = colorama.Fore.CYAN
-        reset = colorama.Style.RESET_ALL
+        # Validate `requirements.txt`
+        if "requirements.txt" not in parsed_files:
+            return False, "`requirements.txt` is missing from the generated files."
 
-        try:
-            print(f"{cyan}Parsing the output for files...{reset}")
-            files = self.parse_files(input_data)
-            if not files:
-                return False, f"{red}No valid files found in the output. Please ensure the output is correctly formatted.{reset}"
+        # Save `requirements.txt`
+        req_path = os.path.join(brain.work_folder, "requirements.txt")
+        os.makedirs(os.path.dirname(req_path), exist_ok=True)
+        with open(req_path, "w") as req_file:
+            req_file.write(parsed_files["requirements.txt"])
 
-            # Save files to the appropriate directory
-            for file_path, content in files.items():
-                full_path = os.path.join(brain.work_folder, file_path)
-                os.makedirs(os.path.dirname(full_path), exist_ok=True)
-                with open(full_path, "w") as f:
+        # Create virtual environment
+        if os.path.exists("project_env"):
+            # remove existing virtual environment directory
+            os.system("rm -rf project_env")
+        create_input = CreateVenvInput(env_name="project_env", requirements_file=req_path)
+        passed, result = create_virtualenv_with_requirements.invoke({"input_data": create_input.model_dump()})
+
+        if not passed:
+            print(create_input.env_name, create_input.requirements_file)
+            return False, f"Failed to set up virtual environment:\n{result}"
+
+        # Save all files and structure
+        for filename, content in parsed_files.items():
+            if not filename.endswith(".py"):
+                file_path = os.path.join(brain.work_folder, filename)
+                os.makedirs(os.path.dirname(file_path), exist_ok=True)
+                with open(file_path, "w") as f:
                     f.write(content)
-                print(f"{green}Saved file: {full_path}{reset}")
 
-            # Validate and install requirements.txt
-            if "requirements.txt" in files:
-                requirements_path = os.path.join(brain.work_folder, "requirements.txt")
-                create_input = CreateVenvInput(env_name="project_env", requirements_file=requirements_path)
-                result = create_virtualenv_with_requirements.invoke({"input_data": create_input.model_dump()})
+        return True, "Environment setup is complete. All files validated and saved."
 
-                if "successfully" in result:
-                    brain.knowledge_base["requirements.txt"] = files["requirements.txt"]
-                    print(f"{green}Virtual environment created successfully.{reset}")
-                else:
-                    return False, f"{red}Failed to set up virtual environment: {result}{reset}"
+    def is_achieved(self, brain, input_data) -> tuple[bool, str]:
+        """
+        Judges whether the milestone is achieved based on the LLM-generated output.
 
-            # Save files to knowledge base
-            brain.knowledge_base.setdefault("files", {}).update(files)
+        Args:
+            brain: The Brain instance managing the system's knowledge and tools.
+            input_data (str): The raw output from the LLM module.
 
-            return True, f"{green}Environment setup complete with all files saved successfully.{reset}"
-        except Exception as e:
-            return False, f"{red}An error occurred during environment setup: {e}{reset}"
+        Returns:
+            tuple: A boolean indicating success and a message.
+        """
+        parsed_files = self.parse_generated_files(input_data)
+
+        if not parsed_files:
+            return False, "No valid files were generated by the LLM. Please retry environment setup."
+
+        return self.validate_environment(brain, parsed_files)

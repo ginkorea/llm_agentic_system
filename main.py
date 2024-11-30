@@ -1,6 +1,7 @@
 import argparse
 import logging
 from agents.base import Agent
+import os
 
 
 # Configure logging
@@ -58,9 +59,49 @@ def parse_arguments():
 
     return parser.parse_args()
 
+def clean_space(directory: str = "workbench", add_init: bool = True):
+    """
+    Clean the workbench directory before running the agent.
+    Ensures the directory exists, removes all files and subdirectories,
+    and creates a new __init__.py file.
+
+    Args:
+        directory (str): Path to the workbench directory (default: "workbench").
+        add_init (bool): Add an __init__.py file to the directory (default: True).
+    """
+    try:
+        # Ensure the workbench directory exists
+        if not os.path.exists(directory):
+            if add_init:
+                os.makedirs(directory)
+
+        # Remove all files and subdirectories
+        for root, dirs, files in os.walk(directory, topdown=False):
+            for name in files:
+                file_path = os.path.join(root, name)
+                os.remove(file_path)
+            for name in dirs:
+                dir_path = os.path.join(root, name)
+                os.rmdir(dir_path)
+
+        # Create a new __init__.py file
+        if add_init:
+            init_file_path = os.path.join(directory, "__init__.py")
+            with open(init_file_path, "w") as init_file:
+                init_file.write("# Workbench package initialization\n")
+
+        logging.info("Workbench directory cleaned and initialized.")
+    except Exception as e:
+        logging.error(f"Error cleaning the workbench directory: {e}")
+
+
 if __name__ == "__main__":
     # Parse arguments
     args = parse_arguments()
+
+    # Clean the workbench and project_env directories
+    clean_space()
+    clean_space("project_env", add_init=False)
 
     # Initialize agent with parsed arguments
     agent = Agent(

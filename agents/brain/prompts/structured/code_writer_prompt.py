@@ -85,11 +85,13 @@ class CodeWriterPrompt(StructuredPrompt):
         
         Existing Code Base:
         ----------------
-        {brain.knowledge_base.get("code_base", "No existing code base found.")}
+        {brain.knowledge_base.get("code", "No existing code base found.")}
         
         ----------------
                 
         Generate the Python code files as described above, one code block per class and one for the `main.py` file  
-        Ensure that you add any folder or module nesting as well as '__init__.py' to make the modules works.
+        Ensure that you add any folder or module nesting as well as '__init__.py' to make the modules works.  
+        All modules should be prefixed with the "workbench" module name.  for instance if the module is myproject, the module should be workbench.myproject.
+        Do not prefix filenames with "workbench.".
         """
         return self.prompt

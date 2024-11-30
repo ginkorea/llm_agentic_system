@@ -14,7 +14,7 @@ class AcceptanceTestPrompt(StructuredPrompt):
         super().__init__(tools=tools, modules=modules, examples=examples, goal=goal)
         self.base_prompt = """
         You are an expert in Python testing and software verification. Your task is to generate comprehensive acceptance tests for the provided system. 
-        These tests must validate system functionality against the PRD, UML Class Diagram, and Architecture Design.
+        These tests must validate system functionality against the PRD, UML Class Diagram, and Architecture Design, and Code Files.
 
         Each test must:
         - Validate key functionality as described in the PRD.
@@ -23,6 +23,9 @@ class AcceptanceTestPrompt(StructuredPrompt):
         - Follow the unittest framework.
 
         Include one test file per component and ensure the main flow is tested in a separate `test_main.py` file.
+        
+        For importing modules, you should prefix the module with "workbench." plus the module name. Because all files are in the workbench directory.
+        Do not prefix filenames with "workbench.".
         """
 
     def build_prompt(self, brain: 'Brain', prompt_input: str, **kwargs) -> str:
@@ -53,7 +56,7 @@ class AcceptanceTestPrompt(StructuredPrompt):
 
         Code Files:
         ----------------
-        {brain.knowledge_base.get("code_files", "No code files found.")}
+        {brain.knowledge_base.get("code", "No code files found.")}
 
         ----------------
 

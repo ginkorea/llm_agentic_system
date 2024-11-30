@@ -1,5 +1,4 @@
 # goal.py
-from torch import unique
 
 
 class Goal:
@@ -11,7 +10,7 @@ class Goal:
         self.milestone_module_map = {}
 
     def current_milestone(self):
-        return self.milestones[self.current_milestone_index] if self.current_milestone_index < len(self.milestones) else None
+        return self.milestones[self.current_milestone_index] if self.current_milestone_index < len(self.milestones) + 1 else None
 
     def get_milestone_map(self):
         return self.milestone_module_map[self.current_milestone_index]

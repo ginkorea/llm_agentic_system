@@ -21,6 +21,9 @@ class UnitTestPrompt(StructuredPrompt):
         - Follow the unittest framework and proper test structure.
 
         Include one test file per class or module, naming them as `test_<module_name>.py`.
+        
+        For importing modules, you should prefix the module with "workbench." plus the module name. Because all files are in the workbench directory.
+        Do not prefix filenames with "workbench.".
         """
 
     def build_prompt(self, brain: 'Brain', prompt_input: str, **kwargs) -> str:
@@ -48,7 +51,7 @@ class UnitTestPrompt(StructuredPrompt):
 
         Code Files:
         ----------------
-        {brain.knowledge_base.get("code_files", "No code files found.")}
+        {brain.knowledge_base.get("code", "No code files found.")}
 
         ----------------
 

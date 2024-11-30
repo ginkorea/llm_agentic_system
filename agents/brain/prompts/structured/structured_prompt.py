@@ -39,7 +39,7 @@ class StructuredPrompt:
             """
         else:
             self.prompt += f"""
-            React to the following input: "{prompt_input}"
+            React to the following input (it likely contains output from a previous LLM so it needs to be interpreted as such): "{prompt_input}"
             """
         return self.prompt
 

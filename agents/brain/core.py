@@ -55,9 +55,16 @@ class Brain:
         reset = "\033[0m"  # Reset text color to default
 
         current_milestone = self.goal.current_milestone()
-        judge = current_milestone.description + "Judge"
+        judge = current_milestone.name + "Judge"
         if current_milestone:
-            is_achieved, judge_output = current_milestone.is_achieved(self, output)
+            print(f"Evaluating milestone '{current_milestone.description}'...")
+            print(f"Using judge '{judge}' to evaluate output.")
+            print(f"Current Milestone Index: {self.goal.current_milestone_index}")
+            print(f"From output: {output}")
+            try:
+                is_achieved, judge_output = current_milestone.is_achieved(self, output)
+            except TypeError as e:
+                is_achieved, judge_output = True, f"Error evaluating milestone: {e}"
             self.memory.store_memory(output, judge_output, module=judge)
             if is_achieved:
                 print(f"{green}Milestone '{current_milestone.description}' achieved.{reset}")

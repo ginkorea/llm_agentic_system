@@ -13,7 +13,7 @@ class UnitTestGenerator(Module):
             model_name="gpt-4o",
             temperature=0.5,
             memory_limit=5,
-            system_message="Generate unit tests for Python code based on PRD, UML Diagram, and Architecture Design.",
+            system_message="Generate unit tests for Python code based on PRD, UML Class Diagram, and Code.",
         )
         self.examples = UnitTestExamples()
         self.prompt_builder = None
@@ -22,6 +22,5 @@ class UnitTestGenerator(Module):
         """
         Initializes the prompt builder using the UnitTestPrompt class.
         """
-        examples = self.examples.get_examples() if examples is None else examples
-        self.prompt_builder = UnitTestPrompt(examples=examples)
+        self.prompt_builder = UnitTestPrompt(examples=self.examples.get_examples())
 

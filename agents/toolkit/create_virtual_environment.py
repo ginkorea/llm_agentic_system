@@ -12,9 +12,9 @@ class CreateVenvInput(BaseModel):
 
 
 @tool
-def create_virtualenv_with_requirements(input_data: CreateVenvInput) -> str:
+def create_virtualenv_with_requirements(input_data: CreateVenvInput) -> tuple[bool, str]:
     """
-    Create a virtual environment and install dependencies from requirements.txt, not used for creating a requirements file.
+    Create a virtual environment and install dependencies from requirements.txt.
 
     Args:
         input_data (CreateVenvInput): Contains the environment name and path to requirements.txt.
@@ -30,20 +30,30 @@ def create_virtualenv_with_requirements(input_data: CreateVenvInput) -> str:
         if not os.path.exists(env_name):
             venv.create(env_name, with_pip=True)
 
-        # Activate the virtual environment
+        # Ensure pip is installed
         env_bin = os.path.join(env_name, "bin" if os.name != "nt" else "Scripts")
+        python_executable = os.path.join(env_bin, "python")
         pip_executable = os.path.join(env_bin, "pip")
+
+        if not os.path.exists(pip_executable):
+            subprocess.run([python_executable, "-m", "ensurepip"], check=True)
+            subprocess.run([pip_executable, "install", "--upgrade", "pip"], check=True)
 
         # Install requirements from requirements.txt
         if os.path.exists(requirements_file):
-            subprocess.run([pip_executable, "install", "-r", requirements_file], check=True)
-        else:
-            return f"Error: Requirements file '{requirements_file}' not found."
+            install_command = [pip_executable, "install", "-r", requirements_file]
+            result = subprocess.run(install_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
-        return f"Virtual environment '{env_name}' created and requirements installed successfully."
+            if result.returncode != 0:
+                return False, f"Error installing requirements: {result.stderr}"
+
+            return True, f"Virtual environment '{env_name}' created and requirements installed successfully."
+        else:
+            return False, "Error: Requirements file '{requirements_file}' not found."
 
     except Exception as e:
-        return f"An error occurred: {e}"
+        return False, f"An error occurred: {e}"
+
 
 
 if __name__ == "__main__":
@@ -52,6 +62,7 @@ if __name__ == "__main__":
         env_name="test_env",
         requirements_file="requirements.txt"
     )
-    create_result = create_virtualenv_with_requirements.invoke({"input_data": create_input.dict()})
-    print(create_result)
+    passed, return_result = create_virtualenv_with_requirements.invoke({"input_data": create_input.model_dump()})
+    print(passed)
+    print(return_result)
 
