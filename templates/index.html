@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PRD Selection</title>
+</head>
+<body>
+    <h1>Select a PRD to Develop Software</h1>
+    <form action="/start" method="post">
+        <label for="prd_file">Select PRD:</label>
+        <select id="prd_file" name="prd_file">
+            {% for prd in prd_files %}
+                <option value="{{ prd }}">{{ prd }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Develop Software</button>
+    </form>
+    <div>
+        <h1>Milestone Progress</h1>
+        <div id="progress-bar" style="width: 100%; background-color: #f3f3f3;">
+            <div id="progress" style="width: 0%; height: 30px; background-color: #4caf50;"></div>
+        </div>
+        <p id="milestone-text">Current Milestone: </p>
+    </div>
+
+    <script>
+        function updateProgress() {
+            fetch("/progress")
+                .then(response => response.json())
+                .then(data => {
+                    const progress = document.getElementById("progress");
+                    const milestoneText = document.getElementById("milestone-text");
+                    progress.style.width = data.percentage + "%";
+                    milestoneText.innerText = "Current Milestone: " + data.milestone;
+                });
+        }
+
+        setInterval(updateProgress, 2000);  // Poll every 2 seconds
+    </script>
+
+</body>
+</html>

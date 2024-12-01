@@ -15,3 +15,8 @@ class Milestone(ABC):
     def is_achieved(self, brain, input_data) -> Tuple[bool, str]:
         """Check if the milestone has been achieved. This should be overridden in each subclass."""
         return True, "Milestone Achieved (Free Pass)."
+
+    def complete(self, goal):
+        """Mark milestone as complete and update goal progress."""
+        self.achieved = True
+        goal.update_progress()

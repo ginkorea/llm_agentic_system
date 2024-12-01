@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Milestone Results</title>
+</head>
+<body>
+    <h1>Milestone Outputs</h1>
+    {% if milestone_outputs %}
+        <ul>
+            {% for milestone, output in milestone_outputs.items() %}
+                <li>
+                    <strong>{{ milestone }}</strong>
+                    <pre>{{ output }}</pre>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No results available yet. The development process might still be running.</p>
+    {% endif %}
+</body>
+</html>

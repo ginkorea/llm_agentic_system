@@ -166,6 +166,7 @@ class TestMilestone(Milestone):
 
         # Provide detailed feedback on test results
         if "failed" not in result:
+            self.complete(brain.goal)
             return True, f"All {self.test_type.lower()} tests passed successfully.\n{result}"
         else:
             # Extract detailed errors

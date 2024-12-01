@@ -10,5 +10,3 @@ class UnitTestMilestone(TestMilestone):
             predefined_dependencies=["pytest"],
         )
 
-    def is_achieved(self, brain, input_data: str) -> tuple[bool, str]:
-        return True, "Unit tests passed successfully... Haha, just kidding. I can't run tests yet. But I trust you!"

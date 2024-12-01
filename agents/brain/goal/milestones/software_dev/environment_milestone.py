@@ -26,8 +26,7 @@ class EnvSetupMilestone(Milestone):
         parsed_files = {filename: content.strip() for filename, content in code_blocks}
         return parsed_files
 
-    @staticmethod
-    def validate_environment(brain, parsed_files: dict) -> tuple[bool, str]:
+    def validate_environment(self, brain, parsed_files: dict) -> tuple[bool, str]:
         """
         Validates the environment setup based on the parsed files.
 
@@ -67,6 +66,7 @@ class EnvSetupMilestone(Milestone):
                 with open(file_path, "w") as f:
                     f.write(content)
 
+        self.complete(brain.goal)
         return True, "Environment setup is complete. All files validated and saved."
 
     def is_achieved(self, brain, input_data) -> tuple[bool, str]:

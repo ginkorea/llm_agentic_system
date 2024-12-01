@@ -8,6 +8,7 @@ class Goal:
         self.current_milestone_index = 0
         self.goal_file = goal_file
         self.milestone_module_map = {}
+        self.progress = 0  # Progress percentage
 
     def current_milestone(self):
         return self.milestones[self.current_milestone_index] if self.current_milestone_index < len(self.milestones) + 1 else None
@@ -16,9 +17,15 @@ class Goal:
         return self.milestone_module_map[self.current_milestone_index]
 
     def update_progress(self):
+        """Update progress percentage after a milestone is achieved."""
         if self.current_milestone():
             self.current_milestone_index += 1
+            self.progress = int((self.current_milestone_index / len(self.milestones)) * 100)
         return self.is_complete()
+
+    def get_progress(self):
+        """Returns progress percentage."""
+        return self.progress
 
     def fallback(self):
         fallback_index = self.current_milestone().fallback

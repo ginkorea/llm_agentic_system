@@ -61,6 +61,7 @@ class SoftwareDesignMilestone(Milestone):
         # Check if all components passed
         all_passed = all(result[1][0] for result in results)
         if all_passed:
+            self.complete(brain.goal)
             return True, f"{green}UML and Architecture Design validated and stored in the knowledge base.{reset}"
 
         # Create a detailed failure report

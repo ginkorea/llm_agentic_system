@@ -110,9 +110,8 @@ class ImplementationMilestone(Milestone):
             with open(class_file_path, "w") as class_file:
                 class_file.write(code)
 
-
-
         # If all requirements are met
+        self.complete(brain.goal)
         return True, "All required classes and main.py are implemented and saved. Proceed to developing and running unit tests."
 
 
