@@ -1,6 +1,5 @@
 # goal.py
 
-
 class Goal:
     def __init__(self, description, milestones, goal_file=None):
         self.description = description
@@ -11,7 +10,7 @@ class Goal:
         self.progress = 0  # Progress percentage
 
     def current_milestone(self):
-        return self.milestones[self.current_milestone_index] if self.current_milestone_index < len(self.milestones) + 1 else None
+        return self.milestones[self.current_milestone_index] 
 
     def get_milestone_map(self):
         return self.milestone_module_map[self.current_milestone_index]

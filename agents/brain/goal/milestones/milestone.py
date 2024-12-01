@@ -19,4 +19,3 @@ class Milestone(ABC):
     def complete(self, goal):
         """Mark milestone as complete and update goal progress."""
         self.achieved = True
-        goal.update_progress()

@@ -65,6 +65,9 @@ class ImplementationMilestone(Milestone):
         """
         brain.knowledge_base.setdefault("code", {})
         for filename, code in code_files.items():
+            # print filname in green and the code in blue
+            print(f"\033[92m{filename}\033[00m")
+            print(f"\033[94m{code}\033[00m")
             brain.knowledge_base["code"][filename] = code
             file_path = os.path.join(brain.work_folder, filename)
             os.makedirs(os.path.dirname(file_path), exist_ok=True)

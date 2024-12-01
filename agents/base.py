@@ -67,9 +67,6 @@ class Agent:
         results = f"Original Results:\n{original_results}\nusing {using}\nGoal Achieved: {achieved} \nJudge Results:\n{judge_results}"
         return results
 
-    def goal_achieved(self):
-        """Check if the overall goal has been achieved by updating and checking milestones."""
-        return self.brain.goal.update_progress()
 
 
 # Example usage
