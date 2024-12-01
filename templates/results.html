@@ -1,21 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Milestone Results</title>
+    <title>Results</title>
+    <script>
+        async function fetchFiles() {
+            const response = await fetch('/explore');
+            const files = await response.json();
+            const fileList = document.getElementById('file-list');
+            fileList.innerHTML = '';
+            files.forEach(file => {
+                const listItem = document.createElement('li');
+                listItem.innerText = file;
+                listItem.onclick = () => fetchFileContent(file);
+                fileList.appendChild(listItem);
+            });
+        }
+
+        async function fetchFileContent(file) {
+            const response = await fetch(`/file-content?file=${encodeURIComponent(file)}`);
+            const content = await response.text();
+            const fileContentPane = document.getElementById('file-content');
+            fileContentPane.innerText = content;
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchFiles);
+    </script>
 </head>
 <body>
-    <h1>Milestone Outputs</h1>
-    {% if milestone_outputs %}
-        <ul>
-            {% for milestone, output in milestone_outputs.items() %}
-                <li>
-                    <strong>{{ milestone }}</strong>
-                    <pre>{{ output }}</pre>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No results available yet. The development process might still be running.</p>
-    {% endif %}
+    <h1>Results and File Explorer</h1>
+    <div style="display: flex; gap: 20px;">
+        <div style="width: 30%; border: 1px solid #ccc; padding: 10px;">
+            <h2>File Explorer</h2>
+            <ul id="file-list" style="list-style-type: none; padding: 0;"></ul>
+        </div>
+        <div style="width: 70%; border: 1px solid #ccc; padding: 10px;">
+            <h2>File Content</h2>
+            <pre id="file-content" style="white-space: pre-wrap;"></pre>
+        </div>
+    </div>
 </body>
 </html>

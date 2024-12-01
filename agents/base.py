@@ -50,6 +50,7 @@ class Agent:
 
                 # Update input for chaining
                 current_input = self.concat_results(results, judge_output, achieved, using)
+                current_input += "\n" + self.brain.goal.get_progress_description()
                 if self.verbose:
                     print(current_input)
         else:

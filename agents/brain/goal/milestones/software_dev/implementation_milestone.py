@@ -7,7 +7,6 @@ class ImplementationMilestone(Milestone):
     def __init__(self):
         super().__init__("Code Implementation Milestone")
 
-
     @staticmethod
     def parse_code_files(input_data):
         """
@@ -26,20 +25,56 @@ class ImplementationMilestone(Milestone):
             re.DOTALL
         )
 
-        # Process matches to extract filename and code content
         parsed_files = {}
         for pre_filename, code, post_filename in code_blocks:
             filename = pre_filename or post_filename
             if filename:
                 parsed_files[filename.strip()] = code.strip()
 
-        # print in green the parsed files
-        for key, value in parsed_files.items():
-            print(f"\033[92m{key}\033[00m")
-            print(value)
-            print()
-
         return parsed_files
+
+    @staticmethod
+    def save_code_files(brain, code_files, work_folder):
+        """
+        Saves code files to the brain's knowledge base and the file system.
+
+        Args:
+            brain: The Brain instance managing the system's knowledge and tools.
+            code_files (dict): Dictionary of filenames and their code content.
+            work_folder (str): Directory to save the code files.
+        """
+        if "code" not in brain.knowledge_base:
+            brain.knowledge_base.setdefault("code", {})
+
+        for filename, code in code_files.items():
+
+            filename = filename.replace(work_folder + "/", "")  # remove work_folder from filename
+            # Save to the knowledge base
+            brain.knowledge_base["code"][filename] = code
+
+            # Save to the file system
+            file_path = os.path.join(work_folder, filename)
+
+            # Print the filename in green and the code in blue
+            ImplementationMilestone.save_file_print_green_name_and_blue_text(file_path, code)
+
+        #yellow text for entire brain.knowledge_base["code"] dictionary
+        print("\033[33m", brain.knowledge_base["code"], "\033[0m")
+
+    @staticmethod
+    def save_file_print_green_name_and_blue_text(file_path, code):
+        """
+        Saves the code to the file and prints the filename in green and the code in blue.
+
+        Args:
+            file_path (str): The path to the file.
+            code (str): The code to save.
+        """
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        with open(file_path, "w") as f:
+            f.write(code)
+        print("\033[32m", file_path, "\033[0m")
+        print("\033[34m", code, "\033[0m")
 
     @staticmethod
     def extract_classes_from_code(code):
@@ -54,26 +89,6 @@ class ImplementationMilestone(Milestone):
         """
         return re.findall(r"class (\w+)", code)
 
-    @staticmethod
-    def save_code_files(brain, code_files):
-        """
-        Saves code files to the brain's knowledge base and the file system.
-
-        Args:
-            brain: The Brain instance managing the system's knowledge and tools.
-            code_files (dict): Dictionary of filenames and their code content.
-        """
-        brain.knowledge_base.setdefault("code", {})
-        for filename, code in code_files.items():
-            # print filname in green and the code in blue
-            print(f"\033[92m{filename}\033[00m")
-            print(f"\033[94m{code}\033[00m")
-            brain.knowledge_base["code"][filename] = code
-            file_path = os.path.join(brain.work_folder, filename)
-            os.makedirs(os.path.dirname(file_path), exist_ok=True)
-            with open(file_path, "w") as f:
-                f.write(code)
-
     def is_achieved(self, brain, input_data) -> tuple[bool, str]:
         """
         Validates the implementation against the UML Class Diagram.
@@ -87,34 +102,36 @@ class ImplementationMilestone(Milestone):
         """
         # Parse response for code files
         code_files = self.parse_code_files(input_data)
+        if not code_files:
+            return False, "No code files were found in the input data."
 
-        # Save all code files to brain knowledge base and working directory
-        self.save_code_files(brain, code_files)
+        # Save all code files to the brain's knowledge base and working directory
+        self.save_code_files(brain, code_files, brain.work_folder)
 
-        required_classes = brain.knowledge_base.get("required_classes", set())
+        # Extract required classes from the UML Class Diagram
+        uml_class_diagram = brain.knowledge_base.get("uml_class", "")
+        required_classes = set(re.findall(r"class (\w+)", uml_class_diagram))
+        if not required_classes:
+            return False, "No required classes found in the UML Class Diagram."
+
+        # Extract implemented classes from the saved code files
         implemented_classes = set()
-
-        # Gather implemented classes from all saved code files
         for code in brain.knowledge_base["code"].values():
             implemented_classes.update(self.extract_classes_from_code(code))
 
         # Determine missing classes
         missing_classes = required_classes - implemented_classes
         if missing_classes:
-            # Add missing classes to brain.knowledge_base for focus in next iteration
             brain.knowledge_base["missing_classes"] = list(missing_classes)
             return False, (
                 f"The following classes are missing: {', '.join(missing_classes)}. "
-                f"Partial files saved for future iterations. Rework the implementation focusing on the missing classes."
+                "Partial files have been saved for future iterations."
             )
 
-        for filename, code in brain.knowledge_base["code"].items():
-            class_file_path = os.path.join(brain.work_folder, filename)
-            with open(class_file_path, "w") as class_file:
-                class_file.write(code)
+        main_file = brain.knowledge_base['code'].get('main.py', '')
+        if not main_file:
+            return False, "No main.py file found in the code. Please ensure the main flow is tested in a separate `test_main.py` file."
 
         # If all requirements are met
         self.complete(brain.goal)
-        return True, "All required classes and main.py are implemented and saved. Proceed to developing and running unit tests."
-
-
+        return True, "All required classes have been implemented and saved. Proceed to the next milestone."
