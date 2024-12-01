@@ -1,21 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>PRD Selection</title>
-    <style>
-        #progress-bar {
-            width: 100%;
-            background-color: #f3f3f3;
-        }
-        #progress {
-            width: 0%;
-            height: 30px;
-            background-color: #4caf50;
-        }
-    </style>
+    <title>LLM Agentic Software Development Application</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <h1>Select a PRD to Develop Software</h1>
+    <h1>LLM Agentic Software Development Application</h1>
+    <h2>Select a PRD to Develop Software</h2>
     <form action="/start" method="post">
         <label for="prd_file">Select PRD:</label>
         <select id="prd_file" name="prd_file">
@@ -26,13 +17,12 @@
         <button type="submit">Develop Software</button>
     </form>
     <div>
-        <h1>Milestone Progress</h1>
+        <h2>Milestone Progress</h2>
         <div id="progress-bar">
             <div id="progress"></div>
         </div>
         <p id="milestone-text">Current Milestone: Initializing...</p>
     </div>
-
     <script>
         function updateProgress() {
             fetch("/progress")

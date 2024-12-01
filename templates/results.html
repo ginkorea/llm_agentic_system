@@ -1,31 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Results</title>
-    <style>
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        li {
-            display: flex;
-            align-items: center;
-            padding: 5px;
-            cursor: pointer;
-            border-bottom: 1px solid #ccc;
-        }
-        li:hover {
-            background-color: #f0f0f0;
-        }
-        img {
-            width: 1em;
-            height: 1em;
-            margin-right: 10px;
-        }
-        #file-content {
-            white-space: pre-wrap;
-        }
-    </style>
+    <title>Results for LLM Agentic System Software Development</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>Results and File Explorer for LLM Agentic System Software Development</h1>
+    <div style="display: flex; gap: 20px;">
+        <div style="width: 30%; border: 1px solid #ccc; padding: 10px;">
+            <h2>File Explorer</h2>
+            <ul id="file-list"></ul>
+        </div>
+        <div style="width: 70%; border: 1px solid #ccc; padding: 10px;">
+            <h2>File Content</h2>
+            <pre id="file-content"></pre>
+        </div>
+    </div>
     <script>
         const fileIcons = {
             '.py': 'https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg',
@@ -72,18 +62,5 @@
 
         document.addEventListener('DOMContentLoaded', fetchFiles);
     </script>
-</head>
-<body>
-    <h1>Results and File Explorer</h1>
-    <div style="display: flex; gap: 20px;">
-        <div style="width: 30%; border: 1px solid #ccc; padding: 10px;">
-            <h2>File Explorer</h2>
-            <ul id="file-list"></ul>
-        </div>
-        <div style="width: 70%; border: 1px solid #ccc; padding: 10px;">
-            <h2>File Content</h2>
-            <pre id="file-content"></pre>
-        </div>
-    </div>
 </body>
 </html>
