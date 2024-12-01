@@ -9,7 +9,7 @@ app = Flask(__name__)
 app.config["PRD_FOLDER"] = "prd"
 app.config["WORK_FOLDER"] = "workbench"
 
-progress = {"percentage": 0, "milestone": "", "status": "running"}
+progress = {"percentage": 0, "milestone": "Initializing...", "status": "running"}
 
 cleaner = Cleaner()
 
@@ -32,7 +32,11 @@ def run_agent(prd_file):
             progress["status"] = "completed"
 
     try:
+        # Initialize first milestone
+        progress["milestone"] = "Starting development..."
         agent.run(callback=milestone_callback)
+        progress["percentage"] = 100
+        progress["status"] = "completed"
     except Exception as e:
         progress["status"] = f"error: {str(e)}"
 
@@ -50,6 +54,7 @@ def start_development():
         return redirect(url_for("index"))
 
     cleaner.start_fresh()
+    progress.update({"percentage": 0, "milestone": "Initializing...", "status": "running"})
     thread = Thread(target=run_agent, args=(prd_file,))
     thread.start()
 

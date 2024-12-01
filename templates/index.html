@@ -2,6 +2,17 @@
 <html lang="en">
 <head>
     <title>PRD Selection</title>
+    <style>
+        #progress-bar {
+            width: 100%;
+            background-color: #f3f3f3;
+        }
+        #progress {
+            width: 0%;
+            height: 30px;
+            background-color: #4caf50;
+        }
+    </style>
 </head>
 <body>
     <h1>Select a PRD to Develop Software</h1>
@@ -16,10 +27,10 @@
     </form>
     <div>
         <h1>Milestone Progress</h1>
-        <div id="progress-bar" style="width: 100%; background-color: #f3f3f3;">
-            <div id="progress" style="width: 0%; height: 30px; background-color: #4caf50;"></div>
+        <div id="progress-bar">
+            <div id="progress"></div>
         </div>
-        <p id="milestone-text">Current Milestone: </p>
+        <p id="milestone-text">Current Milestone: Initializing...</p>
     </div>
 
     <script>
@@ -29,13 +40,26 @@
                 .then(data => {
                     const progress = document.getElementById("progress");
                     const milestoneText = document.getElementById("milestone-text");
+
+                    // Update progress bar and milestone text
                     progress.style.width = data.percentage + "%";
                     milestoneText.innerText = "Current Milestone: " + data.milestone;
-                });
+
+                    // Redirect to results if the process is complete
+                    if (data.status === "completed") {
+                        window.location.href = "/results";
+                    }
+
+                    // Handle errors
+                    if (data.status.startsWith("error")) {
+                        milestoneText.innerText = "Error: " + data.status;
+                        clearInterval(intervalId);  // Stop further polling
+                    }
+                })
+                .catch(error => console.error("Error fetching progress:", error));
         }
 
-        setInterval(updateProgress, 2000);  // Poll every 2 seconds
+        const intervalId = setInterval(updateProgress, 2000);  // Poll every 2 seconds
     </script>
-
 </body>
 </html>

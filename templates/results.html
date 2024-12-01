@@ -2,7 +2,49 @@
 <html lang="en">
 <head>
     <title>Results</title>
+    <style>
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            display: flex;
+            align-items: center;
+            padding: 5px;
+            cursor: pointer;
+            border-bottom: 1px solid #ccc;
+        }
+        li:hover {
+            background-color: #f0f0f0;
+        }
+        img {
+            width: 1em;
+            height: 1em;
+            margin-right: 10px;
+        }
+        #file-content {
+            white-space: pre-wrap;
+        }
+    </style>
     <script>
+        const fileIcons = {
+            '.py': 'https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg',
+            '.txt': 'https://www.svgrepo.com/show/145033/text-file-document.svg',
+            '.md': 'https://upload.wikimedia.org/wikipedia/commons/4/48/Markdown-mark.svg',
+            '.json': 'https://upload.wikimedia.org/wikipedia/commons/c/c9/JSON_vector_logo.svg',
+            '.html': 'https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg',
+            '.xml': 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Xml_logo.svg',
+            '.js': 'https://upload.wikimedia.org/wikipedia/commons/6/6a/JavaScript-logo.png',
+            '.css': 'https://upload.wikimedia.org/wikipedia/commons/d/d5/CSS3_logo_and_wordmark.svg',
+            '.csv': 'https://logowik.com/csv-file-format-vector-icon-15345.html',
+            'default': 'https://www.svgrepo.com/show/491021/file-generic.svg'
+        };
+
+        function getFileIcon(fileName) {
+            const extension = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+            return fileIcons[extension] || fileIcons['default'];
+        }
+
         async function fetchFiles() {
             const response = await fetch('/explore');
             const files = await response.json();
@@ -10,7 +52,12 @@
             fileList.innerHTML = '';
             files.forEach(file => {
                 const listItem = document.createElement('li');
-                listItem.innerText = file;
+                const img = document.createElement('img');
+                img.src = getFileIcon(file);
+                img.alt = `${file} icon`;
+                listItem.appendChild(img);
+                const textNode = document.createTextNode(file);
+                listItem.appendChild(textNode);
                 listItem.onclick = () => fetchFileContent(file);
                 fileList.appendChild(listItem);
             });
@@ -31,11 +78,11 @@
     <div style="display: flex; gap: 20px;">
         <div style="width: 30%; border: 1px solid #ccc; padding: 10px;">
             <h2>File Explorer</h2>
-            <ul id="file-list" style="list-style-type: none; padding: 0;"></ul>
+            <ul id="file-list"></ul>
         </div>
         <div style="width: 70%; border: 1px solid #ccc; padding: 10px;">
             <h2>File Content</h2>
-            <pre id="file-content" style="white-space: pre-wrap;"></pre>
+            <pre id="file-content"></pre>
         </div>
     </div>
 </body>
