@@ -31,6 +31,30 @@ class ImplementationMilestone(Milestone):
             if filename:
                 parsed_files[filename.strip()] = code.strip()
 
+        # If no valid code blocks are found, use fallback parsing
+        if not parsed_files:
+            parsed_files = ImplementationMilestone.fallback_parse_code_files(input_data)
+
+        return parsed_files
+
+    @staticmethod
+    def fallback_parse_code_files(input_data):
+        """
+        Fallback parser to extract code blocks using generic ``` delimiters.
+
+        Args:
+            input_data (str): Raw response containing multiple code blocks.
+
+        Returns:
+            dict: A dictionary where keys are generic filenames and values are code strings.
+        """
+        code_blocks = re.findall(r"```(?:python)?\n(.*?)```", input_data, re.DOTALL)
+
+        # Use generic filenames if no filename is provided
+        parsed_files = {}
+        for i, code in enumerate(code_blocks, start=1):
+            parsed_files[f"file_{i}.py"] = code.strip()
+
         return parsed_files
 
     @staticmethod
@@ -47,7 +71,6 @@ class ImplementationMilestone(Milestone):
             brain.knowledge_base.setdefault("code", {})
 
         for filename, code in code_files.items():
-
             filename = filename.replace(work_folder + "/", "")  # remove work_folder from filename
             # Save to the knowledge base
             brain.knowledge_base["code"][filename] = code
@@ -58,7 +81,7 @@ class ImplementationMilestone(Milestone):
             # Print the filename in green and the code in blue
             ImplementationMilestone.save_file_print_green_name_and_blue_text(file_path, code)
 
-        #yellow text for entire brain.knowledge_base["code"] dictionary
+        # Print the entire brain.knowledge_base["code"] dictionary in yellow
         print("\033[33m", brain.knowledge_base["code"], "\033[0m")
 
     @staticmethod
@@ -103,7 +126,8 @@ class ImplementationMilestone(Milestone):
         # Parse response for code files
         code_files = self.parse_code_files(input_data)
         if not code_files:
-            return False, "No code files were found in the input data."
+            return False, ("No code files were found in the input data. Please ensure the code is generated correctly. \n"
+                           "Code Produced (first 100 chars): \n" + input_data[:100])
 
         # Save all code files to the brain's knowledge base and working directory
         self.save_code_files(brain, code_files, brain.work_folder)

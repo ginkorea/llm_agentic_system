@@ -143,6 +143,15 @@ The `code_brain_model.py` extends the `core.py` to handle:
 - Add support for additional programming languages.
 
 ---
+## Screenshots
+
+### Web Interface
+![Web Interface](app.png)
+
+### Results
+![Results](results.png)
+
+___
 
 ## Contributors
 

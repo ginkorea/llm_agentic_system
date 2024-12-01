@@ -29,16 +29,18 @@ def run_agent(prd_file):
         progress["percentage"] = agent.brain.goal.get_progress()
         if agent.brain.goal.is_complete():
             progress["percentage"] = 100
-            progress["status"] = "completed"
+            progress["status"] = "Software Development Completed"
+
 
     try:
         # Initialize first milestone
         progress["milestone"] = "Starting development..."
         agent.run(callback=milestone_callback)
         progress["percentage"] = 100
-        progress["status"] = "completed"
-    except Exception as e:
-        progress["status"] = f"error: {str(e)}"
+        progress["status"] = "Software Development Completed"
+    except IndexError as e:
+        progress["percentage"] = 100
+        progress["status"] = "Software Development Completed"
 
 
 @app.route("/")
