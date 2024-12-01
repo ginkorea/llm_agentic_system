@@ -10,3 +10,4 @@ agents/toolkit/test_env/*
 workbench/*
 project_env/*
 application.log
+flask_app.log
