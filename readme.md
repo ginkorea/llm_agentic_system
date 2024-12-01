@@ -1,212 +1,160 @@
-# Autonomous Software Development System
+# LLM Agentic System for Software Development
 
-## By Josh Gompert, Nathan Smith, and Kruti Shah
-
-**Under Active Development - Not Ready for Deployment in a Production Environment**
+![Repository Overview](repo_image.png)
 
 ## Overview
 
-This project focuses on building an **autonomous software development system** using **LLM-based agents** and a **multi-lobe architecture**. The system manages the entire software development lifecycle, including:
-- **Planning**
-- **Coding**
-- **Testing**
-- **Reviewing**
+The **LLM Agentic System for Software Development** is an advanced, autonomous system designed to streamline software development. Using Large Language Models (LLMs), the system dynamically interprets input from a Product Requirements Document (PRD) and progresses through various milestones to develop, test, and validate software automatically. This project is a collaboration of advanced agentic AI techniques, making it capable of end-to-end software development.
 
-Using **hybrid memory structures** and **CUDA acceleration**, the system improves memory management, computational efficiency, and the ability to refine past work through **file embeddings**.
+## Features
 
-<img src="repo_image.png" alt="LLM Autonomous Agent System for Software Development" width="800">
+- **Autonomous Development**: Agents progress through predefined milestones to complete the development cycle.
+- **Interactive Interface**: A Flask-based UI to manage and monitor the development process.
+- **Modular Design**: Includes multiple brain models (`code_brain`, `cognitive_brain`) tailored for specific tasks.
+- **Acceptance and Unit Testing**: Generates and validates tests autonomously.
+- **Visualization and Reporting**: Monitors milestones and provides detailed logs of the process.
 
-## Key Features
+---
 
-- **Multi-Lobe Framework**: Specialized modules handle distinct tasks such as memory recall, reasoning, and problem-solving.
-- **Hybrid Memory**: Efficient long-term and short-term memory management with file embedding.
-- **Submodule Task Handling**: Modular components streamline tasks like code generation, testing, and environment setup.
-- **CUDA Acceleration**: Boosts performance in memory retrieval and embedding operations.
+## System Architecture
 
-## Project Structure
+### Brains
 
-```
-agents/
-    __init__.py
-    base.py
-    brain/
-        __init__.py
-        build_prompt.py
-        core.py
-        examples.py
-        hippocampus.py
-        lobes.py
-        memory/
-            __init__.py
-            cuda_embedded.py
-            embedded.py
-            file_structure/
-                graph
-                graph.pdf
-                tree.txt
-            model/
-                __init__.py
-                get.py
-                graphcodebert-base/
-                graphcodebert-py/
-                jina-embeddings-v3/
-            model_test.py
-            ov_embedded.py
-            simple.py
-            test.py
-    toolkit/
-        __init__.py
-        bag.py
-        calculate.py
-        get_page.py
-        search.py
-        t.py
-        to_upper.py
-        visualize_file_structure.py
-const/
-    __init__.py
-    _sk.py
-    sk.py
-main.py
-readme.md
-requirements.txt
-```
+- **Core Brain (`core.py`)**: The foundational module for all brain implementations. Manages memory, tools, and the goal system. It supports modularity and extensibility.
+- **Code Brain (`code_brain_model.py`)**: Inherits the core functionality to specialize in interpreting PRDs, UML diagrams, and generating Python-based software solutions.
+- **Cognitive Brain (`cognitive.py`)**: Designed for cognitive decision-making and complex problem-solving tasks. [Future development planned].
 
-## Technologies
+### Milestones
 
-- **LangChain** and **OpenAI API** for LLM orchestration.
-- **Jina AI** for embedding-based memory.
-- **Python** as the primary development language.
-- **Torch and Triton** for high-performance computation on GPU.
-- **OpenVINO** for hardware-accelerated inference.
+The system operates through the following milestones:
+1. **UML and Architecture Design**: Parses and validates UML diagrams and architecture documents.
+2. **Environment Setup**: Configures a virtual Python environment for development.
+3. **Code Implementation**: Uses the PRD, UML, and architecture to generate code.
+4. **Acceptance Testing**: Generates and validates acceptance tests based on requirements.
+5. **Unit Testing**: Creates and runs unit tests for individual components.
 
-### Installation Instructions
+Each milestone is modular, allowing for independent testing and debugging.
 
-### Prerequisites
+---
 
-1. **Git with LFS (Large File Storage)**
+## Installation
 
-   Make sure you have Git and Git LFS installed to clone the repository. Git LFS is required to handle large model files.
-   
-   **Install Git LFS**:
-   - On Linux:
-     ```bash
-     sudo <your_package_manager> install git-lfs
-     git lfs install
-     ```
-   - On macOS:
-     ```bash
-     brew install git-lfs
-     git lfs install
-     ```
-   - On Windows, use the [Git LFS installer](https://git-lfs.github.com/).
+### Requirements
 
-2. **Python 3.10+**
-
-   Ensure Python 3.10 or later is installed. You can check your Python version with:
-
-   ```bash
-   python --version
-   ```
-
-### Clone the Repository
+Ensure Python 3.10+ is installed on your system.
 
 ```bash
-git clone https://github.com/ginkorea/llm_agentic_system.git
-cd llm_agentic_system
+pip install -r requirements.txt
 ```
 
-### Install the Dependencies Using `setup.py`
+### Additional Setup
 
-Instead of manually installing dependencies via `requirements.txt`, you can now install the package with the following command:
-
-1. **Create a Virtual Environment** (optional but recommended):
-
+1. Create the necessary folders:
    ```bash
-   python -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   mkdir prd workbench
    ```
 
-2. **Install the package** (Core dependencies):
+2. Populate the `prd` folder with PRD files to initiate development.
 
-   ```bash
-   pip install .
-   ```
+---
 
-3. **Install optional GPU dependencies (FlashAttention)**:
+## Usage
 
-   If you want to install FlashAttention for GPU acceleration, use the following command:
+### 1. CLI Mode
 
-   ```bash
-   pip install .[gpu, ov] # for CUDA [gpu] and OpenVINO [ov] acceleration
-   ```
-
-### Additional Setup for CUDA or OpenVINO
-
-Depending on your hardware configuration, you may want to adjust the memory configuration:
-- **CUDA**: If you're using NVIDIA GPUs, the system can utilize CUDA for fast computations with models.
-- **OpenVINO**: For systems using Intel hardware, OpenVINO can accelerate ONNX models.
-
-## API Key Configuration
-
-This project requires API keys to access certain functionalities. To set up your API keys, follow these steps:
-
-1. **Locate the API Key Example**:
-   You will find an example API key file named `const/_sk.py`. This file contains placeholders for the required keys.
-
-   Example structure of `const/_sk.py`:
-
-   ```python
-   import os
-
-   class KeyChain:
-       def __init__(self):
-           self.open_ai = "your_openai_key"  # Replace with your OpenAI API key
-           self.google_json = "your_google_json"  # Replace with your Google JSON key
-           self.google_cx = "your_google_cx"  # Replace with your Google CX
-
-   kc = KeyChain()
-   os.environ["OPENAI_API_KEY"] = kc.open_ai
-
-### Running the System
-
-Once the setup is complete, you can start the system:
+To use the CLI mode, run the following:
 
 ```bash
 python main.py
 ```
 
-The system will initialize the **autonomous agent** that can plan, code, and refine software projects autonomously.
+### 2. Flask Web Interface
 
-## Tools Available
+The web interface allows you to select a PRD, track progress, and view results.
 
-This project includes a set of integrated tools based off of the LangChain tools suite are available for the agent to use for various tasks:
+Start the Flask app:
+```bash
+python flask_app.py
+```
 
-1. **`calculate`**: 
-   - Description: Evaluates mathematical expressions.
-   - Usage: `calculate("2 + 2")`
-   - Example Output: `4`
+Navigate to [http://localhost:5000](http://localhost:5000) to access the interface.
 
-2. **`get_page`**:
-   - Description: Retrieves the full text of a web page from a given URL.
-   - Usage: `get_page("https://example.com")`
-   - Example Output: The content of the web page as text.
+---
 
-3. **`search`**:
-   - Description: Performs a Google search using Google's JSON API and returns top non-visited results.
-   - Usage: `search({"query": "Python programming", "n_sites": 3, "visited_sites": []})`
-   - Example Output: A list of search results containing titles, links, and snippets.
+## Components
 
-4. **`visualize_file_structure`**:
-   - Description: Recursively builds a graph and text-based tree of the file structure, using colored submodules.
-   - Usage: `visualize_file_structure(start_path=".")`
-   - Example Output: A PDF of the file structure and a text-based tree.
+### Flask Interface
 
-5. **`BagOfTools`**:
-   - Description: A class to manage and dynamically bind the above tools for flexible use.
-   - Example Usage: You can call `get_tools()` to see a list of all available tools.
+The UI provides:
+- Dropdown for PRD selection.
+- Real-time milestone tracking with a progress bar.
+- File explorer and viewer for generated files.
 
-## Visualization of File Structures
+### Milestones
 
-You can also use the `visualize_file_structure.py` tool to generate visual representations of the file structure, outputting both a graph and a text-based tree.
+Each milestone leverages the brain's capabilities:
+- **Environment Setup**: Automatically installs required dependencies.
+- **Code Implementation**: Generates code for the selected PRD.
+- **Testing**: Validates functionality through generated tests.
+
+### Tools
+
+Integrated tools include:
+- Virtual environment management.
+- Acceptance and unit test execution.
+- Syntax highlighting for generated files in the web UI.
+
+---
+
+## Example Workflow
+
+1. **Select PRD**: Upload or select a PRD file from the web interface.
+2. **Track Progress**: Monitor milestone completion in real-time.
+3. **View Results**: Explore generated files, including UML diagrams, architecture designs, and code.
+
+---
+
+## Development Notes
+
+### Modular Design
+
+The `code_brain_model` inherits functionality from `core.py`, ensuring a consistent structure across different brain implementations. 
+
+### Core Functionality (`core.py`)
+
+The `core.py` manages:
+- **Memory**: Tracks progress and stores relevant data.
+- **Goals**: Defines milestones and their associated tasks.
+- **Toolkits**: Integrates tools like virtual environments and code execution.
+
+### Code Brain
+
+The `code_brain_model.py` extends the `core.py` to handle:
+- Parsing UML and PRD documents.
+- Generating Python files.
+- Integrating testing and validation.
+
+---
+
+## Future Enhancements
+
+- Extend the **Cognitive Brain** for multi-agent collaboration.
+- Implement AI-based error correction and optimization for generated code.
+- Add support for additional programming languages.
+
+---
+
+## Contributors
+
+- **Josh Gompert**
+- **Nathan Smith**
+- **Kruti Shah**
+
+---
+
+## License
+
+This project is licensed under the GPL-3.0 License. See the LICENSE file for details.
+
+---
 
