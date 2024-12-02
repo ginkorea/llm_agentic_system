@@ -1,0 +1,20 @@
+mermaid
+classDiagram
+  class ReadTimeCalculator {
+    +estimateReadingTime(content: str, format: str, wpm: int = 265): float
+    +validateContent(content: str, format: str): bool
+  }
+
+  class ContentParser {
+    +parsePlainText(content: str): str
+    +parseHTML(content: str): str
+    +parseMarkdown(content: str): str
+  }
+
+  class ErrorHandler {
+    +handleUnsupportedFormat(format: str): void
+    +handleInvalidInput(content: str): void
+  }
+
+  ReadTimeCalculator --> ContentParser : uses >>
+  ReadTimeCalculator --> ErrorHandler : uses >>

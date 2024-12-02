@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hybrid Image Creator</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <h1>Hybrid Image Creator</h1>
+    <form id="image-form">
+        <label for="image1">Select Image 1:</label>
+        <input type="file" id="image1" name="image1" accept="image/*">
+        <label for="image2">Select Image 2:</label>
+        <input type="file" id="image2" name="image2" accept="image/*">
+        <button type="submit">Create Hybrid Image</button>
+    </form>
+    <div id="result">
+        <h2>Resulting Hybrid Image:</h2>
+        <img id="hybrid-image" src="#" alt="Hybrid Image">
+    </div>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

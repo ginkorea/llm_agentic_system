@@ -1,0 +1,17 @@
+mermaid
+sequenceDiagram
+  participant User
+  participant CLI
+  participant ReadTimeCalculator
+  participant ContentParser
+  participant ErrorHandler
+
+  User->>CLI: Provide content and format
+  CLI->>ReadTimeCalculator: Request reading time estimation
+  ReadTimeCalculator->>ContentParser: Parse content based on format
+  ContentParser-->>ReadTimeCalculator: Return parsed content
+  ReadTimeCalculator->>ReadTimeCalculator: Calculate reading time
+  ReadTimeCalculator->>ErrorHandler: Validate content and format
+  ErrorHandler-->>ReadTimeCalculator: Return validation result
+  ReadTimeCalculator-->>CLI: Return estimated reading time
+  CLI-->>User: Display reading time

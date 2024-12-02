@@ -1,0 +1,20 @@
+mermaid
+sequenceDiagram
+  participant User
+  participant CLI
+  participant CSVParser
+  participant JSONGenerator
+  participant FileManager
+
+  User->>CLI: Run conversion command
+  CLI->>CLI: Parse arguments
+  CLI->>CSVParser: Parse CSV file
+  CSVParser->>CSVParser: Extract column names and data rows
+  CSVParser-->>CLI: Return parsed data
+  CLI->>JSONGenerator: Convert data to JSON
+  JSONGenerator->>JSONGenerator: Generate or use schema
+  JSONGenerator-->>CLI: Return JSON data
+  CLI->>FileManager: Write JSON to file
+  FileManager->>FileManager: Manage file resources
+  FileManager-->>CLI: Confirmation
+  CLI-->>User: Conversion complete

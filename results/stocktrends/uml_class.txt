@@ -1,0 +1,30 @@
+mermaid
+classDiagram
+  class FinancialDataProcessor {
+    +loadData(filePath: str): DataFrame
+    +preprocessData(data: DataFrame): DataFrame
+  }
+
+  class IndicatorCalculator {
+    +calculateRenko(data: DataFrame, brickSize: float, type: str): DataFrame
+    +calculateLineBreak(data: DataFrame, lines: int): DataFrame
+    +calculatePnF(data: DataFrame): DataFrame
+  }
+
+  class InstrumentAnalyzer {
+    +analyzeInstrument(data: DataFrame, instrumentType: str): AnalysisResult
+  }
+
+  class ReportGenerator {
+    +generateReport(analysisResult: AnalysisResult): Report
+  }
+
+  class TestValidator {
+    +validateIndicators(data: DataFrame, expected: DataFrame): bool
+    +checkDataIntegrity(data: DataFrame): bool
+  }
+
+  FinancialDataProcessor --> IndicatorCalculator : uses >>
+  IndicatorCalculator --> InstrumentAnalyzer : feeds >>
+  InstrumentAnalyzer --> ReportGenerator : generates >>
+  ReportGenerator --> TestValidator : validates >>

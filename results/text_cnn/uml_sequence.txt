@@ -1,0 +1,19 @@
+mermaid
+sequenceDiagram
+  participant User
+  participant Script
+  participant TextCNNModel
+  participant DataProcessor
+  participant TrainingLogger
+  participant ModelEvaluator
+
+  User->>Script: Run training script
+  Script->>DataProcessor: Load and preprocess data
+  DataProcessor->>Script: Return processed data
+  Script->>TextCNNModel: Initialize model with parameters
+  Script->>TextCNNModel: Train model
+  TextCNNModel->>TrainingLogger: Log training loss and accuracy
+  TextCNNModel->>ModelEvaluator: Evaluate model
+  ModelEvaluator->>TextCNNModel: Return accuracy
+  TextCNNModel->>Script: Save model checkpoint
+  Script->>User: Training complete with accuracy

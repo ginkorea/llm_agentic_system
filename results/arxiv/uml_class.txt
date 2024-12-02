@@ -1,0 +1,43 @@
+mermaid
+classDiagram
+  class QueryArXiv {
+    +executeQuery(params: QueryParams): List<Paper>
+    +printResults(papers: List<Paper>, verbose: bool): void
+    +saveResultsToCSV(papers: List<Paper>, filePath: str): void
+  }
+
+  class QueryParams {
+    +category: str
+    +title: str
+    +author: str
+    +abstract: str
+    +recent_days: int
+    +max_results: int
+  }
+
+  class Paper {
+    +category: str
+    +title: str
+    +author: str
+    +abstract: str
+    +published: Date
+    +link: str
+  }
+
+  class ArXivAPI {
+    +fetchData(query: str): XML
+  }
+
+  class XMLParser {
+    +parse(xmlData: XML): List<Paper>
+  }
+
+  class DateFilter {
+    +filterByRecentDays(papers: List<Paper>, recent_days: int): List<Paper>
+  }
+
+  QueryArXiv --> QueryParams : uses >>
+  QueryArXiv --> ArXivAPI : interacts >>
+  QueryArXiv --> XMLParser : uses >>
+  QueryArXiv --> DateFilter : uses >>
+  XMLParser --> Paper : creates >>

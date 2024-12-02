@@ -1,0 +1,34 @@
+mermaid
+classDiagram
+  class Chakin {
+    +search(lang: string): List
+    +download(index: int, saveDir: string): bool
+  }
+
+  class WordVector {
+    +name: string
+    +dimension: int
+    +corpus: string
+    +vocabularySize: int
+    +method: string
+    +language: string
+    +paper: string
+    +author: string
+    +url: string
+  }
+
+  class ProgressBar {
+    +start(): void
+    +update(progress: float): void
+    +finish(): void
+  }
+
+  class CSVHandler {
+    +loadCSV(filePath: string): List
+    +parseCSV(): List<WordVector>
+  }
+
+  Chakin --> WordVector : uses >>
+  Chakin --> ProgressBar : uses >>
+  Chakin --> CSVHandler : uses >>
+  CSVHandler --> WordVector : parses >>

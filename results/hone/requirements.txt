@@ -1,0 +1,2 @@
+# requirements.txt
+# The project uses only standard libraries, hence no external dependencies are required.

@@ -1,0 +1,17 @@
+mermaid
+sequenceDiagram
+  participant User
+  participant HybridImageCreator
+  participant ImageProcessor
+  participant Image
+
+  User->>HybridImageCreator: Request hybrid image creation
+  HybridImageCreator->>ImageProcessor: Process image1 with filters
+  ImageProcessor->>Image: Apply Gaussian blur, low-pass, high-pass
+  Image-->>ImageProcessor: Return processed image1
+  HybridImageCreator->>ImageProcessor: Process image2 with filters
+  ImageProcessor->>Image: Apply Gaussian blur, low-pass, high-pass
+  Image-->>ImageProcessor: Return processed image2
+  HybridImageCreator->>Image: Combine images into hybrid
+  Image-->>HybridImageCreator: Return hybrid image
+  HybridImageCreator-->>User: Provide hybrid image

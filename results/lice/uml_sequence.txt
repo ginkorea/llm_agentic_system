@@ -1,0 +1,20 @@
+mermaid
+sequenceDiagram
+  participant User
+  participant CLI
+  participant LicenseGenerator
+  participant TemplateManager
+  participant LanguageDetector
+  participant LicenseFile
+
+  User->>CLI: Enter command to generate license
+  CLI->>CLI: Parse command arguments
+  CLI->>LicenseGenerator: Request license generation
+  LicenseGenerator->>TemplateManager: Retrieve license template
+  TemplateManager-->>LicenseGenerator: Return template
+  LicenseGenerator->>LanguageDetector: Detect language for header
+  LanguageDetector-->>LicenseGenerator: Return language
+  LicenseGenerator->>LicenseFile: Create license file
+  LicenseFile-->>LicenseGenerator: License file created
+  LicenseGenerator-->>CLI: License generation successful
+  CLI-->>User: Display success message

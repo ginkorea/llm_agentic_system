@@ -1,0 +1,42 @@
+mermaid
+classDiagram
+  class GeoText {
+    +extractCitiesAndCountries(text: str): List[Location]
+    +filterByCountryCode(locations: List[Location], code: str): List[Location]
+    +countCountryMentions(text: str): Dict[str, int]
+  }
+
+  class Location {
+    +name: str
+    +type: str
+    +countryCode: str
+  }
+
+  class DataLoader {
+    +loadCityPatches(): Dict[str, str]
+    +loadCountryInfo(): Dict[str, CountryInfo]
+    +loadNationalities(): Dict[str, str]
+    +loadCities(): List[City]
+  }
+
+  class CountryInfo {
+    +iso: str
+    +name: str
+    +capital: str
+    +area: int
+    +population: int
+    +languages: List[str]
+  }
+
+  class City {
+    +id: int
+    +name: str
+    +latitude: float
+    +longitude: float
+    +countryCode: str
+  }
+
+  GeoText --> Location : uses >>
+  GeoText --> DataLoader : utilizes >>
+  DataLoader --> CountryInfo : loads >>
+  DataLoader --> City : loads >>

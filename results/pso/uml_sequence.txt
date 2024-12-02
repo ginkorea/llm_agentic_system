@@ -1,0 +1,20 @@
+mermaid
+sequenceDiagram
+  participant User
+  participant PSOAlgorithm
+  participant Particle
+  participant CostFunction
+  participant Solution
+
+  User->>PSOAlgorithm: Initialize with parameters
+  PSOAlgorithm->>Particle: Initialize particles
+  loop for each iteration
+    PSOAlgorithm->>Particle: Update velocity and position
+    Particle->>CostFunction: Evaluate cost
+    CostFunction-->>Particle: Return cost value
+    Particle-->>PSOAlgorithm: Return updated position and cost
+    PSOAlgorithm->>Solution: Update best solution
+    PSOAlgorithm-->>User: Display iteration info
+  end
+  PSOAlgorithm-->>Solution: Return final best solution
+  Solution-->>User: Display final solution

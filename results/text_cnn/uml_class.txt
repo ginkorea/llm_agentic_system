@@ -1,0 +1,31 @@
+mermaid
+classDiagram
+  class TextCNNModel {
+    +embedding_dim: int
+    +kernel_sizes: List[int]
+    +max_length: int
+    +train(learning_rate: float, batch_size: int, num_epochs: int): void
+    +evaluate(): float
+    +saveCheckpoint(epoch: int): void
+    +loadCheckpoint(path: str): void
+  }
+
+  class DataProcessor {
+    +loadDataset(): Dataset
+    +preprocessData(dataset: Dataset): Tuple[Dataset, Dataset]
+    +tokenize(text: str): List[int]
+  }
+
+  class TrainingLogger {
+    +logTrainingLoss(batch: int, loss: float): void
+    +logAccuracy(epoch: int, accuracy: float): void
+  }
+
+  class ModelEvaluator {
+    +calculateAccuracy(predictions: List[int], labels: List[int]): float
+  }
+
+  TextCNNModel --> DataProcessor : uses >>
+  TextCNNModel --> TrainingLogger : logs >>
+  TextCNNModel --> ModelEvaluator : evaluates >>
+  DataProcessor --> "1" Dataset : loads >>

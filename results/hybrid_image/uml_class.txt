@@ -1,0 +1,23 @@
+mermaid
+classDiagram
+  class ImageProcessor {
+    +applyGaussianBlur(image: Image, sigma: float, kernelSize: int): Image
+    +applyLowPassFilter(image: Image, cutoff: float): Image
+    +applyHighPassFilter(image: Image, cutoff: float): Image
+    +performConvolution(image: Image, kernel: Matrix): Image
+    +performCrossCorrelation(image: Image, template: Image): Image
+  }
+
+  class HybridImageCreator {
+    +createHybridImage(image1: Image, image2: Image, mixRatio: float): Image
+  }
+
+  class Image {
+    +data: Matrix
+    +width: int
+    +height: int
+  }
+
+  ImageProcessor --> Image : processes >>
+  HybridImageCreator --> ImageProcessor : uses >>
+  HybridImageCreator --> Image : creates >>

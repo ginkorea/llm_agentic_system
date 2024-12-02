@@ -1,0 +1,41 @@
+mermaid
+classDiagram
+  class LicenseGenerator {
+    +generateLicense(type: String, year: int, org: String): LicenseFile
+    +listAvailableLicenses(): List
+    +addCustomTemplate(templatePath: String): bool
+  }
+
+  class LicenseFile {
+    +type: String
+    +year: int
+    +organization: String
+    +content: String
+    +saveToFile(fileName: String): bool
+  }
+
+  class TemplateManager {
+    +getTemplate(type: String): String
+    +addTemplate(templatePath: String): bool
+    +listTemplates(): List
+  }
+
+  class LanguageDetector {
+    +detectLanguage(fileExtension: String): String
+  }
+
+  class CLI {
+    +parseArguments(args: List): Command
+    +executeCommand(command: Command): void
+  }
+
+  class Command {
+    +type: String
+    +parameters: Map
+  }
+
+  LicenseGenerator --> LicenseFile : creates >>
+  LicenseGenerator --> TemplateManager : uses >>
+  LicenseGenerator --> LanguageDetector : uses >>
+  CLI --> LicenseGenerator : interacts >>
+  CLI --> Command : parses >>

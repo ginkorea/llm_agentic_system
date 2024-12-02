@@ -1,0 +1,2 @@
+# MANIFEST.in
+include geotext/data_file/*.txt

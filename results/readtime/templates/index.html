@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReadTime Estimator</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+</head>
+<body>
+    <h1>ReadTime Estimator</h1>
+    <form id="contentForm">
+        <textarea id="content" placeholder="Enter your content here..."></textarea>
+        <select id="format">
+            <option value="plain">Plain Text</option>
+            <option value="html">HTML</option>
+            <option value="markdown">Markdown</option>
+        </select>
+        <input type="number" id="wpm" placeholder="Words per minute" value="265">
+        <button type="submit">Estimate Reading Time</button>
+    </form>
+    <div id="result"></div>
+    <script src="../static/js/app.js"></script>
+</body>
+</html>

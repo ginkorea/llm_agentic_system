@@ -1,0 +1,30 @@
+mermaid
+classDiagram
+  class CSVParser {
+    +parseCSV(filePath: str, delimiter: str): List
+    +extractColumnNames(): List
+    +extractDataRows(): List
+  }
+
+  class JSONGenerator {
+    +convertToJSON(data: List, schema: dict): str
+    +generateSchema(data: List): dict
+    +formatJSON(jsonData: str): str
+  }
+
+  class CLI {
+    +parseArguments(args: List): dict
+    +executeConversion(args: dict): void
+  }
+
+  class FileManager {
+    +openFile(filePath: str, mode: str): File
+    +writeJSONToFile(jsonData: str, filePath: str): void
+    +manageResources(): void
+  }
+
+  CSVParser --> JSONGenerator : uses >>
+  CLI --> CSVParser : interacts >>
+  CLI --> JSONGenerator : interacts >>
+  CLI --> FileManager : manages >>
+  FileManager --> JSONGenerator : writes >>

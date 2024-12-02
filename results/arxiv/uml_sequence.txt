@@ -1,0 +1,23 @@
+mermaid
+sequenceDiagram
+  participant User
+  participant CommandLine
+  participant QueryArXiv
+  participant ArXivAPI
+  participant XMLParser
+  participant DateFilter
+
+  User->>CommandLine: Run query_arxiv.py with parameters
+  CommandLine->>QueryArXiv: Parse command-line arguments
+  QueryArXiv->>ArXivAPI: Fetch data with constructed query
+  ArXivAPI-->>QueryArXiv: Return XML data
+  QueryArXiv->>XMLParser: Parse XML data
+  XMLParser-->>QueryArXiv: Return list of Papers
+  QueryArXiv->>DateFilter: Filter papers by recent_days
+  DateFilter-->>QueryArXiv: Return filtered list of Papers
+  alt User chooses console output
+    QueryArXiv->>CommandLine: Print results to console
+  end
+  alt User chooses CSV output
+    QueryArXiv->>CommandLine: Save results to CSV
+  end

@@ -1,0 +1,34 @@
+mermaid
+classDiagram
+  class PSOAlgorithm {
+    +particles: List<Particle>
+    +costFunction: CostFunction
+    +numParticles: int
+    +maxIterations: int
+    +bounds: Tuple
+    +optimize(): Solution
+    +displayIterationInfo(iteration: int, bestSolution: Solution): void
+  }
+
+  class Particle {
+    +position: List<float>
+    +velocity: List<float>
+    +bestPosition: List<float>
+    +evaluate(costFunction: CostFunction): float
+    +updateVelocity(globalBestPosition: List<float>): void
+    +updatePosition(bounds: Tuple): void
+  }
+
+  class CostFunction {
+    +evaluate(position: List<float>): float
+  }
+
+  class Solution {
+    +position: List<float>
+    +value: float
+  }
+
+  PSOAlgorithm --> Particle : contains >>
+  PSOAlgorithm --> CostFunction : uses >>
+  PSOAlgorithm --> Solution : returns >>
+  Particle --> CostFunction : evaluates >>

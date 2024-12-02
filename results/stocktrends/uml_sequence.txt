@@ -1,0 +1,22 @@
+mermaid
+sequenceDiagram
+  participant User
+  participant CLI
+  participant FinancialDataProcessor
+  participant IndicatorCalculator
+  participant InstrumentAnalyzer
+  participant ReportGenerator
+  participant TestValidator
+
+  User->>CLI: Run analysis script
+  CLI->>FinancialDataProcessor: Load and preprocess data
+  FinancialDataProcessor-->>CLI: Return processed data
+  CLI->>IndicatorCalculator: Calculate indicators
+  IndicatorCalculator-->>CLI: Return calculated indicators
+  CLI->>InstrumentAnalyzer: Analyze instruments
+  InstrumentAnalyzer-->>CLI: Return analysis results
+  CLI->>ReportGenerator: Generate report
+  ReportGenerator-->>CLI: Return report
+  CLI->>TestValidator: Validate results
+  TestValidator-->>CLI: Return validation status
+  CLI-->>User: Display report and validation status

@@ -1,0 +1,25 @@
+mermaid
+sequenceDiagram
+  participant User
+  participant CLI
+  participant Chakin
+  participant CSVHandler
+  participant ProgressBar
+
+  User->>CLI: Execute search command
+  CLI->>Chakin: Call search(lang)
+  Chakin->>CSVHandler: Load and parse CSV
+  CSVHandler-->>Chakin: Return word vector list
+  Chakin-->>CLI: Display search results
+  CLI-->>User: Show available word vectors
+
+  User->>CLI: Execute download command
+  CLI->>Chakin: Call download(index, saveDir)
+  Chakin->>CSVHandler: Load and parse CSV
+  CSVHandler-->>Chakin: Return word vector details
+  Chakin->>ProgressBar: Start progress bar
+  Chakin->>Chakin: Download word vector
+  Chakin->>ProgressBar: Update progress
+  Chakin->>ProgressBar: Finish progress bar
+  Chakin-->>CLI: Confirm download completion
+  CLI-->>User: Notify download success

@@ -1,0 +1,23 @@
+mermaid
+sequenceDiagram
+  participant User
+  participant GeoText
+  participant DataLoader
+  participant Location
+
+  User->>GeoText: extractCitiesAndCountries(text)
+  GeoText->>DataLoader: loadCityPatches()
+  GeoText->>DataLoader: loadCountryInfo()
+  GeoText->>DataLoader: loadCities()
+  DataLoader-->>GeoText: return data
+  GeoText->>Location: create Location instances
+  Location-->>GeoText: return Location list
+  GeoText-->>User: return Location list
+
+  User->>GeoText: filterByCountryCode(locations, code)
+  GeoText-->>User: return filtered Location list
+
+  User->>GeoText: countCountryMentions(text)
+  GeoText->>DataLoader: loadCountryInfo()
+  DataLoader-->>GeoText: return country data
+  GeoText-->>User: return country mention count
