@@ -6,6 +6,8 @@ from agents.brain.goal.milestones import Milestone
 class ImplementationMilestone(Milestone):
     def __init__(self):
         super().__init__("Code Implementation Milestone")
+        self.tries = 0
+        self.max_tries = 5
 
     @staticmethod
     def parse_code_files(input_data):
@@ -18,18 +20,20 @@ class ImplementationMilestone(Milestone):
         Returns:
             dict: A dictionary where keys are filenames and values are code strings.
         """
-        # Match patterns where the filename comment may be before or after the code block
+        # Updated regex to capture the filename immediately after the code block starts
         code_blocks = re.findall(
-            r"(?:# (\S+)\n)?```python\n(.*?)```(?:\n# (\S+))?",
+            r"```python\n#\s*(\S+\.py)\n(.*?)```",
             input_data,
             re.DOTALL
         )
 
         parsed_files = {}
-        for pre_filename, code, post_filename in code_blocks:
-            filename = pre_filename or post_filename
-            if filename:
-                parsed_files[filename.strip()] = code.strip()
+        for filename, code in code_blocks:
+            # Ensure filenames are normalized (e.g., remove leading/trailing whitespace)
+            filename = filename.strip()
+
+            # Add the extracted filename and associated code block to the dictionary
+            parsed_files[filename] = code.strip()
 
         # If no valid code blocks are found, use fallback parsing
         if not parsed_files:
@@ -40,20 +44,28 @@ class ImplementationMilestone(Milestone):
     @staticmethod
     def fallback_parse_code_files(input_data):
         """
-        Fallback parser to extract code blocks using generic ``` delimiters.
+        Fallback parser to extract code blocks using generic ``` delimiters
+        and infer filenames ending with .py.
 
         Args:
             input_data (str): Raw response containing multiple code blocks.
 
         Returns:
-            dict: A dictionary where keys are generic filenames and values are code strings.
+            dict: A dictionary where keys are inferred filenames ending with `.py` and values are code strings.
         """
+        # Match code blocks using the ``` delimiters
         code_blocks = re.findall(r"```(?:python)?\n(.*?)```", input_data, re.DOTALL)
 
-        # Use generic filenames if no filename is provided
         parsed_files = {}
-        for i, code in enumerate(code_blocks, start=1):
-            parsed_files[f"file_{i}.py"] = code.strip()
+        for code in code_blocks:
+            # Attempt to find a filename ending with .py within the code block or the surrounding text
+            filenames_with_py = re.findall(r"\b\S+\.py", input_data)
+
+            # Use the first `.py` filename found, or default to a generic name
+            filename = filenames_with_py[0] if filenames_with_py else f"file_{len(parsed_files) + 1}.py"
+
+            # Add the extracted filename and code block to the dictionary
+            parsed_files[filename] = code.strip()
 
         return parsed_files
 
@@ -132,10 +144,15 @@ class ImplementationMilestone(Milestone):
         # Save all code files to the brain's knowledge base and working directory
         self.save_code_files(brain, code_files, brain.work_folder)
 
+        # Check to see if max tries have been reached
+        if self.tries >= self.max_tries:
+            return True, "Max tries reached. Moving on to next step with current implementation."
+
         # Extract required classes from the UML Class Diagram
         uml_class_diagram = brain.knowledge_base.get("uml_class", "")
         required_classes = set(re.findall(r"class (\w+)", uml_class_diagram))
         if not required_classes:
+            self.tries += 1
             return False, "No required classes found in the UML Class Diagram."
 
         # Extract implemented classes from the saved code files
@@ -147,6 +164,7 @@ class ImplementationMilestone(Milestone):
         missing_classes = required_classes - implemented_classes
         if missing_classes:
             brain.knowledge_base["missing_classes"] = list(missing_classes)
+            self.tries += 1
             return False, (
                 f"The following classes are missing: {', '.join(missing_classes)}. "
                 "Partial files have been saved for future iterations."
@@ -154,6 +172,7 @@ class ImplementationMilestone(Milestone):
 
         main_file = brain.knowledge_base['code'].get('main.py', '')
         if not main_file:
+            self.tries += 1
             return False, "No main.py file found in the code. Please ensure the main flow is tested in a separate `test_main.py` file."
 
         # If all requirements are met

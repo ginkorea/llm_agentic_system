@@ -68,7 +68,8 @@ class EnvironmentSetupPrompt(StructuredPrompt):
         ---------------
         
         The format of the requirements.txt file is critical and will be validated.  Follow this format exactly:
-        - Each line should contain a package name and version, separated by `==`.
+        - Each line should contain a package name. Only put the version number if absolutely necessary and the correct version is known.  
+        - If possible use the latest version of the package, and do not specify a version number.
         - Comments should be prefixed with `#`.
         - Include only necessary dependencies.
         - Do not include any unnecessary packages.
@@ -76,8 +77,8 @@ class EnvironmentSetupPrompt(StructuredPrompt):
         example:
         # requirements.txt
         ```plaintext
-        Flask==2.0.1
-        Flask-Cors==3.0.10
+        Flask
+        Flask-Cors
         ```
         """
         self.prompt += extended_prompt

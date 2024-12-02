@@ -3,6 +3,7 @@ import os
 import subprocess
 import venv
 from langchain_core.tools import tool
+from agents.toolkit.run_code_in_virtual_environment import run_code_in_existing_virtualenv
 
 
 # Input schema for creating virtual environment
@@ -41,6 +42,9 @@ def create_virtualenv_with_requirements(input_data: CreateVenvInput) -> tuple[bo
 
         # Install requirements from requirements.txt
         if os.path.exists(requirements_file):
+            install_command = [pip_executable, "install", 'setuptools']
+            subprocess.run(install_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
             install_command = [pip_executable, "install", "-r", requirements_file]
             result = subprocess.run(install_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
