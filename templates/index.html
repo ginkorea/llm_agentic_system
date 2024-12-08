@@ -18,10 +18,11 @@
     </form>
     <div>
         <h2>Milestone Progress</h2>
-        <div id="progress-bar">
-            <div id="progress"></div>
+        <div id="progress-bar" style="width: 100%; background-color: #ddd;">
+            <div id="progress" style="width: 0; height: 30px; background-color: #4caf50;"></div>
         </div>
         <p id="milestone-text">Current Milestone: Initializing...</p>
+        <p id="status-text"></p>
     </div>
     <script>
         function updateProgress() {
@@ -30,26 +31,37 @@
                 .then(data => {
                     const progress = document.getElementById("progress");
                     const milestoneText = document.getElementById("milestone-text");
+                    const statusText = document.getElementById("status-text");
 
-                    // Update progress bar and milestone text
+                    // Update progress bar width and milestone text
                     progress.style.width = data.percentage + "%";
                     milestoneText.innerText = "Current Milestone: " + data.milestone;
 
-                    // Redirect to results if the process is complete
-                    if (data.status === "completed") {
+                    // Update status text
+                    statusText.innerText = data.status;
+
+                    // Redirect to results if process is complete or if there is an error or IndexError
+                    if (data.percentage === 100 ||
+                        data.status === "Software Development Completed" ||
+                        data.status.includes("IndexError")) {
+                        clearInterval(intervalId); // Stop polling
                         window.location.href = "/results";
                     }
 
-                    // Handle errors
-                    if (data.status.startsWith("error")) {
+                    // Handle generic errors
+                    if (data.status.startsWith("Error")) {
                         milestoneText.innerText = "Error: " + data.status;
-                        clearInterval(intervalId);  // Stop further polling
+                        clearInterval(intervalId); // Stop polling on error
                     }
                 })
-                .catch(error => console.error("Error fetching progress:", error));
+                .catch(error => {
+                    console.error("Error fetching progress:", error);
+                    document.getElementById("status-text").innerText = "Error updating progress. Please check logs.";
+                });
         }
 
-        const intervalId = setInterval(updateProgress, 2000);  // Poll every 2 seconds
+        // Poll every 2 seconds
+        const intervalId = setInterval(updateProgress, 2000);
     </script>
 </body>
 </html>
