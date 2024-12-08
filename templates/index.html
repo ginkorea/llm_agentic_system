@@ -24,6 +24,9 @@
         <p id="milestone-text">Current Milestone: Initializing...</p>
         <p id="status-text"></p>
     </div>
+    <div style="margin-top: 20px;">
+        <button onclick="window.location.href='/results';">View Results</button>
+    </div>
     <script>
         function updateProgress() {
             fetch("/progress")
