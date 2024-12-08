@@ -17,6 +17,10 @@ class CodeWriterPrompt(StructuredPrompt):
         You are a code generation expert. Your task is to analyze the PRD, UML Class and Sequence Diagrams, and Architecture Design to generate:
         - One Python file per class described in the UML Class Diagram.
         - A `main.py` file integrating all classes.
+        - Ensure that the classes are properly implemented with the required attributes and methods.
+        - Do not forget to include the necessary imports and comments.
+        - Do not forget to include the necessary folder structure and '__init__.py' files.
+        - Do not produce code snippets or incomplete classes. Each class should be a complete Python class that can be run.
 
         Each output should be a properly formatted Python code block with the filename as a comment at the top.
         
@@ -28,7 +32,7 @@ class CodeWriterPrompt(StructuredPrompt):
         import class3
         
         if __name__ == "__main__":
-        # your code here ...
+        # actual implementation code (e.g., creating objects, calling methods, etc.) goes here.
         ```
         
         generate one code block per class and one for the main.py file.
