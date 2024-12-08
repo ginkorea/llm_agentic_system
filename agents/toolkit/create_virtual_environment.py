@@ -3,7 +3,6 @@ import os
 import subprocess
 import venv
 from langchain_core.tools import tool
-from agents.toolkit.run_code_in_virtual_environment import run_code_in_existing_virtualenv
 
 
 # Input schema for creating virtual environment
@@ -27,7 +26,7 @@ def create_virtualenv_with_requirements(input_data: CreateVenvInput) -> tuple[bo
         env_name = input_data.env_name
         requirements_file = input_data.requirements_file
 
-        # Create the virtual environment
+        # Create a virtual environment
         if not os.path.exists(env_name):
             venv.create(env_name, with_pip=True)
 
@@ -37,13 +36,13 @@ def create_virtualenv_with_requirements(input_data: CreateVenvInput) -> tuple[bo
         pip_executable = os.path.join(env_bin, "pip")
 
         if not os.path.exists(pip_executable):
-            subprocess.run([python_executable, "-m", "ensurepip"], check=True)
-            subprocess.run([pip_executable, "install", "--upgrade", "pip"], check=True)
+            subprocess.run([python_executable, "-m", "ensurepip"], check=True) # Ensure pip is installed
+            subprocess.run([pip_executable, "install", "--upgrade", "pip"], check=True) # Upgrade pip
 
         # Install requirements from requirements.txt
         if os.path.exists(requirements_file):
-            install_command = [pip_executable, "install", 'setuptools']
-            subprocess.run(install_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            install_command = [pip_executable, "install", 'setuptools'] # Required for some packages
+            subprocess.run(install_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) # Install setuptools
 
             install_command = [pip_executable, "install", "-r", requirements_file]
             result = subprocess.run(install_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)

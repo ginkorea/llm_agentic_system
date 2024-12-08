@@ -147,19 +147,16 @@ class ImplementationMilestone(Milestone):
         # Check to see if max tries have been reached
         if self.tries >= self.max_tries:
             return True, "Max tries reached. Moving on to next step with current implementation."
-
         # Extract required classes from the UML Class Diagram
         uml_class_diagram = brain.knowledge_base.get("uml_class", "")
         required_classes = set(re.findall(r"class (\w+)", uml_class_diagram))
         if not required_classes:
             self.tries += 1
             return False, "No required classes found in the UML Class Diagram."
-
         # Extract implemented classes from the saved code files
         implemented_classes = set()
         for code in brain.knowledge_base["code"].values():
             implemented_classes.update(self.extract_classes_from_code(code))
-
         # Determine missing classes
         missing_classes = required_classes - implemented_classes
         if missing_classes:
@@ -169,12 +166,10 @@ class ImplementationMilestone(Milestone):
                 f"The following classes are missing: {', '.join(missing_classes)}. "
                 "Partial files have been saved for future iterations."
             )
-
         main_file = brain.knowledge_base['code'].get('main.py', '')
         if not main_file:
             self.tries += 1
             return False, "No main.py file found in the code. Please ensure the main flow is tested in a separate `test_main.py` file."
-
         # If all requirements are met
         self.complete(brain.goal)
         return True, "All required classes have been implemented and saved. Proceed to the next milestone."
